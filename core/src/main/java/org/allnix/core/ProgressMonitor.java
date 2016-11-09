@@ -36,7 +36,7 @@ public interface ProgressMonitor {
   /**
    * Set the cancel flag to be true
    */
-  void setCanceled();
+  void cancel();
   /**
    * Current task name
    * 
