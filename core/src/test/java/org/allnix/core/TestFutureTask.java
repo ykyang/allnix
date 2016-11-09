@@ -15,6 +15,15 @@
  */
 package org.allnix.core;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
@@ -22,9 +31,53 @@ import org.testng.annotations.Test;
  * @author Yi-Kun Yang &gt;ykyang@gmail.com&lt;
  */
 public class TestFutureTask {
- 
+
+  static private final Logger logger = LoggerFactory.getLogger(
+    TestFutureTask.class);
+  private ExecutorService executor;
+  @BeforeClass(alwaysRun = true)
+  public void beforeClass() {
+    executor = Executors.newCachedThreadPool();
+  }
+
   @Test(groups = {"short"})
-  public void test() {
+  public void testExecute() {
+    FutureTask<String> task = new FutureTask<String>(
+      () -> {
+        return "This is a test";
+      }
+    );
+
+    executor.execute(task);
+
+    try {
+      String result = task.get();
+      Assert.assertEquals(result, "This is a test");
+    } catch (InterruptedException | ExecutionException ex) {
+      throw new RuntimeException();
+    }
+  }
+
+  @Test(groups = {"short"})
+  public void testCancel() {
+    FutureTask<String> task = new FutureTask<String>(
+      () -> {
+        try {
+          TimeUnit.DAYS.sleep(1);
+        } catch (InterruptedException ex) {
+          // Does not reach here
+          Assert.fail("Should not be here");
+        }
+        return "done";
+      }
+    );
     
+    executor.execute(task);
+    
+    boolean success = task.cancel(true);
+
+    Assert.assertTrue(success);
+    Assert.assertTrue(task.isCancelled());
+    Assert.assertTrue(task.isDone());
   }
 }

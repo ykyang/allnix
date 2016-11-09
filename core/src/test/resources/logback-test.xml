@@ -16,7 +16,7 @@
           </layout-->
         </appender>
         <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-          <file>smarties.middle.core.log</file>
+          <file>org.allnix.core.log</file>
           <append>false</append>
           <encoder>
 			<Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
