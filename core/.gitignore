@@ -14,3 +14,5 @@ gradle-app.setting
 # gradle/wrapper/gradle-wrapper.properties
 
 .nb-gradle-properties
+
+org.allnix.core.log
