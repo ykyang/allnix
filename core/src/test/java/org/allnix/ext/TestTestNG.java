@@ -84,6 +84,7 @@ public class TestTestNG {
   @Test(dataProvider = "names")
   public void testNameList(String value) {
     logger.debug("Name: {}", value);
+    Assert.assertNotNull(value);
   }
 
   // >>> 
@@ -97,8 +98,9 @@ public class TestTestNG {
     };
   }
 
-  @Test(dataProvider = "nameProvider")
+  @Test(groups = {"short"}, dataProvider = "nameProvider")
   public void testNameProvider(String value) {
     logger.debug("Name: {}", value);
+    Assert.assertNotNull(value);
   }
 }

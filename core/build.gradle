@@ -25,7 +25,10 @@ dependencies {
     compile 'ch.qos.logback:logback-classic:1.1.2'
 
     // Use TestNG framework, also requires calling test.useTestNG() below
-    testCompile 'org.testng:testng:6.9.12'
+    testCompile 'org.testng:testng:6.9.11'
+    
+    // bug in 6.9.12 in DataProvider
+    //testCompile 'org.testng:testng:6.9.12'
 }
 
 test {
