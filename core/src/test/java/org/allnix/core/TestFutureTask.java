@@ -119,6 +119,11 @@ public class TestFutureTask {
 //    }
 //
     // > Cancel --interrupts--> task thread --> waitFor() --> destroyForcibly()
-    task.cancel(true);
+    boolean success = task.cancel(true);
+
+    Assert.assertTrue(success);
+    Assert.assertTrue(task.isCancelled());
+    Assert.assertTrue(task.isDone());    
+    
   }
 }
