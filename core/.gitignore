@@ -16,3 +16,5 @@ gradle-app.setting
 .nb-gradle-properties
 
 org.allnix.core.log
+
+.nb-gradle/
