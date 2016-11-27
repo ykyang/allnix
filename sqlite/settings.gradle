@@ -16,4 +16,4 @@ include 'api'
 include 'services:webservice'
 */
 
-rootProject.name = 'sqlite'
+rootProject.name = 'org.allnix.sqlite'
