@@ -36,4 +36,25 @@ dependencies {
     testCompile 'org.testng:testng:6.9.11'
 }
 
-test.useTestNG()
+test {
+  // Run the test
+  // ./gradlew test
+  
+  // Force re-run the test
+  // ./gradlew cleanTest test
+  
+  systemProperties 'logback.configurationFile' : new File(projectDir,'src/test/resources/logback-test.xml').absolutePath
+  // Tem disabled  
+  include '**/Test*.*'
+  //include '**/DisableAllTest*.*'
+  
+  // Use "gradlew cleanTest test" to force running test
+  testLogging {
+    events "started", "passed", "skipped", "failed", "standardOut", "standardError"
+  }
+
+  useTestNG() {
+    setParallel("methods");
+    setThreadCount(4);
+  }
+}
