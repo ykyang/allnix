@@ -37,7 +37,7 @@ public class TestSQLiteJsonDao {
   }
 
   @Test
-  public void test() {
+  public void testBasic() {
     String id = "1";
     String json = "{}";
     boolean result;
@@ -71,5 +71,11 @@ public class TestSQLiteJsonDao {
     // > Second delete should fail
     result = dao.delete(JOB_INPUT, id);
     Assert.assertFalse(result);
+  }
+  
+  @Test
+  public void testMultipleThread() {
+    ObjectMapper mapper = new ObjectMapper();
+    // > Create a million entries
   }
 }
