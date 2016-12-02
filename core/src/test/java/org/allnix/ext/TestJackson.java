@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -81,6 +82,66 @@ public class TestJackson {
       String value = "12345";
       node.put("id", value);
       Assert.assertEquals(node.get("id").asText(), value);
+    }
+  }
+  
+  @Test
+  public void testConvertValue() {
+    { 
+      // > Map -> POJO
+      Pojo value = mapper.convertValue(map, Pojo.class);
+      Assert.assertEquals(value.getId(), uuid);
+      
+      // > String -> POJO, use readValue
+
+      // > ObjectNode -> POJO
+      value = mapper.convertValue(objectNode, Pojo.class);
+      Assert.assertEquals(value.getId(), uuid);
+    }
+    
+    {
+      // > POJO -> ObjectNode
+      ObjectNode value = mapper.convertValue(pojo, ObjectNode.class);
+      Assert.assertEquals(value.get("id").asText(), uuid);
+      
+      // > Map -> ObjectNode
+      value = mapper.convertValue(map, ObjectNode.class);
+      Assert.assertEquals(value.get("id").asText(), uuid);
+      
+      // > String -> ObjectNode, use readValue
+    }
+    
+    {
+      // > POJO -> Map
+      Map<String,Object> value = mapper.convertValue(pojo, Map.class);
+      Assert.assertEquals((String)value.get("id"), uuid);
+      
+      // > ObjectNode -> Map
+      value = mapper.convertValue(objectNode, Map.class);
+      Assert.assertEquals((String)value.get("id"), uuid);
+      
+      // > String -> Map, use readValue
+    }
+  }
+
+  @Test
+  public void testReadValue() throws IOException {
+    {
+      // > String -> POJO
+      Pojo value = mapper.readValue(string, Pojo.class);
+      Assert.assertEquals(value.getId(), uuid);
+    }
+    
+    {
+      // > String -> Map
+      Map<String,Object> value = mapper.readValue(string, Map.class);
+      Assert.assertEquals((String)value.get("id"), uuid);
+    }
+    
+    {
+      // > String -> ObjectNode
+      ObjectNode value = mapper.readValue(string, ObjectNode.class);
+      Assert.assertEquals(value.get("id").asText(), uuid);
     }
   }
   
