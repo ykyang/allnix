@@ -17,11 +17,15 @@ package org.allnix.sqlite;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -31,7 +35,8 @@ import org.testng.annotations.Test;
  * @author Yi-Kun Yang &gt;ykyang@gmail.com&lt;
  */
 public class TestSQLiteJsonDao {
-
+  static private final Logger logger = LoggerFactory.getLogger(TestSQLiteJsonDao.class);
+  
   private SQLiteJsonDao dao;
   static private final String JOB_INPUT = "JobInput";
 
@@ -39,16 +44,16 @@ public class TestSQLiteJsonDao {
   private ObjectNode objectNode;
   private ObjectMapper mapper;
   private ExecutorService es;
-  
+
   @BeforeTest(alwaysRun = true)
   void beforeTest() throws Exception {
     dao = new SQLiteJsonDao();
     dao.init();
 
     dao.createTable(JOB_INPUT);
-    
+
     mapper = new ObjectMapper();
-    
+
   }
 
   @Test
@@ -82,29 +87,42 @@ public class TestSQLiteJsonDao {
     // > Read returns null
     text = dao.read(JOB_INPUT, id);
     Assert.assertNull(text);
-    
+
     // > Second delete should fail
     result = dao.delete(JOB_INPUT, id);
     Assert.assertFalse(result);
   }
-  
-  @Test(threadPoolSize = 10, invocationCount = 10)
+
+  @Test(threadPoolSize = 4, invocationCount = 12)
   public void testMultipleThread() throws IOException {
     // > Create a million entries
     List<String> ids = new ArrayList<>();
-    int count = 10;
-    for ( int i = 0; i < count; i++) {
+    int count = 10_000;
+    for (int i = 0; i < count; i++) {
       String id = UUID.randomUUID().toString();
       ids.add(id);
       String text = String.format("{\"id\":\"%s\"}", id);
       dao.create(JOB_INPUT, id, text);
     }
-    
+
     for ( int i = 0; i < count; i++) {
       String id = ids.get(i);
       String text = dao.read(JOB_INPUT, id);
       ObjectNode objectNode = mapper.readValue(text, ObjectNode.class);
       Assert.assertEquals(objectNode.get("id").asText(), id);
     }
+  }
+
+  @Test(enabled = false)
+  public void generateInsert() throws FileNotFoundException {
+    String template = "INSERT OR IGNORE INTO %s VALUES ('%s', '{\"%s\":\"%s\"}');";
+    int count = 1_000;
+    try (PrintWriter out = new PrintWriter("insert.sql")) {
+      for (int i = 0; i < count; i++) {
+        String uuid = UUID.randomUUID().toString();
+        String sql = String.format(template, JOB_INPUT, uuid, "id", uuid);
+        out.println(sql);
+      }
+    } 
   }
 }

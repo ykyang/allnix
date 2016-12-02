@@ -36,11 +36,21 @@ public class SQLiteJsonDao {
     
     BasicDataSource basicDataSource = new BasicDataSource();
     basicDataSource.setUrl("jdbc:sqlite:job.db");
+//    basicDataSource.setUrl("jdbc:sqlite::memory:");
     basicDataSource.setMaxTotal(1);
 
     jdbcTemplate = new JdbcTemplate(basicDataSource);
+    
+    pragmaSynchronous(false);
   }
 
+  public void pragmaSynchronous(boolean onoff) {
+    if (onoff) {
+      jdbcTemplate.execute("pragma synchronous = on;");
+    } else {
+     jdbcTemplate.execute("pragma synchronous = off;");
+    }
+  }
   public void createTable(String tableName) {
     String sql
       = "CREATE TABLE IF NOT EXISTS %s (\n"
