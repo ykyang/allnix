@@ -51,48 +51,48 @@ public class TestSQLiteJsonDao {
     
   }
 
-//  @Test
-//  public void testBasic() {
-//    String id = "1";
-//    String json = "{}";
-//    boolean result;
-//    String text;
-//
-//    result = dao.create(JOB_INPUT, id, json);
-//    Assert.assertTrue(result);
-//
-//    // > Second create should fail
-//    result = dao.create(JOB_INPUT, id, json);
-//    Assert.assertFalse(result);
-//
-//    text = dao.read(JOB_INPUT, id);
-//    Assert.assertEquals(text, json);
-//
-//    json = "{\"method\":\"run\"}";
-//
-//    result = dao.update(JOB_INPUT, id, json);
-//    Assert.assertTrue(result);
-//
-//    text = dao.read(JOB_INPUT, id);
-//    Assert.assertEquals(text, json);
-//
-//    result = dao.delete(JOB_INPUT, id);
-//    Assert.assertTrue(result);
-//
-//    // > Read returns null
-//    text = dao.read(JOB_INPUT, id);
-//    Assert.assertNull(text);
-//    
-//    // > Second delete should fail
-//    result = dao.delete(JOB_INPUT, id);
-//    Assert.assertFalse(result);
-//  }
+  @Test
+  public void testBasic() {
+    String id = "1";
+    String json = "{}";
+    boolean result;
+    String text;
+
+    result = dao.create(JOB_INPUT, id, json);
+    Assert.assertTrue(result);
+
+    // > Second create should fail
+    result = dao.create(JOB_INPUT, id, json);
+    Assert.assertFalse(result);
+
+    text = dao.read(JOB_INPUT, id);
+    Assert.assertEquals(text, json);
+
+    json = "{\"method\":\"run\"}";
+
+    result = dao.update(JOB_INPUT, id, json);
+    Assert.assertTrue(result);
+
+    text = dao.read(JOB_INPUT, id);
+    Assert.assertEquals(text, json);
+
+    result = dao.delete(JOB_INPUT, id);
+    Assert.assertTrue(result);
+
+    // > Read returns null
+    text = dao.read(JOB_INPUT, id);
+    Assert.assertNull(text);
+    
+    // > Second delete should fail
+    result = dao.delete(JOB_INPUT, id);
+    Assert.assertFalse(result);
+  }
   
   @Test(threadPoolSize = 10, invocationCount = 10)
   public void testMultipleThread() throws IOException {
     // > Create a million entries
     List<String> ids = new ArrayList<>();
-    int count = 100;
+    int count = 10;
     for ( int i = 0; i < count; i++) {
       String id = UUID.randomUUID().toString();
       ids.add(id);

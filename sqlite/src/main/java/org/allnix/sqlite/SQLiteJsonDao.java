@@ -15,6 +15,7 @@
  */
 package org.allnix.sqlite;
 
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.sqlite.SQLiteDataSource;
@@ -32,8 +33,12 @@ public class SQLiteJsonDao {
     boolean success = SQLiteJDBCLoader.initialize();
     SQLiteDataSource dataSource = new SQLiteDataSource();
     dataSource.setUrl("jdbc:sqlite:job.db");
+    
+    BasicDataSource basicDataSource = new BasicDataSource();
+    basicDataSource.setUrl("jdbc:sqlite:job.db");
+    basicDataSource.setMaxTotal(1);
 
-    jdbcTemplate = new JdbcTemplate(dataSource);
+    jdbcTemplate = new JdbcTemplate(basicDataSource);
   }
 
   public void createTable(String tableName) {
