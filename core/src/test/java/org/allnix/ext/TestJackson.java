@@ -15,12 +15,15 @@
  */
 package org.allnix.ext;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.util.HashMap;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -30,11 +33,43 @@ import org.testng.annotations.Test;
  * @author Yi-Kun Yang &gt;ykyang@gmail.com&lt;
  */
 public class TestJackson {
+  
+  static private final Logger logger = LoggerFactory.getLogger(TestJackson.class);
+  static class Pojo {
+    private String id;
+
+    public String getId() {
+      return id;
+    }
+
+    public void setId(String id) {
+      this.id = id;
+    }
+  }
+
   private ObjectMapper mapper;
+  private Map<String,Object> map;
+  private ObjectNode objectNode;
+  private String string;
+  private String uuid;
+  private Pojo pojo;
 
   @BeforeClass(alwaysRun = true)
   public void beforeClass() {
     mapper = new ObjectMapper();
+    
+    uuid = "300a9aa6-4f9d-4286-b7be-f23a20374a7d";
+    
+    map = new HashMap<>();
+    map.put("id", uuid);
+    
+    string = String.format("{\"id\":\"%s\"}", uuid);
+    
+    objectNode = new ObjectNode(JsonNodeFactory.instance);
+    objectNode.put("id", uuid);
+    
+    pojo = new Pojo();
+    pojo.setId(uuid);
   }
   
   
@@ -54,12 +89,37 @@ public class TestJackson {
    */
   @Test
   public void testValuetoTree() {
-    Map<String,Object> value = new HashMap<>();
-    String uuid = "300a9aa6-4f9d-4286-b7be-f23a20374a7d";
-    value.put("id", uuid);
-    
-    JsonNode node = mapper.valueToTree(value);
-    
+    JsonNode node = mapper.valueToTree(map);
     Assert.assertEquals(node.get("id").asText(), uuid);
+    
+    // > A String is converted into a text node
+    node = mapper.valueToTree(string);
+    logger.debug("node: {}", node.toString());
+    Assert.assertTrue(node.isTextual());
+    Assert.assertEquals(node.asText(), string);
+
+    // > Map -> JsonNode
+    node = mapper.valueToTree(map);
+    Assert.assertEquals(node.get("id").asText(), uuid);
+    Assert.assertTrue(node.isObject());
+    Assert.assertTrue(node instanceof ObjectNode);
+
+    // > POJO -> JsonNode 
+    node = mapper.valueToTree(pojo);
+    Assert.assertEquals(node.get("id").asText(), uuid);
+    Assert.assertTrue(node.isObject());
+    Assert.assertTrue(node instanceof ObjectNode);
+  }
+  @Test
+  public void testWriteValueAsString() throws JsonProcessingException {
+    // > Map -> String
+    String value = mapper.writeValueAsString(map);
+    Assert.assertEquals(value, string);
+    // > ObjectNode -> String
+    value = mapper.writeValueAsString(objectNode);
+    Assert.assertEquals(value, string);
+    // > POJO -> String
+    value = mapper.writeValueAsString(pojo);
+    Assert.assertEquals(value, string);
   }
 }
