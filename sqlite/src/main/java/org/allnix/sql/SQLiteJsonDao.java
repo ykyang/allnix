@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.allnix.sqlite;
+package org.allnix.sql;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
@@ -22,7 +22,10 @@ import org.sqlite.SQLiteDataSource;
 import org.sqlite.SQLiteJDBCLoader;
 
 /**
- *
+ * A DAO for storing JSON in SQLite
+ * 
+ * See TestSQLiteJsonDao for usage example
+ * 
  * @author Yi-Kun Yang &gt;ykyang@gmail.com&lt;
  */
 public class SQLiteJsonDao {

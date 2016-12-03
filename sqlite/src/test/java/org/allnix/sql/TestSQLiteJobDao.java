@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.allnix.sqlite;
+package org.allnix.sql;
 
+import org.allnix.sql.SQLiteJobDao;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
