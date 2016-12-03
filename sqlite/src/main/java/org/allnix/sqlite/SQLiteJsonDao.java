@@ -29,27 +29,31 @@ public class SQLiteJsonDao {
 
   private JdbcTemplate jdbcTemplate;
 
-  public void init() throws Exception {
-    boolean success = SQLiteJDBCLoader.initialize();
-    SQLiteDataSource dataSource = new SQLiteDataSource();
-    dataSource.setUrl("jdbc:sqlite:job.db");
-    
-    BasicDataSource basicDataSource = new BasicDataSource();
-    basicDataSource.setUrl("jdbc:sqlite:job.db");
-//    basicDataSource.setUrl("jdbc:sqlite::memory:");
-    basicDataSource.setMaxTotal(1);
-
-    jdbcTemplate = new JdbcTemplate(basicDataSource);
-    
-    pragmaSynchronous(false);
-  }
-
-  public void pragmaSynchronous(boolean onoff) {
-    if (onoff) {
-      jdbcTemplate.execute("pragma synchronous = on;");
-    } else {
-     jdbcTemplate.execute("pragma synchronous = off;");
-    }
+//  public void init() throws Exception {
+//    boolean success = SQLiteJDBCLoader.initialize();
+//    SQLiteDataSource dataSource = new SQLiteDataSource();
+//    dataSource.setUrl("jdbc:sqlite:job.db");
+//    
+//    BasicDataSource basicDataSource = new BasicDataSource();
+//    basicDataSource.setUrl("jdbc:sqlite:job.db");
+////    basicDataSource.setUrl("jdbc:sqlite::memory:");
+//    basicDataSource.setMaxTotal(1);
+//
+//    jdbcTemplate = new JdbcTemplate(basicDataSource);
+//    
+//    pragmaSynchronous(false);
+//  }
+//
+//  public void pragmaSynchronous(boolean onoff) {
+//    if (onoff) {
+//      jdbcTemplate.execute("pragma synchronous = on;");
+//    } else {
+//     jdbcTemplate.execute("pragma synchronous = off;");
+//    }
+//  }
+  
+  public void setJdbcTemplate(JdbcTemplate value) {
+    this.jdbcTemplate = value;
   }
   public void createTable(String tableName) {
     String sql

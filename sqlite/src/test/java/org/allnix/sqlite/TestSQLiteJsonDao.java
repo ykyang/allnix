@@ -24,8 +24,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.sqlite.SQLiteJDBCLoader;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -47,13 +50,25 @@ public class TestSQLiteJsonDao {
 
   @BeforeTest(alwaysRun = true)
   void beforeTest() throws Exception {
+    BasicDataSource basicDataSource = new BasicDataSource();
+    basicDataSource.setUrl("jdbc:sqlite:job.db");
+//    basicDataSource.setUrl("jdbc:sqlite::memory:");
+    basicDataSource.setMaxTotal(1);
+    
+    boolean success = SQLiteJDBCLoader.initialize();
+    
+    JdbcTemplate jdbcTemplate = new JdbcTemplate(basicDataSource);
+    
+    jdbcTemplate.execute("pragma synchronous = off;");
+    
+    
     dao = new SQLiteJsonDao();
-    dao.init();
-
+    dao.setJdbcTemplate(jdbcTemplate);
+//    dao.init();
+    
     dao.createTable(JOB_INPUT);
 
     mapper = new ObjectMapper();
-
   }
 
   @Test
