@@ -99,36 +99,41 @@ public class TestSQLiteJsonDao {
   @Test
   public void testCRUD() {
     String id = "1234567890987654321";
-    String json = String.format(template, id);
+    String expectedValue = String.format(template, id);
     boolean result;
-    String text;
+    String actualValue;
 
-    result = dao.create(JOB_INPUT, id, json);
+    // > Create
+    result = dao.create(JOB_INPUT, id, expectedValue);
     Assert.assertTrue(result);
 
     // > Second create should fail
-    result = dao.create(JOB_INPUT, id, json);
+    result = dao.create(JOB_INPUT, id, expectedValue);
     Assert.assertFalse(result);
 
-    text = dao.read(JOB_INPUT, id);
-    Assert.assertEquals(text, json);
+    // > Read
+    actualValue = dao.read(JOB_INPUT, id);
+    Assert.assertEquals(actualValue, expectedValue);
 
-    json = String.format(template, "1357924680");
+    expectedValue = String.format(template, "1357924680");
 
-    result = dao.update(JOB_INPUT, id, json);
+    // > Update
+    result = dao.update(JOB_INPUT, id, expectedValue);
     Assert.assertTrue(result);
 
-    text = dao.read(JOB_INPUT, id);
-    Assert.assertEquals(text, json);
+    // > Check updated value
+    actualValue = dao.read(JOB_INPUT, id);
+    Assert.assertEquals(actualValue, expectedValue);
 
+    // > Delete
     result = dao.delete(JOB_INPUT, id);
     Assert.assertTrue(result);
 
-    // > Read returns null
-    text = dao.read(JOB_INPUT, id);
-    Assert.assertNull(text);
+    // > Read should return null
+    actualValue = dao.read(JOB_INPUT, id);
+    Assert.assertNull(actualValue);
 
-    // > Second delete should fail
+    // > Delete should fail
     result = dao.delete(JOB_INPUT, id);
     Assert.assertFalse(result);
   }
