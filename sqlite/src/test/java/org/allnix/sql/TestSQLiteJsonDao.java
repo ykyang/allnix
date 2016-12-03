@@ -17,19 +17,23 @@ package org.allnix.sql;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.sqlite.SQLiteJDBCLoader;
 import org.testng.Assert;
+import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -45,39 +49,57 @@ public class TestSQLiteJsonDao {
 
 //  private String text;
   private ObjectMapper mapper;
+  private String databaseFileName;
+  private String template;
+  private Random random;
 
   @BeforeTest(alwaysRun = true)
   void beforeTest() throws Exception {
+    databaseFileName = "job.db";
+    FileUtils.deleteQuietly(new File(databaseFileName));
+    
+    template = "{\"id\":\"%s\"}";
+    
+    random = new Random();
+    
     BasicDataSource basicDataSource = new BasicDataSource();
-    basicDataSource.setUrl("jdbc:sqlite:job.db");
-//    basicDataSource.setUrl("jdbc:sqlite::memory:");
+    basicDataSource.setUrl("jdbc:sqlite:" + databaseFileName);
+    
+    // > Memory database file
+    // basicDataSource.setUrl("jdbc:sqlite::memory:");
 
     // > Maximum number of connection
     // > SQLite cannot have more than 1 connection
     // > in multi-thread mode
     basicDataSource.setMaxTotal(1);
     
+    // > Initialize SQLite database
     boolean success = SQLiteJDBCLoader.initialize();
     
     JdbcTemplate jdbcTemplate = new JdbcTemplate(basicDataSource);
     
     // > Not waiting for data actually writing to the disk
+    // > The performance is not acceptable for my use case
+    // > without this setting.
     jdbcTemplate.execute("pragma synchronous = off;");
-    
     
     dao = new SQLiteJsonDao();
     dao.setJdbcTemplate(jdbcTemplate);
-//    dao.init();
-    
     dao.createTable(JOB_INPUT);
 
     mapper = new ObjectMapper();
   }
 
+  @AfterTest(alwaysRun = true)
+  void afterTest() throws IOException {
+    FileUtils.deleteQuietly(new File(databaseFileName));
+  }
+    
+  
   @Test
   public void testCRUD() {
-    String id = "1";
-    String json = "{}";
+    String id = "1234567890987654321";
+    String json = String.format(template, id);
     boolean result;
     String text;
 
@@ -91,7 +113,7 @@ public class TestSQLiteJsonDao {
     text = dao.read(JOB_INPUT, id);
     Assert.assertEquals(text, json);
 
-    json = "{\"method\":\"run\"}";
+    json = String.format(template, "1357924680");
 
     result = dao.update(JOB_INPUT, id, json);
     Assert.assertTrue(result);
@@ -111,11 +133,14 @@ public class TestSQLiteJsonDao {
     Assert.assertFalse(result);
   }
 
-  @Test(threadPoolSize = 4, invocationCount = 16)
-  public void testMultipleThreadCRUD() throws IOException {
+  @Test(threadPoolSize = 4, invocationCount = 128)
+  public void testMultipleThreadCRUD() throws IOException, InterruptedException {
+    // > Make threads start at different time
+    TimeUnit.MILLISECONDS.sleep(random.nextInt(100));
+    
     // > Create a million entries
     List<String> ids = new ArrayList<>();
-    int count = 1000;
+    int count = 100;
     
     // > Create
     for (int i = 0; i < count; i++) {
@@ -133,11 +158,20 @@ public class TestSQLiteJsonDao {
       Assert.assertEquals(objectNode.get("id").asText(), id);
     }
     
-    // > Update
+    // > Update: Make id = index
     for ( int i = 0; i < count; i++) {
       String id = ids.get(i);
-      boolean ans = dao.update(JOB_INPUT, id, "{}");
+      String value = String.format(template, Integer.toString(i));
+      boolean ans = dao.update(JOB_INPUT, id, value);
       Assert.assertTrue(ans);
+    }
+    
+    // > Check if the updated value = index
+    for ( int i = 0; i < count; i++) {
+      String id = ids.get(i);
+      String value = dao.read(JOB_INPUT, id);
+      ObjectNode objectNode = mapper.readValue(value, ObjectNode.class);
+      Assert.assertEquals(objectNode.get("id").asText(), Integer.toString(i));
     }
     
     // > Delete

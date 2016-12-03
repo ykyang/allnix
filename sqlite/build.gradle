@@ -28,6 +28,8 @@ dependencies {
     // Spring
     compile 'org.springframework:spring-context:4.3.4.RELEASE'
     compile 'org.springframework:spring-jdbc:4.3.4.RELEASE'
+    // Apache
+    compile group: 'commons-io', name: 'commons-io', version: '2.5'
     // JSON
     compile 'com.fasterxml.jackson.core:jackson-core:2.7.3'
     compile 'com.fasterxml.jackson.core:jackson-annotations:2.7.3'
