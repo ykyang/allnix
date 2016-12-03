@@ -53,12 +53,17 @@ public class TestSQLiteJsonDao {
     BasicDataSource basicDataSource = new BasicDataSource();
     basicDataSource.setUrl("jdbc:sqlite:job.db");
 //    basicDataSource.setUrl("jdbc:sqlite::memory:");
+
+    // > Maximum number of connection
+    // > SQLite cannot have more than 1 connection
+    // > in multi-thread mode
     basicDataSource.setMaxTotal(1);
     
     boolean success = SQLiteJDBCLoader.initialize();
     
     JdbcTemplate jdbcTemplate = new JdbcTemplate(basicDataSource);
     
+    // > Not waiting for data actually writing to the disk
     jdbcTemplate.execute("pragma synchronous = off;");
     
     
@@ -72,7 +77,7 @@ public class TestSQLiteJsonDao {
   }
 
   @Test
-  public void testBasic() {
+  public void testCRUD() {
     String id = "1";
     String json = "{}";
     boolean result;
@@ -108,11 +113,13 @@ public class TestSQLiteJsonDao {
     Assert.assertFalse(result);
   }
 
-  @Test(threadPoolSize = 4, invocationCount = 12)
-  public void testMultipleThread() throws IOException {
+  @Test(threadPoolSize = 4, invocationCount = 16)
+  public void testMultipleThreadCRUD() throws IOException {
     // > Create a million entries
     List<String> ids = new ArrayList<>();
-    int count = 10_000;
+    int count = 1000;
+    
+    // > Create
     for (int i = 0; i < count; i++) {
       String id = UUID.randomUUID().toString();
       ids.add(id);
@@ -120,11 +127,26 @@ public class TestSQLiteJsonDao {
       dao.create(JOB_INPUT, id, text);
     }
 
+    // > Read
     for ( int i = 0; i < count; i++) {
       String id = ids.get(i);
       String text = dao.read(JOB_INPUT, id);
       ObjectNode objectNode = mapper.readValue(text, ObjectNode.class);
       Assert.assertEquals(objectNode.get("id").asText(), id);
+    }
+    
+    // > Update
+    for ( int i = 0; i < count; i++) {
+      String id = ids.get(i);
+      boolean ans = dao.update(JOB_INPUT, id, "{}");
+      Assert.assertTrue(ans);
+    }
+    
+    // > Delete
+    for ( int i = 0; i < count; i++) {
+      String id = ids.get(i);
+      boolean ans = dao.delete(JOB_INPUT, id);
+      Assert.assertTrue(ans);
     }
   }
 
