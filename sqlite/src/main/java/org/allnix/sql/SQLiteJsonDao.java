@@ -15,16 +15,18 @@
  */
 package org.allnix.sql;
 
-import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.sqlite.SQLiteDataSource;
-import org.sqlite.SQLiteJDBCLoader;
 
 /**
  * A DAO for storing JSON in SQLite
  * 
- * See TestSQLiteJsonDao for usage example
+ * See TestSQLiteJsonDao for usage example.  Stores 
+ * <pre>
+ * Id         | JSON
+ * CHAR(36)   | TEXT
+ * </pre>
+ * in SQLite.  The Id column is meant for UUID.
  * 
  * @author Yi-Kun Yang &gt;ykyang@gmail.com&lt;
  */
@@ -32,29 +34,6 @@ public class SQLiteJsonDao {
 
   private JdbcTemplate jdbcTemplate;
 
-//  public void init() throws Exception {
-//    boolean success = SQLiteJDBCLoader.initialize();
-//    SQLiteDataSource dataSource = new SQLiteDataSource();
-//    dataSource.setUrl("jdbc:sqlite:job.db");
-//    
-//    BasicDataSource basicDataSource = new BasicDataSource();
-//    basicDataSource.setUrl("jdbc:sqlite:job.db");
-////    basicDataSource.setUrl("jdbc:sqlite::memory:");
-//    basicDataSource.setMaxTotal(1);
-//
-//    jdbcTemplate = new JdbcTemplate(basicDataSource);
-//    
-//    pragmaSynchronous(false);
-//  }
-//
-//  public void pragmaSynchronous(boolean onoff) {
-//    if (onoff) {
-//      jdbcTemplate.execute("pragma synchronous = on;");
-//    } else {
-//     jdbcTemplate.execute("pragma synchronous = off;");
-//    }
-//  }
-  
   public void setJdbcTemplate(JdbcTemplate value) {
     this.jdbcTemplate = value;
   }

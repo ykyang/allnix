@@ -15,7 +15,6 @@
  */
 package org.allnix.sql;
 
-import org.allnix.sql.SQLiteJsonDao;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.FileNotFoundException;
@@ -44,10 +43,8 @@ public class TestSQLiteJsonDao {
   private SQLiteJsonDao dao;
   static private final String JOB_INPUT = "JobInput";
 
-  private String text;
-  private ObjectNode objectNode;
+//  private String text;
   private ObjectMapper mapper;
-  private ExecutorService es;
 
   @BeforeTest(alwaysRun = true)
   void beforeTest() throws Exception {
@@ -151,6 +148,10 @@ public class TestSQLiteJsonDao {
     }
   }
 
+  /**
+   * Use for generate SQL commands for testing in SQLite command line.
+   * @throws java.io.FileNotFoundException
+   */
   @Test(enabled = false)
   public void generateInsert() throws FileNotFoundException {
     String template = "INSERT OR IGNORE INTO %s VALUES ('%s', '{\"%s\":\"%s\"}');";
