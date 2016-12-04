@@ -65,6 +65,6 @@ test {
 
   useTestNG() {
     setParallel("methods");
-    setThreadCount(4);
+    setThreadCount(1);
   }
 }

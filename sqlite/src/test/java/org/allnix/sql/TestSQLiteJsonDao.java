@@ -30,6 +30,7 @@ import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.sqlite.SQLiteJDBCLoader;
 import org.testng.Assert;
@@ -45,6 +46,7 @@ public class TestSQLiteJsonDao {
   static private final Logger logger = LoggerFactory.getLogger(TestSQLiteJsonDao.class);
   
   private SQLiteJsonDao dao;
+  private JdbcTemplate jdbcTemplate;
   static private final String JOB_INPUT = "JobInput";
 
 //  private String text;
@@ -52,39 +54,48 @@ public class TestSQLiteJsonDao {
   private String databaseFileName;
   private String template;
   private Random random;
+  private AnnotationConfigApplicationContext ctx;
 
   @BeforeTest(alwaysRun = true)
   void beforeTest() throws Exception {
-    databaseFileName = "job.db";
-    FileUtils.deleteQuietly(new File(databaseFileName));
+    ctx = new AnnotationConfigApplicationContext();
+    ctx.register(SQLiteJsonDaoConfig.class, TestDatabaseNameConfig.class);
+    ctx.refresh();
+    ctx.registerShutdownHook();
+    
+    
+//    databaseFileName = "job.db";
+//    FileUtils.deleteQuietly(new File(databaseFileName));
     
     template = "{\"id\":\"%s\"}";
     
     random = new Random();
     
-    BasicDataSource basicDataSource = new BasicDataSource();
-    basicDataSource.setUrl("jdbc:sqlite:" + databaseFileName);
-    
-    // > Memory database file
-    // basicDataSource.setUrl("jdbc:sqlite::memory:");
-
-    // > Maximum number of connection
-    // > SQLite cannot have more than 1 connection
-    // > in multi-thread mode
-    basicDataSource.setMaxTotal(1);
-    
-    // > Initialize SQLite database
-    boolean success = SQLiteJDBCLoader.initialize();
-    
-    JdbcTemplate jdbcTemplate = new JdbcTemplate(basicDataSource);
-    
-    // > Not waiting for data actually writing to the disk
-    // > The performance is not acceptable for my use case
-    // > without this setting.
-    jdbcTemplate.execute("pragma synchronous = off;");
-    
-    dao = new SQLiteJsonDao();
-    dao.setJdbcTemplate(jdbcTemplate);
+//    BasicDataSource basicDataSource = new BasicDataSource();
+//    basicDataSource.setUrl("jdbc:sqlite:" + databaseFileName);
+//    
+//    // > Memory database file
+//    // basicDataSource.setUrl("jdbc:sqlite::memory:");
+//
+//    // > Maximum number of connection
+//    // > SQLite cannot have more than 1 connection
+//    // > in multi-thread mode
+//    basicDataSource.setMaxTotal(1);
+//    
+//    // > Initialize SQLite database
+//    boolean success = SQLiteJDBCLoader.initialize();
+//    
+//    jdbcTemplate = new JdbcTemplate();
+//    jdbcTemplate.setDataSource(basicDataSource);
+//    
+//    // > Not waiting for data actually writing to the disk
+//    // > The performance is not acceptable for my use case
+//    // > without this setting.
+//    jdbcTemplate.execute("pragma synchronous = off;");
+//    
+//    dao = new SQLiteJsonDao();
+//    dao.setJdbcTemplate(jdbcTemplate);
+    dao = ctx.getBean(SQLiteJsonDao.class);
     dao.createTable(JOB_INPUT);
 
     mapper = new ObjectMapper();
@@ -92,9 +103,28 @@ public class TestSQLiteJsonDao {
 
   @AfterTest(alwaysRun = true)
   void afterTest() throws IOException {
-    FileUtils.deleteQuietly(new File(databaseFileName));
+//    FileUtils.deleteQuietly(new File(databaseFileName));
   }
     
+//  @Test
+//  public void testSwitchDataSource() {
+//    BasicDataSource basicDataSource = new BasicDataSource();
+//    basicDataSource.setUrl("jdbc:sqlite:" + "tmp.db");
+//    basicDataSource.setMaxTotal(1);
+//    
+//    jdbcTemplate.setDataSource(basicDataSource);
+//    dao.createTable(JOB_INPUT);
+//    
+//    testCRUD();
+//    
+//    FileUtils.deleteQuietly(new File("tmp.db"));
+//    
+//    basicDataSource = new BasicDataSource();
+//    basicDataSource.setUrl("jdbc:sqlite:" + databaseFileName);
+//    basicDataSource.setMaxTotal(1);
+//    jdbcTemplate.setDataSource(basicDataSource);
+//  }
+  
   
   @Test
   public void testCRUD() {
