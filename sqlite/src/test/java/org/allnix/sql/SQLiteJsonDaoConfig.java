@@ -29,31 +29,40 @@ import org.sqlite.SQLiteJDBCLoader;
  */
 @Configuration
 public class SQLiteJsonDaoConfig {
+
   private JdbcTemplate jdbcTemplate;
-  
+
   @Autowired
   @Qualifier("jobDatabaseName")
   private String databaseName;
-  
+
   @Bean
-  public SQLiteJsonDao defaultDao() throws Exception {
+  public SQLiteJsonDao newSQLiteJsonDao() throws Exception {
+    // > Initialize SQLite driver
     boolean success = SQLiteJDBCLoader.initialize();
-    
+
     SQLiteJsonDao bean = new SQLiteJsonDao();
-    
+
+    // > Create SQLite data source
     BasicDataSource basicDataSource = new BasicDataSource();
     basicDataSource.setUrl("jdbc:sqlite:" + databaseName);
+    // > Maximum number of connection = 1
+    // > SQLite cannot have more than 1 connection
+    // > in multi-thread mode
     basicDataSource.setMaxTotal(1);
-    
+
     jdbcTemplate = new JdbcTemplate();
     jdbcTemplate.setDataSource(basicDataSource);
+    // > Not waiting for data actually writing to the disk
+    // > The performance is not acceptable for my use case
+    // > without this setting.
     jdbcTemplate.execute("pragma synchronous = off;");
-    
+
     bean.setJdbcTemplate(jdbcTemplate);
-    
+
     return bean;
   }
-  
+
 //  @Bean
 //  public DataSource defaultDataSource() {
 //    BasicDataSource bean = new BasicDataSource();
@@ -61,5 +70,4 @@ public class SQLiteJsonDaoConfig {
 //    
 //    return bean;
 //  }
-  
 }
