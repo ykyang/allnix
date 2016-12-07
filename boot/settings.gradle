@@ -16,4 +16,4 @@ include 'api'
 include 'services:webservice'
 */
 
-rootProject.name = 'boot'
+rootProject.name = 'org.allnix.boot'
