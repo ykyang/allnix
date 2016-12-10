@@ -4,4 +4,4 @@ subprojects {
 project(':core') {
 }
 
-project(':sqlite') {}
+project(':sql') {}
