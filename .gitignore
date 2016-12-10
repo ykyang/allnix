@@ -11,3 +11,5 @@ gradle-app.setting
 .gradletasknamecache
 
 
+.nb-gradle/
+.nb-gradle-properties
