@@ -30,10 +30,9 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.testng.Assert;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
@@ -41,6 +40,7 @@ import org.testng.annotations.Test;
  * @author Yi-Kun Yang &gt;ykyang@gmail.com&lt;
  */
 public class TestSQLiteJsonDao {
+
   static private final Logger logger = LoggerFactory.getLogger(TestSQLiteJsonDao.class);
   
   private SQLiteJsonDao dao;
@@ -52,8 +52,9 @@ public class TestSQLiteJsonDao {
   private Random random;
   private AnnotationConfigApplicationContext ctx;
 
-  @BeforeTest(alwaysRun = true)
-  void beforeTest() throws Exception {
+  @BeforeClass(alwaysRun = false)
+  void beforeClass() throws Exception {
+    logger.debug("beforeTest()");
     ctx = new AnnotationConfigApplicationContext();
     ctx.register(
       TestDatabaseNameConfig.class,  // Specify database name
@@ -64,6 +65,8 @@ public class TestSQLiteJsonDao {
     
     template = "{\"id\":\"%s\"}";
     
+    databaseFileName = ctx.getBean("jobDatabaseName", String.class);
+    
     random = new Random();
     
     dao = ctx.getBean(SQLiteJsonDao.class);
@@ -72,8 +75,8 @@ public class TestSQLiteJsonDao {
     mapper = new ObjectMapper();
   }
 
-  @AfterTest(alwaysRun = true)
-  void afterTest() throws IOException {
+  @AfterClass(alwaysRun = false)
+  void afterClass() throws IOException {
     FileUtils.deleteQuietly(new File(databaseFileName));
   }
     
@@ -95,7 +98,10 @@ public class TestSQLiteJsonDao {
 //    basicDataSource.setMaxTotal(1);
 //    jdbcTemplate.setDataSource(basicDataSource);
 //  }
-  
+  @Test
+  public void testDatabaseName() {
+    Assert.assertEquals(databaseFileName, "job.db");
+  }
   
   @Test
   public void testCRUD() {

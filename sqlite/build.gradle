@@ -28,6 +28,8 @@ dependencies {
     // Spring
     compile 'org.springframework:spring-context:4.3.4.RELEASE'
     compile 'org.springframework:spring-jdbc:4.3.4.RELEASE'
+    
+
     // Apache
     compile group: 'commons-io', name: 'commons-io', version: '2.5'
     // JSON
@@ -44,6 +46,7 @@ dependencies {
 
     // Use TestNG framework, also requires calling test.useTestNG() below
     testCompile 'org.testng:testng:6.9.11'
+    testCompile group: 'org.springframework', name: 'spring-test', version: '4.3.4.RELEASE'
 }
 
 test {
