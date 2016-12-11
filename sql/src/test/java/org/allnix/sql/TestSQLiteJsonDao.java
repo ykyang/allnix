@@ -103,8 +103,9 @@ public class TestSQLiteJsonDao {
     Assert.assertEquals(databaseFileName, "job.db");
   }
   
+  
   @Test
-  public void testCRUD() {
+  public void testCRUD1() {
     String id = "1234567890987654321";
     String expectedValue = String.format(template, id);
     boolean result;
