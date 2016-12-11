@@ -4,11 +4,11 @@ subprojects {
 //  version: '1.0'
 }
 
-project(':core') {
-  dependencies {
-    testCompile project(':sql')
-  }
-}
+//project(':core') {
+//  dependencies {
+//    testCompile project(':sql')
+//  }
+//}
 
 project(':sql') {
   dependencies {
