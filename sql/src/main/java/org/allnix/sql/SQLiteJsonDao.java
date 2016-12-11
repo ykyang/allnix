@@ -15,6 +15,7 @@
  */
 package org.allnix.sql;
 
+import org.allnix.core.JsonDao;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -23,14 +24,15 @@ import org.springframework.jdbc.core.JdbcTemplate;
  * 
  * See TestSQLiteJsonDao for usage example.  Stores 
  * <pre>
- * Id         | JSON
- * CHAR(36)   | TEXT
+ * | Id       | JSON |
+ * +----------+------+
+ * | CHAR(36) | TEXT |
  * </pre>
  * in SQLite.  The Id column is meant for UUID.
  * 
  * @author Yi-Kun Yang &gt;ykyang@gmail.com&lt;
  */
-public class SQLiteJsonDao {
+public class SQLiteJsonDao implements JsonDao {
 
   private JdbcTemplate jdbcTemplate;
 
@@ -49,6 +51,7 @@ public class SQLiteJsonDao {
     jdbcTemplate.execute(sql);
   }
 
+  @Override
   public boolean create(String tableName, String id, String json) {
     final String insert = "INSERT OR IGNORE INTO %s VALUES (?,?);";
     
