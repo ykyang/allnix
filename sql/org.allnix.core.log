@@ -1,2 +1,0 @@
-20:57:01.443 [pool-1-thread-1] DEBUG org.allnix.sql.TestSQLiteJsonDao - beforeTest()
-20:57:06.155 [pool-1-thread-1] DEBUG org.allnix.sql.TestSpring - beforeTest()

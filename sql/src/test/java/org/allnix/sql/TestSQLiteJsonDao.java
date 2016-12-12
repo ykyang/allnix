@@ -106,7 +106,7 @@ public class TestSQLiteJsonDao extends TestJsonDao {
   
   @Test
   public void testCRUD() {
-    super.testCRUD(dao);
+    super.testCRUD(dao, JOB_INPUT);
   }
   
   @Test

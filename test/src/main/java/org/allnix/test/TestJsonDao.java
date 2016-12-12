@@ -28,8 +28,7 @@ public class TestJsonDao {
   public TestJsonDao() {
     jsonTemplate = "{\"id\":\"%s\"}";
   }
-  public void testCRUD(JsonDao dao) {
-  String tableName = "DefaultTable";
+  public void testCRUD(JsonDao dao, String tableName) {
     String id = UUID.randomUUID().toString();
     String json = String.format(jsonTemplate, id);
     
