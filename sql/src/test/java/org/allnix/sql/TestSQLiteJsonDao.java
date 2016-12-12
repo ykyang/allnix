@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import org.allnix.test.TestJsonDao;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +40,7 @@ import org.testng.annotations.Test;
  *
  * @author Yi-Kun Yang &gt;ykyang@gmail.com&lt;
  */
-public class TestSQLiteJsonDao {
+public class TestSQLiteJsonDao extends TestJsonDao {
 
   static private final Logger logger = LoggerFactory.getLogger(TestSQLiteJsonDao.class);
   
@@ -103,6 +104,10 @@ public class TestSQLiteJsonDao {
     Assert.assertEquals(databaseFileName, "job.db");
   }
   
+  @Test
+  public void testCRUD() {
+    super.testCRUD(dao);
+  }
   
   @Test
   public void testCRUD1() {

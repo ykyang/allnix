@@ -13,5 +13,12 @@ subprojects {
 project(':sql') {
   dependencies {
     compile project(':core')
+    testCompile project(':test')
+  }
+}
+
+project(':test') {
+  dependencies {
+    compile project(':core')
   }
 }
