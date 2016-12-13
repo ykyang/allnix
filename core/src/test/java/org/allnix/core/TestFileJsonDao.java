@@ -15,16 +15,18 @@
  */
 package org.allnix.core;
 
-import java.util.UUID;
+import org.allnix.test.TestJsonDao;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
 /**
  *
  * @author Yi-Kun Yang &gt;ykyang@gmail.com&lt;
  */
-public class TestJsonDao {
-  protected String jsonTemplate;
-  public TestJsonDao() {
-    jsonTemplate = "{\"id\":\"%s\"}";
+public class TestFileJsonDao extends TestJsonDao {
+  private FileJsonDao dao;
+  
+  public TestFileJsonDao() {
   }
 //  private JsonDao dao;
   
@@ -35,12 +37,14 @@ public class TestJsonDao {
 //    };
 //  }
   
-//  @Test(dataProvider = "daoList")
-  public void testCRUD(JsonDao dao) {
-    String tableName = "DefaultTable";
-    String id = UUID.randomUUID().toString();
-    String json = String.format(jsonTemplate, id);
-    
-    dao.create(tableName, id, json);
+  @BeforeClass
+  public void beforeClass() {
+    dao = new FileJsonDao();
+    dao.setDatabaseFolder("FileJsonDao");
+  }
+  
+  @Test
+  public void testCRUD() {
+    super.testCRUD(dao, "JobInput");
   }
 }

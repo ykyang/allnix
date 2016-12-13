@@ -24,16 +24,51 @@ import org.testng.Assert;
  * @author Yi-Kun Yang &gt;ykyang@gmail.com&lt;
  */
 public class TestJsonDao {
+
   protected String jsonTemplate;
+
   public TestJsonDao() {
     jsonTemplate = "{\"id\":\"%s\"}";
   }
+
   public void testCRUD(JsonDao dao, String tableName) {
     String id = UUID.randomUUID().toString();
     String json = String.format(jsonTemplate, id);
+    boolean ans;
+    String actual;
     
-    dao.create(tableName, id, json);  
+    // Create
+    ans = dao.create(tableName, id, json);
+    Assert.assertTrue(ans);
     
-    Assert.assertTrue(false);
+    // Read an existing record
+    actual = dao.read(tableName, id);
+    Assert.assertEquals(actual, json);
+    
+    // Read an non-existent record
+    actual = dao.read(tableName, "non-existent ID");
+    Assert.assertNull(actual);
+
+    // > Update < 
+    
+    // Update existing
+    json = String.format(jsonTemplate, "new ID");
+    ans = dao.update(tableName, id, json);
+    Assert.assertTrue(ans);
+
+    // Update non-existent
+    ans = dao.update(tableName, "non existent ID", json);
+    Assert.assertFalse(ans);
+    // Read back to make sure it wasn't saved
+    actual = dao.read(tableName, "non existent ID");
+    Assert.assertNull(actual);
+    
+    // > Delete <
+    ans = dao.delete(tableName, id);
+    Assert.assertTrue(ans);
+    
+    // Delete non-existent
+    ans = dao.delete(tableName, id);
+    Assert.assertFalse(ans);
   }
 }

@@ -41,6 +41,10 @@ public class FileJsonDao implements JsonDao {
   private String databaseFolder;
 //  private final ObjectMapper mapper;
 
+  public void setDatabaseFolder(String databaseFolder) {
+    this.databaseFolder = databaseFolder;
+  }
+
   public FileJsonDao() {
 //    mapper = new ObjectMapper();
   }
@@ -77,13 +81,14 @@ public class FileJsonDao implements JsonDao {
   @Override
   public String read(String tableName, String id) {
     Path path = Paths.get(databaseFolder, fileName(tableName, id));
-    
-    if ( !Files.isRegularFile(path)) {
+
+    if (!Files.isRegularFile(path)) {
       return null;
     }
-    
+
     try {
-      String json = FileUtils.readFileToString(path.toFile(), StandardCharsets.UTF_8);
+      String json = FileUtils.readFileToString(path.toFile(),
+        StandardCharsets.UTF_8);
       return json;
     } catch (IOException ex) {
       throw new UncheckedIOException(ex);
@@ -92,12 +97,45 @@ public class FileJsonDao implements JsonDao {
 
   @Override
   public boolean update(String tableName, String id, String json) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    if (!hasId(tableName, id)) {
+      return false;
+    }
+
+    Path path = Paths.get(databaseFolder, fileName(tableName, id));
+
+    try {
+      FileUtils.writeStringToFile(path.toFile(), json, StandardCharsets.UTF_8);
+    } catch (IOException ex) {
+      throw new UncheckedIOException(ex);
+    }
+
+    return true;
   }
 
   @Override
   public boolean delete(String tableName, String id) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    if (!hasId(tableName, id)) {
+      return false;
+    }
+    
+    Path path = Paths.get(databaseFolder, fileName(tableName, id));
+    
+    try {
+      Files.delete(path);
+      return true;
+    } catch (IOException ex) {
+      throw new UncheckedIOException(ex);
+    }
+  }
+
+  public boolean hasId(String tableName, String id) {
+    Path path = Paths.get(databaseFolder, fileName(tableName, id));
+
+    if (Files.isRegularFile(path)) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
 }

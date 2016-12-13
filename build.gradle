@@ -1,14 +1,18 @@
+// Test Project "core"
+// ./gradlew cleanTest :core:test
+// ./gradlew cleanTest :core:test --tests "*TestFileJsonDao.test*"
+
 subprojects {
   apply plugin:'java'
 //  group: 'org.allnix'
 //  version: '1.0'
 }
 
-//project(':core') {
-//  dependencies {
-//    testCompile project(':sql')
-//  }
-//}
+project(':core') {
+  dependencies {
+    testCompile project(':test')
+  }
+}
 
 project(':sql') {
   dependencies {
