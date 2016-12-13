@@ -15,40 +15,89 @@
  */
 package org.allnix.core;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.logging.Level;
+import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
+ * Store JSON as files
+ *
+ * The table name is used as the file extension and the ID is the file name.
+ * The table name is case insensitive in order to conform to SQL implementation.
  *
  * @author Yi-Kun Yang &gt;ykyang@gmail.com&lt;
  */
 public class FileJsonDao implements JsonDao {
+
+  static private final Logger logger = LoggerFactory.getLogger(FileJsonDao.class);
+
   private String databaseFolder;
-  private final ObjectMapper mapper;
-  
+//  private final ObjectMapper mapper;
+
   public FileJsonDao() {
-    mapper = new ObjectMapper();
+//    mapper = new ObjectMapper();
   }
-  
+
+  /**
+   * Calculate the file name based on ID and table name.
+   *
+   * @param tableName Table name will be converted to all lower cases
+   * @param id
+   * @return File name
+   */
+  private String fileName(String tableName, String id) {
+    return id + "." + tableName.toLowerCase();
+  }
+
   @Override
   public boolean create(String tableName, String id, String json) {
-    Path path = Paths.get(databaseFolder, id + ".json");
+    Path path = Paths.get(databaseFolder, fileName(tableName, id));
 
-    if ( Files.exists(path) ) {
+    if (Files.exists(path)) {
       return false;
     }
 
     try {
-      mapper.writeValue(path.toFile(), json);
+      FileUtils.writeStringToFile(path.toFile(), json, StandardCharsets.UTF_8);
+//      mapper.writeValue(path.toFile(), json);
     } catch (IOException ex) {
       throw new UncheckedIOException(ex);
     }
 
     return true;
   }
-  
+
+  @Override
+  public String read(String tableName, String id) {
+    Path path = Paths.get(databaseFolder, fileName(tableName, id));
+    
+    if ( !Files.isRegularFile(path)) {
+      return null;
+    }
+    
+    try {
+      String json = FileUtils.readFileToString(path.toFile(), StandardCharsets.UTF_8);
+      return json;
+    } catch (IOException ex) {
+      throw new UncheckedIOException(ex);
+    }
+  }
+
+  @Override
+  public boolean update(String tableName, String id, String json) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
+
+  @Override
+  public boolean delete(String tableName, String id) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
+
 }

@@ -29,4 +29,7 @@ public interface JsonDao {
    * @return true on success
    */
   public boolean create(String tableName, String id, String json);
+  public String read(String tableName, String id);
+  public boolean update(String tableName, String id, String json);
+  public boolean delete(String tableName, String id);
 }

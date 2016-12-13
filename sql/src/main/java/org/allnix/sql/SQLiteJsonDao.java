@@ -91,4 +91,13 @@ public class SQLiteJsonDao implements JsonDao {
     
     return rowCount == 1;
   }
+  
+  public boolean hasId(String tableName, String id) {
+    final String count = "SELECT COUNT(*) FROM %s WHERE Id = ?";
+    String sql = String.format(count, tableName);
+    
+    Integer rowCount = jdbcTemplate.queryForObject(sql, Integer.class, id);
+    
+    return rowCount != 0;
+  }
 }
