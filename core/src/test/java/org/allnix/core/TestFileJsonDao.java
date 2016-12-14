@@ -15,6 +15,7 @@
  */
 package org.allnix.core;
 
+import java.io.IOException;
 import org.allnix.test.TestJsonDao;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -24,27 +25,32 @@ import org.testng.annotations.Test;
  * @author Yi-Kun Yang &gt;ykyang@gmail.com&lt;
  */
 public class TestFileJsonDao extends TestJsonDao {
+
   private FileJsonDao dao;
-  
+
   public TestFileJsonDao() {
   }
 //  private JsonDao dao;
-  
+
 //  @DataProvider
 //  public Object[][] daoList() {
 //    return new Object[][] {
 //      new Object[] {FileJsonDao.class}
 //    };
 //  }
-  
   @BeforeClass
   public void beforeClass() {
     dao = new FileJsonDao();
     dao.setDatabaseFolder("FileJsonDao");
   }
-  
-  @Test
+
+  @Test(threadPoolSize = 4, invocationCount = 4)
   public void testCRUD() {
     super.testCRUD(dao, "JobInput");
+  }
+
+  @Test(threadPoolSize = 4, invocationCount = 4)
+  public void testMultipleCRUD() throws InterruptedException, IOException {
+    super.testMultipleCRUD(dao, "JobInput", 1000);
   }
 }

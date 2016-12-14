@@ -104,7 +104,7 @@ public class TestSQLiteJsonDao extends TestJsonDao {
     Assert.assertEquals(databaseFileName, "job.db");
   }
   
-  @Test
+  @Test(threadPoolSize = 4, invocationCount = 4)
   public void testCRUD() {
     super.testCRUD(dao, JOB_INPUT);
   }
@@ -150,8 +150,13 @@ public class TestSQLiteJsonDao extends TestJsonDao {
     result = dao.delete(JOB_INPUT, id);
     Assert.assertFalse(result);
   }
-
-  @Test(threadPoolSize = 4, invocationCount = 128)
+  
+  @Test(threadPoolSize = 4, invocationCount = 4)
+  public void testMultipleCRUD() throws InterruptedException, IOException {
+    super.testMultipleCRUD(dao, JOB_INPUT, 1000);
+  }
+  
+  @Test(enabled = false, threadPoolSize = 4, invocationCount = 128)
   public void testMultipleThreadCRUD() throws IOException, InterruptedException {
     // > Make threads start at different time
     TimeUnit.MILLISECONDS.sleep(random.nextInt(100));
