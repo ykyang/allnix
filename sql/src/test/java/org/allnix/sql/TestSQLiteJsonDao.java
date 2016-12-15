@@ -109,7 +109,7 @@ public class TestSQLiteJsonDao extends TestJsonDao {
     super.testCRUD(dao, JOB_INPUT);
   }
   
-  @Test
+  @Test(enabled = false)
   public void testCRUD1() {
     String id = "1234567890987654321";
     String expectedValue = String.format(template, id);
