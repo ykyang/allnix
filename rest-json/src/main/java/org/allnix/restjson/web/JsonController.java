@@ -44,11 +44,15 @@ public class JsonController {
     logger.info("Set JsonDao");
     this.dao = dao;
   }
-
   
   @GetMapping(value="/{table}/{id}")
   public String read(@PathVariable String table, @PathVariable String id) {
 //    return table + ": " + id;
-     return dao.read(table, id);
+     String value = dao.read(table, id);
+     if ( value == null ) {
+       throw new JsonNotFoundException(table, id);
+     } else {
+       return value;
+     }
   }
 }
