@@ -21,6 +21,12 @@ project(':sql') {
   }
 }
 
+project(':rest-json') {
+  dependencies {
+    compile project(':core')
+  }
+}
+
 project(':test') {
   dependencies {
     compile project(':core')

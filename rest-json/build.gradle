@@ -9,6 +9,9 @@
 
 // Apply the java plugin to add support for Java
 apply plugin: 'java'
+apply plugin: 'application'
+
+mainClassName='org.allnix.restjson.Application'
 
 // In this section you declare where to find the dependencies of your project
 repositories {
@@ -21,6 +24,9 @@ repositories {
 dependencies {
     // The production code uses the SLF4J logging API at compile time
     compile 'org.slf4j:slf4j-api:1.7.13'
+    compile 'ch.qos.logback:logback-classic:1.1.2'
+    compile 'org.springframework.boot:spring-boot:1.4.2.RELEASE'
+    compile 'org.springframework.boot:spring-boot-starter-web:1.4.2.RELEASE'
 
     // Use TestNG framework, also requires calling test.useTestNG() below
     testCompile 'org.testng:testng:6.9.13.8'
