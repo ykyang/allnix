@@ -32,6 +32,8 @@ public class Config {
     FileJsonDao bean = new FileJsonDao();
     bean.setDatabaseFolder("FileJsonDB");
     
+    bean.create("job", "1234", "{not a json}");
+    
     return bean;
   }
 }

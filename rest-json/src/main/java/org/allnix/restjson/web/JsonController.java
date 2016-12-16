@@ -48,7 +48,7 @@ public class JsonController {
   
   @GetMapping(value="/{table}/{id}")
   public String read(@PathVariable String table, @PathVariable String id) {
-    return table + ": " + id;
-//     return dao.read(table, id);
+//    return table + ": " + id;
+     return dao.read(table, id);
   }
 }
