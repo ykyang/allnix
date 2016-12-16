@@ -29,8 +29,10 @@ import org.springframework.context.annotation.Import;
  */
 @Configuration
 @EnableAutoConfiguration
-@Import(value = {org.allnix.restjson.web.Config.class})
-@ComponentScan
+@Import(value = {
+  org.allnix.restjson.web.JsonController.class, 
+  org.allnix.restjson.web.Config.class})
+//@ComponentScan // Use this to auto-scan classes
 public class Application {
   static private final Logger logger = LoggerFactory.getLogger(Application.class);
   public static void main(String[] args) {

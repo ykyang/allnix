@@ -21,6 +21,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -44,15 +46,25 @@ public class JsonController {
     logger.info("Set JsonDao");
     this.dao = dao;
   }
+
+  @PostMapping(value="/{table}/{id}")
+  public boolean create(@PathVariable("table") String tableName, @PathVariable String id,
+    @RequestBody String json) {
+    return dao.create(tableName, id, json);
+  }
+
   
   @GetMapping(value="/{table}/{id}")
-  public String read(@PathVariable String table, @PathVariable String id) {
+  public String read(@PathVariable("table") String tableName, @PathVariable String id) {
 //    return table + ": " + id;
-     String value = dao.read(table, id);
+     String value = dao.read(tableName, id);
      if ( value == null ) {
-       throw new JsonNotFoundException(table, id);
+       throw new JsonNotFoundException(tableName, id);
      } else {
        return value;
      }
   }
+  
+
+//  public boolean update(String tableName, String id, String json);
 }
