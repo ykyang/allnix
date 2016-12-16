@@ -22,7 +22,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- *
+ * @RestController is shorthand for
+ * @Controller and @ResponseBody
+ * 
  * @author Yi-Kun Yang &gt;ykyang@gmail.com&lt;
  */
 @RestController

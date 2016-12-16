@@ -19,7 +19,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- *
+ * Spring Rest Example: https://spring.io/guides/gs/rest-service/
+ * 
  * @author Yi-Kun Yang &gt;ykyang@gmail.com&lt;
  */
 @SpringBootApplication
