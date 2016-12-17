@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -64,7 +65,17 @@ public class JsonController {
        return value;
      }
   }
-  
 
-//  public boolean update(String tableName, String id, String json);
+  @PutMapping(value="/{table}/{id}")  
+  public boolean update(@PathVariable("table") String tableName, 
+    @PathVariable String id, @RequestBody String json) {
+    
+    boolean value = dao.update(tableName, id, json);
+    
+    if ( !value ) {
+      throw new JsonNotFoundException(tableName, id); 
+    } else {
+      return true;
+    }
+  }
 }
