@@ -27,9 +27,20 @@ dependencies {
     compile 'ch.qos.logback:logback-classic:1.1.2'
     compile 'org.springframework.boot:spring-boot:1.4.2.RELEASE'
     compile 'org.springframework.boot:spring-boot-starter-web:1.4.2.RELEASE'
+    // https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.2'
 
     // Use TestNG framework, also requires calling test.useTestNG() below
     testCompile 'org.testng:testng:6.9.13.8'
 }
 
 test.useTestNG()
+
+task clientMain(type: JavaExec) {
+  classpath = sourceSets.main.runtimeClasspath
+
+  main = 'org.allnix.restjson.client.Main'
+
+  // arguments to pass to the application
+  //args 'first', 'second'
+}

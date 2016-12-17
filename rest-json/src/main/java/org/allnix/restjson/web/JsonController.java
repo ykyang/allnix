@@ -51,12 +51,16 @@ public class JsonController {
 
   @PostMapping(value = "/{table}/{id}")
   public boolean create(@PathVariable("table") String tableName,
-    @PathVariable String id,
-    @RequestBody String json) {
-    return dao.create(tableName, id, json);
+    @PathVariable String id, @RequestBody String json) {
+    boolean value = dao.create(tableName, id, json);
+    if ( value ) {
+      return true;
+    } else {
+      throw new JsonConflictException(tableName, id);
+    }
   }
 
-  @GetMapping(value = "/{table}/{id}")
+  @GetMapping(value = "/{table}/{id}", produces = "application/json; charset=UTF-8")
   public String read(@PathVariable("table") String tableName,
     @PathVariable String id) {
 //    return table + ": " + id;
