@@ -32,48 +32,50 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Yi-Kun Yang &gt;ykyang@gmail.com&lt;
  */
 @RestController
-@RequestMapping(value="/json")
+@RequestMapping(value = "/json")
 public class JsonController {
+
   static private Logger logger = LoggerFactory.getLogger(JsonController.class);
-  
+
   private JsonDao dao;
 
   public JsonController() {
-    
+
   }
-  
+
   @Autowired
   public void setJsonDao(JsonDao dao) {
     logger.info("Set JsonDao");
     this.dao = dao;
   }
 
-  @PostMapping(value="/{table}/{id}")
-  public boolean create(@PathVariable("table") String tableName, @PathVariable String id,
+  @PostMapping(value = "/{table}/{id}")
+  public boolean create(@PathVariable("table") String tableName,
+    @PathVariable String id,
     @RequestBody String json) {
     return dao.create(tableName, id, json);
   }
 
-  
-  @GetMapping(value="/{table}/{id}")
-  public String read(@PathVariable("table") String tableName, @PathVariable String id) {
+  @GetMapping(value = "/{table}/{id}")
+  public String read(@PathVariable("table") String tableName,
+    @PathVariable String id) {
 //    return table + ": " + id;
-     String value = dao.read(tableName, id);
-     if ( value == null ) {
-       throw new JsonNotFoundException(tableName, id);
-     } else {
-       return value;
-     }
+    String value = dao.read(tableName, id);
+    if (value == null) {
+      throw new JsonNotFoundException(tableName, id);
+    } else {
+      return value;
+    }
   }
 
-  @PutMapping(value="/{table}/{id}")  
-  public boolean update(@PathVariable("table") String tableName, 
+  @PutMapping(value = "/{table}/{id}")
+  public boolean update(@PathVariable("table") String tableName,
     @PathVariable String id, @RequestBody String json) {
-    
+
     boolean value = dao.update(tableName, id, json);
-    
-    if ( !value ) {
-      throw new JsonNotFoundException(tableName, id); 
+
+    if (!value) {
+      throw new JsonNotFoundException(tableName, id);
     } else {
       return true;
     }
