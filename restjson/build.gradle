@@ -34,7 +34,19 @@ dependencies {
     testCompile 'org.testng:testng:6.9.13.8'
 }
 
-test.useTestNG()
+test {
+  systemProperties 'logback.configurationFile' : new File(projectDir,'src/test/resources/logback-test.xml').absolutePath
+  
+  include '**/Test*.*'
+  
+  testLogging {
+    events "started", "passed", "skipped", "failed", "standardOut", "standardError"
+  }
+  
+  useTestNG(){
+    
+  }
+}
 
 task clientMain(type: JavaExec) {
   classpath = sourceSets.main.runtimeClasspath
