@@ -19,8 +19,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
@@ -33,7 +35,9 @@ import org.testng.annotations.Test;
  *
  * @author Yi-Kun Yang &gt;ykyang@gmail.com&lt;
  */
-public class TestRestTemplate {
+@SpringBootTest(classes = org.allnix.restjson.Application.class, 
+  webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+public class TestRestTemplate extends AbstractTestNGSpringContextTests {
   
   static private final Logger logger = LoggerFactory.getLogger(
     TestRestTemplate.class);
