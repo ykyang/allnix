@@ -16,5 +16,5 @@ include 'api'
 include 'services:webservice'
 */
 
-include 'core', 'sql', 'rest-json', 'test'
+include 'core', 'sql', 'restjson', 'test'
 rootProject.name = 'org.allnix'
