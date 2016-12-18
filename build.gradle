@@ -21,7 +21,7 @@ project(':sql') {
   }
 }
 
-project(':rest-json') {
+project(':restjson') {
   dependencies {
     compile project(':core')
   }
