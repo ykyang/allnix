@@ -1,21 +1,29 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2016 Yi-Kun Yang.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.allnix.core;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.util.LinkedList;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -30,8 +38,9 @@ import org.slf4j.LoggerFactory;
  * @author Yi-Kun Yang &lt;ykyang at gmail.com&gt;
  */
 public class TextAreaStreamHandler implements ExecuteStreamHandler {
-  
-  static final private Logger logger = LoggerFactory.getLogger(TextAreaStreamHandler.class);
+
+  static final private Logger logger = LoggerFactory.getLogger(
+    TextAreaStreamHandler.class);
 //  private JTextArea textArea;
   private InputStream processOutputStream;
   private InputStream processErrorStream;
@@ -40,10 +49,20 @@ public class TextAreaStreamHandler implements ExecuteStreamHandler {
 
   private Console console;
 
-  private LinkedList<String> stdout;
+  private volatile String coutLine;
+  private final Runnable coutDisplay;
 
   public TextAreaStreamHandler() {
-    stdout = new LinkedList<String>();
+    coutDisplay = new Runnable() {
+      @Override
+      public void run() {
+        try {
+          console.append(coutLine + "\n");
+        } catch (BadLocationException ex) {
+        }
+      }
+
+    };
   }
 
   @Override
@@ -73,7 +92,7 @@ public class TextAreaStreamHandler implements ExecuteStreamHandler {
     });
 
     if (processOutputStream != null) {
-      outThread = createLineReader(processOutputStream);
+      outThread = createLineReader(processOutputStream, coutDisplay);
       outThread.start();
     }
   }
@@ -84,10 +103,13 @@ public class TextAreaStreamHandler implements ExecuteStreamHandler {
 //      TimeUnit.SECONDS.sleep(20);
 //    } catch (InterruptedException ex) {
 //    }
+    System.out.println("Mark 30");
     console.dispose();
+    console.dispatchEvent(new WindowEvent(console, WindowEvent.WINDOW_CLOSING));
+    System.out.println("Mark 40");
   }
 
-  private Thread createLineReader(final InputStream is) {
+  private Thread createLineReader(final InputStream is, final Runnable r) {
     Thread thread = new Thread(new Runnable() {
       @Override
       public void run() {
@@ -95,21 +117,11 @@ public class TextAreaStreamHandler implements ExecuteStreamHandler {
           BufferedReader in = new BufferedReader(new InputStreamReader(is));
           String line;
           while ((line = in.readLine()) != null) {
-            stdout.add(line);
+//            stdout.add(line);
+            coutLine = line;
             try {
-              SwingUtilities.invokeAndWait(new Runnable() {
-                @Override
-                public void run() {
-                  try {
-                    console.append(stdout.poll() + "\n");
-                  } catch (BadLocationException ex) {
-
-                  }
-                }
-              });
-
-            } catch (InterruptedException ex) {
-            } catch (InvocationTargetException ex) {
+              SwingUtilities.invokeAndWait(r);
+            } catch (InterruptedException | InvocationTargetException ex) {
             }
           }
         } catch (IOException ex) {
@@ -138,6 +150,7 @@ public class TextAreaStreamHandler implements ExecuteStreamHandler {
 
       getContentPane().add(scrollPane, BorderLayout.CENTER);
 //      pack();
+      this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     }
 
     public void append(String text) throws BadLocationException {

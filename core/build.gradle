@@ -99,5 +99,9 @@ test {
     }
   }
   
+  task displayMain(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.allnix.core.MainDisplay'
+  }
   
 }
