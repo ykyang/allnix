@@ -1,14 +1,26 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2016 Yi-Kun Yang.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.allnix.ext;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import org.allnix.core.LineStreamHandler;
+import org.allnix.core.TextAreaStreamHandler;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.PumpStreamHandler;
@@ -24,7 +36,7 @@ import org.testng.annotations.Test;
 public class TestCommonsExec {
   static final Logger logger = LoggerFactory.getLogger(TestCommonsExec.class);
   
-  @Test(groups = {"linux"})
+  @Test(groups = {"unix"})
   public void testOneLine() throws IOException {
     String line = "ls -l";
     CommandLine cmdLine = CommandLine.parse(line);
@@ -34,7 +46,7 @@ public class TestCommonsExec {
     Assert.assertEquals(exitValue, 0);
   }
   
-  @Test(groups = {"linux"})
+  @Test(groups = {"unix"})
   public void testQuoting() {
     CommandLine cmdLine = new CommandLine("ls");
     cmdLine.addArgument("File Name with quote", true);
@@ -43,7 +55,7 @@ public class TestCommonsExec {
     System.out.println(cmdLine);
   }
   
-  @Test(groups = {"linux"})
+  @Test(groups = {"unix"})
   public void testEcho() throws IOException {
     CommandLine cmd = new CommandLine("script/echo.sh");
     String param = "Qutoe is necessary";
@@ -65,8 +77,9 @@ public class TestCommonsExec {
     System.out.println(out.toString());
   }
   
-  @Test(groups = {"linux"})
+  @Test(groups = {"unix"})
   public void testLineStreamHandler() throws IOException {
+    // > script/loop.sh <length> <text>
     CommandLine cmd = new CommandLine("script/loop.sh");
     int length = 100_000;
     cmd.addArgument(Integer.toString(length), false);
@@ -84,4 +97,31 @@ public class TestCommonsExec {
     Assert.assertEquals(list.get(0), text+Integer.toString(1));
     Assert.assertEquals(list.get(length-1), text+Integer.toString(length));
   }
+  
+  @Test(groups={"unix", "win"})
+  public void testLineStreamHandler2() throws IOException {
+    // > python debug_stdout.py <length> <text>
+    CommandLine cmd = new CommandLine("python");
+    cmd.addArgument("script/debug_stdout.py");
+    
+    int length = 100_000;
+    
+    cmd.addArgument(Integer.toString(length), false);
+    
+    String text = "Line Number:";
+    cmd.addArgument(text, false);
+    
+    LineStreamHandler streamHandler = new LineStreamHandler();
+    
+    DefaultExecutor executor = new DefaultExecutor();
+    executor.setStreamHandler(streamHandler);
+    
+    int exitValue = executor.execute(cmd);
+    List<String> list = streamHandler.getStandardOut();
+    Assert.assertEquals(list.size(), length);
+    Assert.assertEquals(list.get(0), text+Integer.toString(1));
+    Assert.assertEquals(list.get(length-1), text+Integer.toString(length));
+  }
+  
+  
 }

@@ -64,14 +64,40 @@ test {
     setParallel("methods");
     setThreadCount(4);
     
+    excludeGroups 'void', 'gui'
+    
+    if (os.contains("linux")) {
+      includeGroups 'unix'
+    }
     if (os.contains("windows")) {
-      excludeGroups 'linux'
+      includeGroups 'win'
     }
-    if(os.contains("linux")) {
-      excludeGroups 'win'
-    }
+    //    if (os.contains("windows")) {
+    //      excludeGroups 'linux'
+    //    }
+    //    if(os.contains("linux")) {
+    //      excludeGroups 'win'
+    //    }
   }
   
+  task guiTest (type:Test) {
+    systemProperties 'logback.configurationFile' : new File(projectDir,'src/test/resources/logback-test.xml').absolutePath
+    include '**/Gui*.*'
+  
+    // Use "gradlew cleanTest test" to force running test
+    testLogging {
+      events "passed", "skipped", "failed", "standardOut", "standardError"
+    }
+
+    useTestNG() {
+      if (os.contains("linux")) {
+        includeGroups 'unix'
+      }
+      if (os.contains("windows")) {
+        includeGroups 'win'
+      }
+    }
+  }
   
   
 }
