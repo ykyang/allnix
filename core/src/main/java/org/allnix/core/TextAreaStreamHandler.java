@@ -103,10 +103,10 @@ public class TextAreaStreamHandler implements ExecuteStreamHandler {
 //      TimeUnit.SECONDS.sleep(20);
 //    } catch (InterruptedException ex) {
 //    }
-    System.out.println("Mark 30");
+//    System.out.println("Mark 30");
     console.dispose();
-    console.dispatchEvent(new WindowEvent(console, WindowEvent.WINDOW_CLOSING));
-    System.out.println("Mark 40");
+//    console.dispatchEvent(new WindowEvent(console, WindowEvent.WINDOW_CLOSING));
+//    System.out.println("Mark 40");
   }
 
   private Thread createLineReader(final InputStream is, final Runnable r) {
