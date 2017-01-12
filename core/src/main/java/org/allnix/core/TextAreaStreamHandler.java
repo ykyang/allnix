@@ -30,6 +30,7 @@ import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 import org.apache.commons.exec.ExecuteStreamHandler;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,13 +53,18 @@ public class TextAreaStreamHandler implements ExecuteStreamHandler {
   private volatile String coutLine;
   private final Runnable coutDisplay;
 
+//  private volatile boolean stopped = false;
+  
   public TextAreaStreamHandler() {
+    console = new Console();
+
     coutDisplay = new Runnable() {
       @Override
       public void run() {
         try {
           console.append(coutLine + "\n");
         } catch (BadLocationException ex) {
+          logger.info(ex.getMessage());
         }
       }
 
@@ -81,13 +87,13 @@ public class TextAreaStreamHandler implements ExecuteStreamHandler {
 
   @Override
   public void start() throws IOException {
-    console = new Console();
+
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         Dimension d = new Dimension(400, 300);
         console.setPreferredSize(d);
-        console.pack();
         console.setVisible(true);
+        console.pack();
       }
     });
 
@@ -99,14 +105,17 @@ public class TextAreaStreamHandler implements ExecuteStreamHandler {
 
   @Override
   public void stop() throws IOException {
-//    try {
-//      TimeUnit.SECONDS.sleep(20);
-//    } catch (InterruptedException ex) {
-//    }
-//    System.out.println("Mark 30");
-    console.dispose();
-//    console.dispatchEvent(new WindowEvent(console, WindowEvent.WINDOW_CLOSING));
-//    System.out.println("Mark 40");
+    try {
+      SwingUtilities.invokeAndWait(()->{
+        console.dispose();
+      });
+    } catch (InterruptedException | InvocationTargetException ex) {
+      logger.error(ExceptionUtils.getStackTrace(ex));
+    }
+  }
+
+  public Console getConsole() {
+    return console;
   }
 
   private Thread createLineReader(final InputStream is, final Runnable r) {
@@ -117,16 +126,15 @@ public class TextAreaStreamHandler implements ExecuteStreamHandler {
           BufferedReader in = new BufferedReader(new InputStreamReader(is));
           String line;
           while ((line = in.readLine()) != null) {
-//            stdout.add(line);
             coutLine = line;
             try {
               SwingUtilities.invokeAndWait(r);
             } catch (InterruptedException | InvocationTargetException ex) {
+              return;
             }
           }
         } catch (IOException ex) {
           logger.info(ex.getMessage());
-//          throw new UncheckedIOException(ex);
         }
       }
     });
@@ -134,7 +142,7 @@ public class TextAreaStreamHandler implements ExecuteStreamHandler {
     return thread;
   }
 
-  static class Console extends JFrame {
+  static public class Console extends JFrame {
 
     private JTextArea textArea;
     private JScrollPane scrollPane;

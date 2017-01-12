@@ -89,13 +89,17 @@ test {
     testLogging {
       events "passed", "skipped", "failed", "standardOut", "standardError"
     }
-
+    
     useTestNG() {
+      excludeGroups 'void'
+      
       if (os.contains("linux")) {
-        includeGroups 'unix'
+        excludeGroups 'win'
+//        includeGroups 'unix'
       }
       if (os.contains("windows")) {
-        includeGroups 'win'
+        excludeGroups 'linux'
+//        includeGroups 'win'
       }
     }
   }
