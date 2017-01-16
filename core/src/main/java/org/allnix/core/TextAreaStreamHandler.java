@@ -105,6 +105,9 @@ public class TextAreaStreamHandler implements ExecuteStreamHandler {
 
   @Override
   public void stop() throws IOException {
+    // > Depends on use case,
+    // > we may need to wait on outThread to finish
+    // > reading and display.
     try {
       SwingUtilities.invokeAndWait(()->{
         console.dispose();

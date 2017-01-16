@@ -76,8 +76,13 @@ public class LineStreamHandler implements ExecuteStreamHandler {
 
   @Override
   public void stop() throws IOException {
-    stopThread(outThread, stopTimeout);
-    stopThread(errThread, stopTimeout);
+    // > This is necessary because we need to give
+    // > the threads some time to finish reading 
+    // > before we exit.
+    // > Without these two calls, the output reading may not
+    // > be complete.
+    stopThread(outThread, 0);
+    stopThread(errThread, 0);
   }
 
 //  private Thread createStandardOutLineReader(final InputStream in) {
