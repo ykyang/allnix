@@ -98,7 +98,7 @@ test {
 //        includeGroups 'unix'
       }
       if (os.contains("windows")) {
-        excludeGroups 'linux'
+        excludeGroups 'unix'
 //        includeGroups 'win'
       }
     }

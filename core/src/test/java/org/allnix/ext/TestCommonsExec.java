@@ -26,6 +26,7 @@ import org.apache.commons.exec.ExecuteException;
 import org.apache.commons.exec.ExecuteResultHandler;
 import org.apache.commons.exec.ExecuteWatchdog;
 import org.apache.commons.exec.PumpStreamHandler;
+import org.apache.commons.io.output.NullOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -40,7 +41,7 @@ public class TestCommonsExec {
   static final Logger logger = LoggerFactory.getLogger(TestCommonsExec.class);
 
   volatile boolean complete = false;
-  
+
   @Test(groups = {"unix"})
   public void testOneLine() throws IOException {
     String line = "ls -l";
@@ -80,6 +81,14 @@ public class TestCommonsExec {
     int exitValue = executor.execute(cmd);
 
     System.out.println(out.toString());
+  }
+
+  @Test(groups = {"unix"})
+  public void testEnv() throws IOException {
+    CommandLine cmd = new CommandLine("env");
+    DefaultExecutor executor = new DefaultExecutor();
+
+    int exitValue = executor.execute(cmd);
   }
 
   @Test(groups = {"unix"})
@@ -129,6 +138,30 @@ public class TestCommonsExec {
   }
 
   @Test(groups = {"unix", "win"})
+  public void testNullOutputStream() throws IOException {
+    CommandLine cmd = new CommandLine("python");
+    cmd.addArgument("script/debug_stdout.py");
+
+    int length = 1_000_000;
+
+    cmd.addArgument(Integer.toString(length), false);
+
+    String text = "Line Number:";
+    cmd.addArgument(text, false);
+    
+    // > Seems withtout a proper sink (NullOutputStream) 
+    // > the program stopped when the output buffer is filled
+    PumpStreamHandler streamHandler = new PumpStreamHandler(
+      NullOutputStream.NULL_OUTPUT_STREAM
+    );
+    
+    DefaultExecutor executor = new DefaultExecutor();
+    executor.setStreamHandler(streamHandler);
+
+    int exitValue = executor.execute(cmd);
+  }
+
+  @Test(groups = {"unix", "win"})
   public void testLineStreamhandler3() throws IOException, InterruptedException {
     // > python debug_stdout.py <length> <text>
     CommandLine cmd = new CommandLine("python");
@@ -166,20 +199,18 @@ public class TestCommonsExec {
     executor.setWatchdog(watchdog);
 
 //    int exitValue = executor.execute(cmd);
-
     executor.execute(cmd, resultHandler);
 
     resultHandler.waitFor();
-    
+
     Assert.assertEquals(resultHandler.getExitValue(), 0);
     Assert.assertTrue(complete);
-    
+
     List<String> list = streamHandler.getStandardOut();
     Assert.assertEquals(list.size(), length);
     Assert.assertEquals(list.get(0), text + Integer.toString(1));
     Assert.assertEquals(list.get(length - 1), text + Integer.toString(length));
-    
-    
+
   }
 
 }
