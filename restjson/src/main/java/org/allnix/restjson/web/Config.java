@@ -1,9 +1,3 @@
-package org.allnix.restjson.web;
-
-import org.allnix.core.FileJsonDao;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
 /*
  * Copyright 2016 Yi-Kun Yang.
  *
@@ -19,6 +13,11 @@ import org.springframework.context.annotation.Configuration;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.allnix.restjson.web;
+
+import org.allnix.core.FileJsonDao;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
  *
