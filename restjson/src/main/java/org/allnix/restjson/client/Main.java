@@ -16,6 +16,8 @@
 package org.allnix.restjson.client;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.http.HttpHost;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
@@ -29,5 +31,12 @@ public class Main {
     ObjectNode ans = template.getForObject("http://gturnquist-quoters.cfapps.io/api/random", 
       ObjectNode.class);
     System.out.println(ans.toString());
+    
+    // > This is how to create a template that uses proxy
+    
+//    HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(
+//      HttpClientBuilder.create().setProxy(new HttpHost(
+//        "hou-proxy2.conocophillips.net", 80, "http")).build());
+//    proxyRestTemplate = new RestTemplate(factory);
   }
 }
