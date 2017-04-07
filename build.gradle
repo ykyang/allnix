@@ -1,6 +1,7 @@
 // Test Project "core"
 // ./gradlew cleanTest :core:test
 // ./gradlew cleanTest :core:test --tests "*TestFileJsonDao.test*"
+// ./gradlew :boot:run
 
 subprojects {
   apply plugin:'java'
@@ -28,6 +29,12 @@ project(':restjson') {
 }
 
 project(':test') {
+  dependencies {
+    compile project(':core')
+  }
+}
+
+project(':boot') {
   dependencies {
     compile project(':core')
   }

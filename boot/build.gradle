@@ -24,6 +24,7 @@ repositories {
 dependencies {
     // The production code uses the SLF4J logging API at compile time
     compile 'org.slf4j:slf4j-api:1.7.13'
+    compile 'ch.qos.logback:logback-classic:1.1.2'
     compile 'org.springframework.boot:spring-boot:1.4.2.RELEASE'
     compile 'org.springframework.boot:spring-boot-starter-web:1.4.2.RELEASE'
     // Use TestNG framework, also requires calling test.useTestNG() below
@@ -31,3 +32,12 @@ dependencies {
 }
 
 test.useTestNG()
+
+task runner(type: JavaExec) {
+  classpath = sourceSets.main.runtimeClasspath
+
+  main = 'org.allnix.boot.runner.Application'
+
+  // arguments to pass to the application
+  args 'first', 'second'
+}

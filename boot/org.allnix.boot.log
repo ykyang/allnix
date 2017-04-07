@@ -1,0 +1,10 @@
+21:32:56.794 [main] INFO  org.allnix.boot.runner.Application - Starting Application on omega with PID 3407 (/home/ykyang/work/workspace-allnix/boot/build/classes/main started by ykyang in /home/ykyang/work/workspace-allnix/boot)
+21:32:56.796 [main] INFO  org.allnix.boot.runner.Application - No active profile set, falling back to default profiles: default
+21:32:56.814 [main] INFO  o.s.c.a.AnnotationConfigApplicationContext - Refreshing org.springframework.context.annotation.AnnotationConfigApplicationContext@222545dc: startup date [Thu Apr 06 21:32:56 CDT 2017]; root of context hierarchy
+21:32:56.960 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 5.2.4.Final
+21:32:57.468 [main] INFO  o.s.j.e.a.AnnotationMBeanExporter - Registering beans for JMX exposure on startup
+21:32:57.474 [main] INFO  org.allnix.boot.runner.Runner - Argument: first
+21:32:57.474 [main] INFO  org.allnix.boot.runner.Runner - Argument: second
+21:32:57.476 [main] INFO  org.allnix.boot.runner.Application - Started Application in 0.87 seconds (JVM running for 1.105)
+21:32:57.476 [Thread-1] INFO  o.s.c.a.AnnotationConfigApplicationContext - Closing org.springframework.context.annotation.AnnotationConfigApplicationContext@222545dc: startup date [Thu Apr 06 21:32:56 CDT 2017]; root of context hierarchy
+21:32:57.477 [Thread-1] INFO  o.s.j.e.a.AnnotationMBeanExporter - Unregistering JMX-exposed beans on shutdown
