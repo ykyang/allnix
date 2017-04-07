@@ -13,28 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.allnix.boot;
+package org.allnix.restjson.web;
 
-
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.allnix.core.FileJsonDao;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
  *
  * @author Yi-Kun Yang &gt;ykyang@gmail.com&lt;
  */
-//@SpringBootApplication // same as @Configuration @EnableAutoConfiguration @ComponentScan
-@RestController
-@EnableAutoConfiguration
-public class Application {
-  @RequestMapping("/")
-  String home() {
-    return "Hello World!";
-  }
-
-  public static void main(String[] args) throws Exception {
-    SpringApplication.run(Application.class, args);
+@Configuration
+public class Config {
+ 
+  @Bean
+  public FileJsonDao fileJsonDao() {
+    FileJsonDao bean = new FileJsonDao();
+    bean.setDatabaseFolder("FileJsonDB");
+    
+    bean.create("job", "1234", "{not a json}");
+    
+    return bean;
   }
 }

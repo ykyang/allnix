@@ -13,28 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.allnix.boot;
+package org.allnix.restjson.web;
 
-
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  *
  * @author Yi-Kun Yang &gt;ykyang@gmail.com&lt;
  */
-//@SpringBootApplication // same as @Configuration @EnableAutoConfiguration @ComponentScan
-@RestController
-@EnableAutoConfiguration
-public class Application {
-  @RequestMapping("/")
-  String home() {
-    return "Hello World!";
-  }
-
-  public static void main(String[] args) throws Exception {
-    SpringApplication.run(Application.class, args);
+@ResponseStatus(HttpStatus.CONFLICT)
+public class JsonConflictException extends RuntimeException {
+  public JsonConflictException(String table, String id) {
+     super("(Table, ID) not found: (" + table + ", " + id + ")");
   }
 }

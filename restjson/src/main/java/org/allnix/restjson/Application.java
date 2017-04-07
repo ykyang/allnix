@@ -13,28 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.allnix.boot;
+package org.allnix.restjson;
 
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
 /**
  *
  * @author Yi-Kun Yang &gt;ykyang@gmail.com&lt;
  */
-//@SpringBootApplication // same as @Configuration @EnableAutoConfiguration @ComponentScan
-@RestController
+@Configuration
 @EnableAutoConfiguration
+@Import(value = {
+  org.allnix.restjson.web.JsonController.class, 
+  org.allnix.restjson.web.Config.class})
+//@ComponentScan // Use this to auto-scan classes
 public class Application {
-  @RequestMapping("/")
-  String home() {
-    return "Hello World!";
-  }
-
-  public static void main(String[] args) throws Exception {
+  static private final Logger logger = LoggerFactory.getLogger(Application.class);
+  public static void main(String[] args) {
+    logger.info("START");
     SpringApplication.run(Application.class, args);
   }
 }
