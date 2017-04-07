@@ -13,27 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.allnix.boot;
+package org.allnix.boot.web;
 
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.context.annotation.Import;
 
 /**
  *
  * @author Yi-Kun Yang &gt;ykyang@gmail.com&lt;
  */
 //@SpringBootApplication // same as @Configuration @EnableAutoConfiguration @ComponentScan
-@RestController
+//@RestController
 @EnableAutoConfiguration
+@Import(value ={
+  Config.class,
+  Controller.class
+})
 public class Application {
-  @RequestMapping("/")
-  String home() {
-    return "Hello World!";
-  }
-
   public static void main(String[] args) throws Exception {
     SpringApplication.run(Application.class, args);
   }
