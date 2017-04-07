@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -35,8 +36,11 @@ import org.testng.annotations.Test;
  *
  * @author Yi-Kun Yang &gt;ykyang@gmail.com&lt;
  */
-@SpringBootTest(classes = org.allnix.restjson.Application.class, 
-  webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest(
+  classes = org.allnix.restjson.Application.class, 
+  webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT
+  //webEnvironment = WebEnvironment.RANDOM_PORT
+)
 public class TestRestTemplate extends AbstractTestNGSpringContextTests {
   
   static private final Logger logger = LoggerFactory.getLogger(
@@ -45,13 +49,18 @@ public class TestRestTemplate extends AbstractTestNGSpringContextTests {
   private RestTemplate restTemplate;
   
   private String template;
-  
+  @LocalServerPort
+  private int port;
   @BeforeClass
   public void beforeClass() {
     restTemplate = new RestTemplate(new HttpComponentsClientHttpRequestFactory());
     template = "{\"id\":\"%s\"}";
   }
 
+  @Test
+  public void testPort() {
+    logger.info("LocalServerPort: {}", port);
+  }
   /**
    * <pre>
    * {
