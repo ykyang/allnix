@@ -27,11 +27,50 @@ dependencies {
     compile 'ch.qos.logback:logback-classic:1.1.2'
     compile 'org.springframework.boot:spring-boot:1.4.2.RELEASE'
     compile 'org.springframework.boot:spring-boot-starter-web:1.4.2.RELEASE'
+    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-websocket
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-websocket', version: '1.4.2.RELEASE'
+
     // Use TestNG framework, also requires calling test.useTestNG() below
     testCompile 'org.testng:testng:6.9.13.8'
 }
 
-test.useTestNG()
+test {
+  // Run the test
+  // ./gradlew test
+  
+  // Force re-run the test
+  // ./gradlew cleanTest test
+  
+  systemProperties 'logback.configurationFile' : new File(projectDir,'src/test/resources/logback-test.xml').absolutePath
+  // Tem disabled  
+  include '**/Test*.*'
+  //include '**/DisableAllTest*.*'
+  
+  // Use "gradlew cleanTest test" to force running test
+  testLogging {
+    events "started", "passed", "skipped", "failed", "standardOut", "standardError"
+  }
+  
+  useTestNG() {
+    setParallel("methods");
+    setThreadCount(1);
+    
+    excludeGroups 'void', 'gui'
+    
+    if (os.contains("linux")) {
+      includeGroups 'unix'
+    }
+    if (os.contains("windows")) {
+      includeGroups 'win'
+    }
+    //    if (os.contains("windows")) {
+    //      excludeGroups 'linux'
+    //    }
+    //    if(os.contains("linux")) {
+    //      excludeGroups 'win'
+    //    }
+  }
+}
 
 task runner(type: JavaExec) {
   classpath = sourceSets.main.runtimeClasspath
