@@ -15,6 +15,9 @@
  */
 package org.allnix.boot.web;
 
+import java.util.ArrayList;
+import java.util.List;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.CloseStatus;
@@ -30,21 +33,30 @@ public class NotificationWebSocketHandler extends TextWebSocketHandler {
 
   static private final Logger logger = LoggerFactory.getLogger(
     NotificationWebSocketHandler.class);
-
+  
+  private List<WebSocketSession> sessions = new ArrayList<>();
+  
   @Override
   public void handleTransportError(WebSocketSession session, Throwable throwable)
     throws Exception {
+    logger.error(ExceptionUtils.getStackTrace(throwable));
   }
   
   @Override
   public void afterConnectionClosed(WebSocketSession session, CloseStatus status)
     throws Exception {
+    logger.info("afterConnectionClosed");
+    logger.info("Session: {}", session.toString());
+    logger.info("Status: {}", status.toString());
   }
   
   @Override
   public void afterConnectionEstablished(WebSocketSession session)
     throws Exception {
+    super.afterConnectionEstablished(session);
     // TODO: Save the session
+    sessions.add(session);
+    
     logger.info("Established: {}", session.toString());
   }
   

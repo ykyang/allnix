@@ -31,7 +31,7 @@ public class Customization implements EmbeddedServletContainerCustomizer {
   private int port;
   @Override
   public void customize(ConfigurableEmbeddedServletContainer container) {
-//    port = SocketUtils.findAvailableTcpPort();
+    port = SocketUtils.findAvailableTcpPort();
     port = 8080;
     logger.info("port = {}", port);
     container.setPort(port);

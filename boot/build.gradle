@@ -25,13 +25,28 @@ dependencies {
     // The production code uses the SLF4J logging API at compile time
     compile 'org.slf4j:slf4j-api:1.7.13'
     compile 'ch.qos.logback:logback-classic:1.1.2'
+    
+    compile 'com.fasterxml.jackson.core:jackson-core:2.7.3'
+    compile 'com.fasterxml.jackson.core:jackson-annotations:2.7.3'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.7.3'
+    
     compile 'org.springframework.boot:spring-boot:1.4.2.RELEASE'
     compile 'org.springframework.boot:spring-boot-starter-web:1.4.2.RELEASE'
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-websocket
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-websocket', version: '1.4.2.RELEASE'
 
+    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-tomcat
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-tomcat', version: '1.5.2.RELEASE'
+    //providedRuntime ('org.springframework.boot:spring-boot-starter-tomcat')
+
+    compile group: 'commons-io', name: 'commons-io', version: '2.5'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
+  
+  
     // Use TestNG framework, also requires calling test.useTestNG() below
     testCompile 'org.testng:testng:6.9.13.8'
+    //testCompile group: 'org.springframework', name: 'spring-test', version: '4.3.4.RELEASE'
+    testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '1.4.2.RELEASE'
 }
 
 test {
@@ -41,7 +56,7 @@ test {
   // Force re-run the test
   // ./gradlew cleanTest test
   
-  systemProperties 'logback.configurationFile' : new File(projectDir,'src/test/resources/logback-test.xml').absolutePath
+  systemProperties 'logging.config' : new File(projectDir,'src/test/resources/logback-test.xml').absolutePath
   // Tem disabled  
   include '**/Test*.*'
   //include '**/DisableAllTest*.*'
@@ -52,17 +67,17 @@ test {
   }
   
   useTestNG() {
-    setParallel("methods");
-    setThreadCount(1);
+//    setParallel("methods");
+//    setThreadCount(1);
+//    
+//    excludeGroups 'void', 'gui'
     
-    excludeGroups 'void', 'gui'
-    
-    if (os.contains("linux")) {
-      includeGroups 'unix'
-    }
-    if (os.contains("windows")) {
-      includeGroups 'win'
-    }
+//    if (os.contains("linux")) {
+//      includeGroups 'unix'
+//    }
+//    if (os.contains("windows")) {
+//      includeGroups 'win'
+//    }
     //    if (os.contains("windows")) {
     //      excludeGroups 'linux'
     //    }
@@ -76,6 +91,15 @@ task runner(type: JavaExec) {
   classpath = sourceSets.main.runtimeClasspath
 
   main = 'org.allnix.boot.runner.Application'
+
+  // arguments to pass to the application
+  args 'first', 'second'
+}
+
+task driver(type: JavaExec) {
+  classpath = sourceSets.main.runtimeClasspath
+
+  main = 'org.allnix.boot.web.Driver'
 
   // arguments to pass to the application
   args 'first', 'second'

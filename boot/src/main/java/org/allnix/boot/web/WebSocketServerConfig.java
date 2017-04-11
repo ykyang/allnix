@@ -19,17 +19,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
-
+import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 /**
  *
  * @author Yi-Kun Yang &gt;ykyang@gmail.com&lt;
  */
 @Configuration
+@EnableWebMvc
 @EnableWebSocket
-public class WebSocketServerConfig implements WebSocketConfigurer {
+public class WebSocketServerConfig //extends WebMvcConfigurerAdapter 
+  implements WebSocketConfigurer {
   static private final Logger logger = LoggerFactory.getLogger(WebSocketServerConfig.class);
 //  @Autowired
 //  private NotificationWebSocketHandler handler;
@@ -43,7 +47,11 @@ public class WebSocketServerConfig implements WebSocketConfigurer {
   @Override
   public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
     logger.info("Notification");
-    registry.addHandler(handler(), "/notification");
+    registry.addHandler(handler(), "/notification").withSockJS();
   }
   
+//  @Override
+//  public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) { 
+//    configurer.enable(); 
+//  }
 }

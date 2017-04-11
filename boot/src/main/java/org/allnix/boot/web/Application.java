@@ -16,28 +16,32 @@
 package org.allnix.boot.web;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.web.support.SpringBootServletInitializer;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 /**
  *
  * @author Yi-Kun Yang &gt;ykyang@gmail.com&lt;
  */
+// @SpringBootApplication 
 // same as @Configuration @EnableAutoConfiguration @ComponentScan
 
 //@RestController
-//@EnableAutoConfiguration
-//@Import(value ={
-//  Config.class,
-//  Controller.class,
-//  WebSocketServerConfig.class
-//})
-@SpringBootApplication 
-public class Application  extends SpringBootServletInitializer {
+@Configuration
+@EnableAutoConfiguration
+@Import(value ={
+  Config.class,
+  Controller.class,
+  WebSocketServerConfig.class
+})
+public class Application {
+  static private final Logger logger = LoggerFactory.getLogger(Application.class);
   public static void main(String[] args) throws Exception {
+    logger.info("START");
     SpringApplication.run(Application.class, args);
   }
 }
