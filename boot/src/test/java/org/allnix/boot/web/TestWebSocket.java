@@ -64,36 +64,40 @@ public class TestWebSocket extends AbstractTestNGSpringContextTests {
   }
 
   @Test
-  public void testWebSocket() throws URISyntaxException, IOException, InterruptedException, ExecutionException {
+  public void testWebSocket() throws URISyntaxException, IOException,
+    InterruptedException, ExecutionException {
 
-    URI base = new URI("ws", null, "localhost", port, "/notification", null,
+    URI base = new URI("ws", null, "localhost", port, "/websocket", null,
       null);
     logger.info("URI: {}", base.toString());
     WebSocketClientHandler handler = new WebSocketClientHandler();
     StandardWebSocketClient client = new StandardWebSocketClient();
-    
+
     ListenableFuture<WebSocketSession> sessionFuture = client.doHandshake(
       handler, base.toString());
     WebSocketSession session = sessionFuture.get();
-    session.sendMessage(new TextMessage("This is a test".getBytes()));
-    
-    
-//     List<Transport> transports = Arrays.asList(
-//			new WebSocketTransport(new StandardWebSocketClient()),
-//			new RestTemplateXhrTransport(new RestTemplate()));
-//	SockJsClient sockJsClient = new SockJsClient(transports);
-//    ListenableFuture<WebSocketSession> sessionFuture = sockJsClient.doHandshake(handler, base.toString());
-//    WebSocketSession session = sessionFuture.get();
-//    session.sendMessage(new TextMessage("This is a test".getBytes()));
-    
-    TimeUnit.SECONDS.sleep(3);
-    
-//    handler.setSession(session);
-    
-//    WebSocketConnectionManager manager = new WebSocketConnectionManager(
-//      client, handler, base.toString());
-    
-//    manager.start();
-//    handler.sendMessage(new TextMessage("Another test".getBytes()));
+    session.sendMessage(new TextMessage("WebSocket test".getBytes()));
+
+//    TimeUnit.SECONDS.sleep(3);
+  }
+
+  @Test
+  public void testSockJs() throws URISyntaxException, IOException,
+    InterruptedException, ExecutionException {
+    URI base = new URI("ws", null, "localhost", port, "/sockjs", null,
+      null);
+    logger.info("URI: {}", base.toString());
+    WebSocketClientHandler handler = new WebSocketClientHandler();
+
+    List<Transport> transports = Arrays.asList(
+      new WebSocketTransport(new StandardWebSocketClient()),
+      new RestTemplateXhrTransport(new RestTemplate()));
+    SockJsClient sockJsClient = new SockJsClient(transports);
+    ListenableFuture<WebSocketSession> sessionFuture = sockJsClient.doHandshake(
+      handler, base.toString());
+    WebSocketSession session = sessionFuture.get();
+    session.sendMessage(new TextMessage("SockJs test".getBytes()));
+
+//    TimeUnit.SECONDS.sleep(3);
   }
 }

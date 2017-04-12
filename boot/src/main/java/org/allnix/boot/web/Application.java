@@ -36,7 +36,8 @@ import org.springframework.context.annotation.Import;
 @Import(value ={
   Config.class,
   Controller.class,
-  WebSocketServerConfig.class
+  WebSocketServerConfig.class,
+  SockJsServerConfig.class
 })
 public class Application {
   static private final Logger logger = LoggerFactory.getLogger(Application.class);
