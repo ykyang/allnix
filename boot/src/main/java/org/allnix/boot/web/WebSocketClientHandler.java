@@ -17,11 +17,10 @@ package org.allnix.boot.web;
 
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.LinkedBlockingQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
@@ -34,25 +33,34 @@ public class WebSocketClientHandler extends TextWebSocketHandler {
 
   static private final Logger logger = LoggerFactory.getLogger(
     WebSocketClientHandler.class);
-  
-  private WebSocketSession session;
 
-  public void setSession(WebSocketSession session) {
-    this.session = session;
-  }
+//  private WebSocketSession session;
+  private BlockingQueue<WebSocketSession> sessions;
+
   private BlockingQueue<TextMessage> queue;
-  private AtomicBoolean ready;
+//  private AtomicBoolean ready;
 
   public WebSocketClientHandler() {
-    queue = new SynchronousQueue<>();
-    ready = new AtomicBoolean(false);
+    queue = new LinkedBlockingQueue<>();
+//    ready = new AtomicBoolean(false);
+    sessions = new LinkedBlockingQueue<>();
   }
+
   @Override
   public void afterConnectionEstablished(WebSocketSession session) throws
     Exception {
-    logger.info("Connection established: {}", session.getUri().toString());
-    this.session = session;
-    ready.set(true);
+    logger.info("Session established: {}", session.getUri().toString());
+    logger.info("Session ID: {}", session.getId());
+//    this.session = session;
+    sessions.put(session);
+//    ready.set(true);
+  }
+
+  @Override
+  public void afterConnectionClosed(WebSocketSession session, CloseStatus status)
+    throws Exception {
+    logger.info("Remove session: {}", session.getId());
+    sessions.remove(session);
   }
 
   @Override
@@ -63,10 +71,11 @@ public class WebSocketClientHandler extends TextWebSocketHandler {
 
   /**
    * Blocking send
-   * 
+   *
    * The call is blocked until the connection is done
+   *
    * @param message
-   * @throws IOException 
+   * @throws IOException
    */
   public void sendMessage(TextMessage message) throws IOException {
 //    while (!ready.get()) {
@@ -76,6 +85,9 @@ public class WebSocketClientHandler extends TextWebSocketHandler {
 //        return;
 //      }
 //    }
-    session.sendMessage(message);
+    for (WebSocketSession session : sessions) {
+      session.sendMessage(message);
+    }
+
   }
 }
