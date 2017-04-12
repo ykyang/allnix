@@ -40,11 +40,13 @@ public class NotificationWebSocketHandler extends TextWebSocketHandler {
   public void handleTransportError(WebSocketSession session, Throwable throwable)
     throws Exception {
     logger.error(ExceptionUtils.getStackTrace(throwable));
+    super.handleTransportError(session, throwable);
   }
   
   @Override
   public void afterConnectionClosed(WebSocketSession session, CloseStatus status)
     throws Exception {
+    sessions.remove(session);
     logger.info("afterConnectionClosed");
     logger.info("Session: {}", session.toString());
     logger.info("Status: {}", status.toString());
@@ -53,7 +55,7 @@ public class NotificationWebSocketHandler extends TextWebSocketHandler {
   @Override
   public void afterConnectionEstablished(WebSocketSession session)
     throws Exception {
-    super.afterConnectionEstablished(session);
+//    super.afterConnectionEstablished(session);
     // TODO: Save the session
     sessions.add(session);
     

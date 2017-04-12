@@ -47,7 +47,9 @@ public class WebSocketServerConfig //extends WebMvcConfigurerAdapter
   @Override
   public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
     logger.info("Notification");
-    registry.addHandler(handler(), "/notification").withSockJS();
+//    registry.addHandler(handler(), "/notification").withSockJS();
+//    registry.addHandler(handler(), "/notification").setAllowedOrigins("*");
+    registry.addHandler(handler(), "/notification");
   }
   
 //  @Override

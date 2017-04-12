@@ -72,19 +72,20 @@ public class TestWebSocket extends AbstractTestNGSpringContextTests {
     WebSocketClientHandler handler = new WebSocketClientHandler();
     StandardWebSocketClient client = new StandardWebSocketClient();
     
-//    ListenableFuture<WebSocketSession> sessionFuture = client.doHandshake(
-//      handler, base.toString());
+    ListenableFuture<WebSocketSession> sessionFuture = client.doHandshake(
+      handler, base.toString());
+    WebSocketSession session = sessionFuture.get();
+    session.sendMessage(new TextMessage("This is a test".getBytes()));
+    
+    
+//     List<Transport> transports = Arrays.asList(
+//			new WebSocketTransport(new StandardWebSocketClient()),
+//			new RestTemplateXhrTransport(new RestTemplate()));
+//	SockJsClient sockJsClient = new SockJsClient(transports);
+//    ListenableFuture<WebSocketSession> sessionFuture = sockJsClient.doHandshake(handler, base.toString());
 //    WebSocketSession session = sessionFuture.get();
 //    session.sendMessage(new TextMessage("This is a test".getBytes()));
     
-    
-     List<Transport> transports = Arrays.asList(
-			new WebSocketTransport(new StandardWebSocketClient()),
-			new RestTemplateXhrTransport(new RestTemplate()));
-	SockJsClient sockJsClient = new SockJsClient(transports);
-    ListenableFuture<WebSocketSession> sessionFuture = sockJsClient.doHandshake(handler, base.toString());
-    WebSocketSession session = sessionFuture.get();
-    session.sendMessage(new TextMessage("This is a test".getBytes()));
     TimeUnit.SECONDS.sleep(3);
     
 //    handler.setSession(session);
