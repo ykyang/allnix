@@ -30,4 +30,10 @@ public class Config {
     return bean;
   }
   
+  @Bean
+  public NotificationWebSocketHandler handler() {
+    NotificationWebSocketHandler bean = new NotificationWebSocketHandler();
+    return bean;
+  }
+  
 }

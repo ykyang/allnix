@@ -17,14 +17,12 @@ package org.allnix.boot.web;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Bean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 /**
  *
  * @author Yi-Kun Yang &gt;ykyang@gmail.com&lt;
@@ -35,21 +33,21 @@ import org.springframework.web.servlet.config.annotation.DefaultServletHandlerCo
 public class WebSocketServerConfig //extends WebMvcConfigurerAdapter 
   implements WebSocketConfigurer {
   static private final Logger logger = LoggerFactory.getLogger(WebSocketServerConfig.class);
-//  @Autowired
-//  private NotificationWebSocketHandler handler;
+  @Autowired
+  private NotificationWebSocketHandler handler;
 //
-  @Bean
-  public NotificationWebSocketHandler handler() {
-    NotificationWebSocketHandler bean = new NotificationWebSocketHandler();
-    return bean;
-  }
+//  @Bean
+//  public NotificationWebSocketHandler handler() {
+//    NotificationWebSocketHandler bean = new NotificationWebSocketHandler();
+//    return bean;
+//  }
     
   @Override
   public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
     logger.info("Register WebSocket");
 //    registry.addHandler(handler(), "/notification").withSockJS();
 //    registry.addHandler(handler(), "/notification").setAllowedOrigins("*");
-    registry.addHandler(handler(), "/websocket");
+    registry.addHandler(handler, "/websocket");
   }
   
 //  @Override
