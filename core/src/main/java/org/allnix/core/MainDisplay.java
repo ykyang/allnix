@@ -15,9 +15,11 @@
  */
 package org.allnix.core;
 
+import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.SplashScreen;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
@@ -30,7 +32,37 @@ import org.apache.commons.exec.ExecuteResultHandler;
  */
 public class MainDisplay {
 
+  static void renderSplashFrame(Graphics2D g, int frame) {
+    final String[] comps = {"foo", "bar", "baz"};
+    g.setComposite(AlphaComposite.Clear);
+    g.fillRect(120, 140, 200, 40);
+    g.setPaintMode();
+    g.setColor(Color.BLACK);
+    g.drawString("Loading " + comps[(frame / 5) % 3] + "...", 120, 150);
+  }
+
   static public void main(String[] args) {
+    final SplashScreen splash = SplashScreen.getSplashScreen();
+    if (splash == null) {
+      System.out.println("SplashScreen.getSplashScreen() returned null");
+      return;
+    }
+    Graphics2D g = splash.createGraphics();
+    if (g == null) {
+      System.out.println("g is null");
+      return;
+    }
+    for (int i = 0; i < 100; i++) {
+      renderSplashFrame(g, i);
+      splash.update();
+      try {
+        Thread.sleep(9);
+      } catch (InterruptedException e) {
+      }
+    }
+    
+    splash.close();
+    
     SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
@@ -62,9 +94,9 @@ public class MainDisplay {
               System.exit(1);
             }
           };
-            
+
           executor.execute(cmd, resultHandler);
-          
+
           System.out.println("Mark 20");
         } catch (IOException ex) {
         }
