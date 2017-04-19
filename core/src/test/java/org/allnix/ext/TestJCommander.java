@@ -17,6 +17,9 @@ package org.allnix.ext;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
+import java.util.ArrayList;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -37,27 +40,92 @@ public class TestJCommander {
     logger.debug("beforeClass");
   }
 
-  @Test(groups = {"short", "unix", "win"})
-  public void test1() {
+  /**
+   * Test
+   * <pre>
+   * -port 12345
+   * </pre>
+   */
+  @Test(groups = {"short"})
+  public void test() {
     String[] args = {
-      "-port", "12345"
+      "-port", "12345",
+      "-Dorg.allnix=true"
     };
     Argument argument = new Argument();
+    JavaProperty prop = new JavaProperty();
     
     JCommander jc = new JCommander();
     jc.addObject(argument);
+    jc.addObject(prop);
     jc.parse(args);
     
     Assert.assertEquals(12345, argument.getPort());
+    Assert.assertEquals(true, prop.isAllnix());
+  }
+  
+  @Test
+  public void testDefault() {
+    String[] args = {
+    };
+    Argument argument = new Argument();
+    JavaProperty prop = new JavaProperty();
+    
+    JCommander jc = new JCommander();
+    jc.addObject(argument);
+    jc.addObject(prop);
+    jc.parse(args);
+    
+    Assert.assertEquals(0, argument.getPort());
+  }
+  
+  @Test
+  public void testHelp() {
+    String[] args = {
+      "--help"
+    };
+    Argument argument = new Argument();
+    JavaProperty prop = new JavaProperty();
+    
+    JCommander jc = new JCommander();
+    jc.addObject(argument);
+    jc.addObject(prop);
+    jc.parse(args);
+    
+    StringBuilder sb = new StringBuilder();
+    jc.usage(sb);
+    
+    logger.info(sb.toString());
   }
 
+  /**
+   * Define main parameters
+   */
   static class Argument {
 
     @Parameter(names = {"-port", "--port"}, description = "Server port number")
-    private int port;
-
+    private int port = 0;
+    @Parameter(names = "--help", help = true)
+    private boolean help;
+    
+    @Parameter(description = "Main Parameters")
+    private List<String> params = new ArrayList<>();
+    
     public int getPort() {
       return port;
+    }
+  }
+  
+  /**
+   * Main parameters not allowed
+   */
+  @Parameters(separators = "=")
+  static class JavaProperty {
+    @Parameter(names= {"-Dorg.allnix"}, description = "is org.allnix")
+    private boolean allnix = false;
+    
+    public boolean isAllnix() {
+      return allnix;
     }
   }
 }

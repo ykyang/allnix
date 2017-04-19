@@ -87,7 +87,8 @@ test {
     excludeGroups 'void', 'gui'
     
     if (os.contains("linux")) {
-      includeGroups 'unix'
+//      includeGroups 'unix'
+      excludeGroups 'win'
     }
     if (os.contains("windows")) {
       includeGroups 'win'
