@@ -47,10 +47,10 @@ public class TestJCommander {
    * </pre>
    */
   @Test(groups = {"short"})
-  public void test() {
+  public void testDefaultOverride() {
     String[] args = {
       "-port", "12345",
-      "-Dorg.allnix=true"
+      "-Dorg.allnix=false"
     };
     Argument argument = new Argument();
     JavaProperty prop = new JavaProperty();
@@ -61,7 +61,7 @@ public class TestJCommander {
     jc.parse(args);
     
     Assert.assertEquals(12345, argument.getPort());
-    Assert.assertEquals(true, prop.isAllnix());
+    Assert.assertFalse(prop.isAllnix());
   }
   
   @Test
@@ -77,6 +77,7 @@ public class TestJCommander {
     jc.parse(args);
     
     Assert.assertEquals(0, argument.getPort());
+    Assert.assertTrue(prop.isAllnix());
   }
   
   @Test
@@ -121,8 +122,8 @@ public class TestJCommander {
    */
   @Parameters(separators = "=")
   static class JavaProperty {
-    @Parameter(names= {"-Dorg.allnix"}, description = "is org.allnix")
-    private boolean allnix = false;
+    @Parameter(names= {"-Dorg.allnix"}, description = "is org.allnix", arity=1)
+    private boolean allnix = true;
     
     public boolean isAllnix() {
       return allnix;
