@@ -58,8 +58,14 @@ public class TestJython {
     interp.execfile(in);
     
     PyObject obj;
-    obj = interp.get("a");
     
+    obj = interp.get("a");
     Assert.assertEquals(obj.asInt(),43);
+    
+    obj = interp.get("b");
+    Assert.assertEquals(obj.asDouble(), 34.0);
+    
+    obj = interp.get("c");
+    Assert.assertEquals(obj.asDouble(), 43.0 + 34.0);
   }
 }

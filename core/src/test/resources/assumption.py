@@ -1,3 +1,4 @@
 import sys
 a = 43
-print a
+b = 34.0
+c = a + b
