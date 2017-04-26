@@ -39,7 +39,7 @@ public class FileJsonDao implements JsonDao {
 
   private String databaseFolder;
 //  private final ObjectMapper mapper;
-  private Object lock;
+  private Object stupidBigLock;
   
   public void setDatabaseFolder(String databaseFolder) {
     this.databaseFolder = databaseFolder;
@@ -47,7 +47,7 @@ public class FileJsonDao implements JsonDao {
 
   public FileJsonDao() {
 //    mapper = new ObjectMapper();
-    lock = new Object();
+    stupidBigLock = new Object();
   }
 
   /**
@@ -63,7 +63,7 @@ public class FileJsonDao implements JsonDao {
 
   @Override
   public boolean create(String tableName, String id, String json) {
-    synchronized(lock) {
+    synchronized(stupidBigLock) {
     Path path = Paths.get(databaseFolder, fileName(tableName, id));
 
     if (Files.exists(path)) {
@@ -83,7 +83,7 @@ public class FileJsonDao implements JsonDao {
 
   @Override
   public String read(String tableName, String id) {
-    synchronized(lock) {
+    synchronized(stupidBigLock) {
     Path path = Paths.get(databaseFolder, fileName(tableName, id));
 
     if (!Files.isRegularFile(path)) {
@@ -102,7 +102,7 @@ public class FileJsonDao implements JsonDao {
 
   @Override
   public boolean update(String tableName, String id, String json) {
-    synchronized(lock) {
+    synchronized(stupidBigLock) {
     if (!hasId(tableName, id)) {
       return false;
     }
@@ -121,7 +121,7 @@ public class FileJsonDao implements JsonDao {
 
   @Override
   public boolean delete(String tableName, String id) {
-    synchronized(lock) {
+    synchronized(stupidBigLock) {
     if (!hasId(tableName, id)) {
       return false;
     }
