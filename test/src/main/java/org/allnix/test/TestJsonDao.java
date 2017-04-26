@@ -142,7 +142,7 @@ public class TestJsonDao {
 //    List<String> ids = new ArrayList<>();
 
     StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < 1_000_000; i++) {
+    for (int i = 0; i < 5_000_000; i++) { // 5 MB
       sb.append("*");
     }
     final String value = sb.toString();

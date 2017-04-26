@@ -39,13 +39,15 @@ public class FileJsonDao implements JsonDao {
 
   private String databaseFolder;
 //  private final ObjectMapper mapper;
-
+  private Object lock;
+  
   public void setDatabaseFolder(String databaseFolder) {
     this.databaseFolder = databaseFolder;
   }
 
   public FileJsonDao() {
 //    mapper = new ObjectMapper();
+    lock = new Object();
   }
 
   /**
@@ -61,6 +63,7 @@ public class FileJsonDao implements JsonDao {
 
   @Override
   public boolean create(String tableName, String id, String json) {
+    synchronized(lock) {
     Path path = Paths.get(databaseFolder, fileName(tableName, id));
 
     if (Files.exists(path)) {
@@ -75,10 +78,12 @@ public class FileJsonDao implements JsonDao {
     }
 
     return true;
+    }
   }
 
   @Override
   public String read(String tableName, String id) {
+    synchronized(lock) {
     Path path = Paths.get(databaseFolder, fileName(tableName, id));
 
     if (!Files.isRegularFile(path)) {
@@ -92,10 +97,12 @@ public class FileJsonDao implements JsonDao {
     } catch (IOException ex) {
       throw new UncheckedIOException(ex);
     }
+    }
   }
 
   @Override
   public boolean update(String tableName, String id, String json) {
+    synchronized(lock) {
     if (!hasId(tableName, id)) {
       return false;
     }
@@ -109,10 +116,12 @@ public class FileJsonDao implements JsonDao {
     }
 
     return true;
+    }
   }
 
   @Override
   public boolean delete(String tableName, String id) {
+    synchronized(lock) {
     if (!hasId(tableName, id)) {
       return false;
     }
@@ -124,6 +133,7 @@ public class FileJsonDao implements JsonDao {
       return true;
     } catch (IOException ex) {
       throw new UncheckedIOException(ex);
+    }
     }
   }
 

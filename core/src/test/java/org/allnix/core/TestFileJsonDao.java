@@ -56,6 +56,6 @@ public class TestFileJsonDao extends TestJsonDao {
   
   @Test
   public void testReadUpdate() throws InterruptedException {
-    super.testReadUpdate(dao, "JobInput", 10);
+    super.testReadUpdate(dao, "JobInput", 50);
   }
 }
