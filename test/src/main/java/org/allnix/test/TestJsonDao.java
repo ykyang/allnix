@@ -22,8 +22,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import org.allnix.core.JsonDao;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 
 /**
@@ -31,7 +38,8 @@ import org.testng.Assert;
  * @author Yi-Kun Yang &gt;ykyang@gmail.com&lt;
  */
 public class TestJsonDao {
-
+  static private final Logger logger = LoggerFactory.getLogger(TestJsonDao.class);
+  
   protected String jsonTemplate;
   private Random random;
   private ObjectMapper mapper;
@@ -82,7 +90,8 @@ public class TestJsonDao {
     Assert.assertFalse(ans);
   }
 
-  public void testMultipleCRUD(JsonDao dao, String tableName, int count) throws InterruptedException, IOException {
+  public void testMultipleCRUD(JsonDao dao, String tableName, int count) throws
+    InterruptedException, IOException {
     // > Make threads start at different time
     TimeUnit.MILLISECONDS.sleep(random.nextInt(100));
 
@@ -127,5 +136,75 @@ public class TestJsonDao {
       boolean ans = dao.delete(tableName, id);
       Assert.assertTrue(ans);
     }
+  }
+
+  public void testReadUpdate(JsonDao dao, String tableName, long count) throws InterruptedException {
+//    List<String> ids = new ArrayList<>();
+
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < 1_000_000; i++) {
+      sb.append("*");
+    }
+    final String value = sb.toString();
+
+    // > Create
+    final String id = UUID.randomUUID().toString();
+//      ids.add(id);
+    final String text = String.format("{\"id\":\"%s\", \"value\":\"%s\"}", id, value);
+    dao.create(tableName, id, text);
+
+    CountDownLatch startSignal = new CountDownLatch(1);
+//    CountDownLatch doneSignal = new CountDownLatch(2);
+    
+    List<CompletableFuture<Void>> list = new ArrayList<>();
+    
+    ExecutorService es = Executors.newCachedThreadPool();
+
+    // > Read
+    Runnable readTask = 
+    () -> {
+      try {
+        startSignal.await();
+        long ind = 0;
+        while(ind < count) {
+          String result = dao.read(tableName, id);
+          ObjectNode objectNode = mapper.readValue(result, ObjectNode.class);
+//          Assert.assertEquals(objectNode.get("id").asText(), id);
+//          Assert.assertEquals(objectNode.get("value").asText(), value);
+          ++ind;
+        }
+      } catch (InterruptedException ex) {
+        Assert.fail("Interrupted");
+      } catch (IOException ex) {
+        logger.error(ExceptionUtils.getStackTrace(ex));
+        Assert.fail("Error reading");
+      }
+//      doneSignal.countDown();
+    };
+    
+    // > Update
+    Runnable updateTask = () -> {
+      try {
+        startSignal.await();
+        long ind = 0;
+        while(ind < count) {
+          dao.update(tableName, id, text);
+          ++ind;
+        }
+      } catch (InterruptedException ex) {
+      }
+//      doneSignal.countDown();
+    };
+
+    list.add(CompletableFuture.runAsync(readTask, es));
+    list.add(CompletableFuture.runAsync(updateTask, es));
+      
+    startSignal.countDown();
+    
+     list.stream().forEach((v) -> {
+      v.join();
+    });
+    
+//    doneSignal.await();
   }
 }

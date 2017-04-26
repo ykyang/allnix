@@ -53,4 +53,9 @@ public class TestFileJsonDao extends TestJsonDao {
   public void testMultipleCRUD() throws InterruptedException, IOException {
     super.testMultipleCRUD(dao, "JobInput", 1000);
   }
+  
+  @Test
+  public void testReadUpdate() throws InterruptedException {
+    super.testReadUpdate(dao, "JobInput", 10);
+  }
 }
