@@ -169,8 +169,8 @@ public class TestJsonDao {
         while(ind < count) {
           String result = dao.read(tableName, id);
           ObjectNode objectNode = mapper.readValue(result, ObjectNode.class);
-//          Assert.assertEquals(objectNode.get("id").asText(), id);
-//          Assert.assertEquals(objectNode.get("value").asText(), value);
+          Assert.assertEquals(objectNode.get("id").asText(), id);
+          Assert.assertEquals(objectNode.get("value").asText(), value);
           ++ind;
         }
       } catch (InterruptedException ex) {
