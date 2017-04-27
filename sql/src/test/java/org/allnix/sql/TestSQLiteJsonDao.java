@@ -156,6 +156,11 @@ public class TestSQLiteJsonDao extends TestJsonDao {
     super.testMultipleCRUD(dao, JOB_INPUT, 1000);
   }
   
+  @Test
+  public void testReadUpdate() throws InterruptedException {
+    super.testReadUpdate(dao, JOB_INPUT, 50);
+  }
+  
   @Test(enabled = false, threadPoolSize = 4, invocationCount = 128)
   public void testMultipleThreadCRUD() throws IOException, InterruptedException {
     // > Make threads start at different time
