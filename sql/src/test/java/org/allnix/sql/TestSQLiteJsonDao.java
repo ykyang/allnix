@@ -22,15 +22,22 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import org.allnix.test.TestJsonDao;
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.MapPropertySource;
+import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.StandardEnvironment;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -56,18 +63,32 @@ public class TestSQLiteJsonDao extends TestJsonDao {
   @BeforeClass(alwaysRun = false)
   void beforeClass() throws Exception {
     logger.debug("beforeTest()");
+    
+    databaseFileName = "job.sqlite.db";
+    
+    ConfigurableEnvironment environment = new StandardEnvironment();
+    MutablePropertySources propertySources = environment.getPropertySources();
+    Map myMap = new HashMap();
+    myMap.put("databaseFileName", databaseFileName);
+    propertySources.addFirst(new MapPropertySource("MY_MAP", myMap));
+    
     ctx = new AnnotationConfigApplicationContext();
+    ctx.setEnvironment(environment);
     ctx.register(
-      TestDatabaseNameConfig.class,  // Specify database name
-      SQLiteJsonDaoConfig.class // Load DAO
+//      SqliteJdbcConfig.class
+//      TestDatabaseNameConfig.class,  // Specify database name
+//      SQLiteJsonDaoConfig.class // Load DAO
     );
     ctx.refresh();
     ctx.registerShutdownHook();
     
     template = "{\"id\":\"%s\"}";
     
-    databaseFileName = ctx.getBean("jobDatabaseName", String.class);
+//    databaseFileName = ctx.getBean("jobDatabaseName", String.class);
     
+//    BasicDataSource dataSource = ctx.getBean(BasicDataSource.class);
+//    dataSource.setUrl("jdbc:sqlite:" + databaseFileName);
+
     random = new Random();
     
     dao = ctx.getBean(SQLiteJsonDao.class);
@@ -99,10 +120,10 @@ public class TestSQLiteJsonDao extends TestJsonDao {
 //    basicDataSource.setMaxTotal(1);
 //    jdbcTemplate.setDataSource(basicDataSource);
 //  }
-  @Test
-  public void testDatabaseName() {
-    Assert.assertEquals(databaseFileName, "job.db");
-  }
+//  @Test
+//  public void testDatabaseName() {
+//    Assert.assertEquals(databaseFileName, "job.db");
+//  }
   
   @Test(threadPoolSize = 4, invocationCount = 4)
   public void testCRUD() {

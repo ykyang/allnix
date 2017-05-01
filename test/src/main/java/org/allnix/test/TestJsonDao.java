@@ -98,6 +98,7 @@ public class TestJsonDao {
     // > Create a million entries
     List<String> ids = new ArrayList<>();
 
+    logger.info("<create>");
     // > Create
     for (int i = 0; i < count; i++) {
       String id = UUID.randomUUID().toString();
@@ -105,7 +106,7 @@ public class TestJsonDao {
       String text = String.format("{\"id\":\"%s\"}", id);
       dao.create(tableName, id, text);
     }
-
+    logger.info("</create>");
     // > Read
     for (int i = 0; i < count; i++) {
       String id = ids.get(i);
@@ -113,7 +114,7 @@ public class TestJsonDao {
       ObjectNode objectNode = mapper.readValue(text, ObjectNode.class);
       Assert.assertEquals(objectNode.get("id").asText(), id);
     }
-
+    logger.info("</read>");
     // > Update: Make id = index
     for (int i = 0; i < count; i++) {
       String id = ids.get(i);
@@ -121,7 +122,7 @@ public class TestJsonDao {
       boolean ans = dao.update(tableName, id, value);
       Assert.assertTrue(ans);
     }
-
+    logger.info("</update>");
     // > Check if the updated value = index
     for (int i = 0; i < count; i++) {
       String id = ids.get(i);
@@ -129,6 +130,7 @@ public class TestJsonDao {
       ObjectNode objectNode = mapper.readValue(value, ObjectNode.class);
       Assert.assertEquals(objectNode.get("id").asText(), Integer.toString(i));
     }
+    logger.info("</check>");
 
     // > Delete
     for (int i = 0; i < count; i++) {
@@ -136,6 +138,7 @@ public class TestJsonDao {
       boolean ans = dao.delete(tableName, id);
       Assert.assertTrue(ans);
     }
+    logger.info("</delete>");
   }
 
   public void testReadUpdate(JsonDao dao, String tableName, long count) throws InterruptedException {
