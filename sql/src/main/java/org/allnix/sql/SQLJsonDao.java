@@ -15,12 +15,86 @@
  */
 package org.allnix.sql;
 
+import org.allnix.core.JsonDao;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
+
 /**
  * DAO for storing JSON as String in SQL database.
- * 
+ *
  * @author Yi-Kun Yang &gt;ykyang@gmail.com&lt;
  */
-public interface SQLJsonDao {
-  public void createTable(String tableName);
-  public boolean create(String tableName, String id, String json);
+public class SQLJsonDao implements JsonDao {
+
+  private JdbcTemplate jdbcTemplate;
+
+  public void setJdbcTemplate(JdbcTemplate value) {
+    this.jdbcTemplate = value;
+  }
+
+  public void createTable(String tableName) {
+    String sql
+            = "CREATE TABLE IF NOT EXISTS %s (\n"
+            + "  Id    CHAR(36)        PRIMARY KEY,\n"
+            + "  Json  TEXT            NOT NULL\n"
+            + ");";
+
+    sql = String.format(sql, tableName);
+
+    jdbcTemplate.execute(sql);
+  }
+
+  @Override
+  public boolean create(String tableName, String id, String json) {
+    final String insert = "INSERT INTO %s VALUES (?,?);";
+
+    String sql = String.format(insert, tableName);
+    try {
+      int rowAffected = jdbcTemplate.update(sql, id, json);
+
+      return rowAffected == 1;
+    } catch (org.springframework.dao.DuplicateKeyException e) {
+      return false;
+    }
+  }
+
+  public boolean delete(String tableName, String id) {
+    final String delete = "DELETE FROM %s where Id = ?";
+
+    String sql = String.format(delete, tableName);
+    int rowAffected = jdbcTemplate.update(sql, id);
+
+    return rowAffected == 1;
+  }
+
+  public String read(String tableName, String id) {
+    final String read = "SELECT Json FROM %s WHERE Id = ?";
+
+    String sql = String.format(read, tableName);
+
+    try {
+      String json = jdbcTemplate.queryForObject(sql, String.class, id);
+      return json;
+    } catch (IncorrectResultSizeDataAccessException ex) {
+      return null;
+    }
+  }
+
+  public boolean update(String tableName, String id, String json) {
+    final String update = "UPDATE %s SET Json = ? WHERE Id = ?";
+    String sql = String.format(update, tableName);
+
+    int rowCount = jdbcTemplate.update(sql, json, id);
+
+    return rowCount == 1;
+  }
+
+  public boolean hasId(String tableName, String id) {
+    final String count = "SELECT COUNT(*) FROM %s WHERE Id = ?";
+    String sql = String.format(count, tableName);
+
+    Integer rowCount = jdbcTemplate.queryForObject(sql, Integer.class, id);
+
+    return rowCount != 0;
+  }
 }

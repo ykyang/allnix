@@ -74,7 +74,7 @@ public class TestSqliteJsonDao extends TestJsonDao {
     dao.createTable(JOB_INPUT);
   }
 
-  @AfterClass(alwaysRun = false)
+  @AfterClass
   void afterClass() throws IOException {
     FileUtils.deleteQuietly(new File(databaseFileName));
   }

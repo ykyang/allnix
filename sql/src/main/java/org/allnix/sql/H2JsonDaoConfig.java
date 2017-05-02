@@ -23,6 +23,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 /**
  *
  * @author Yi-Kun Yang &lt;ykyang at gmail.com&gt;
+ * @deprecated 
  */
 @Configuration
 public class H2JsonDaoConfig {
@@ -32,8 +33,8 @@ public class H2JsonDaoConfig {
   @Bean
   public H2JsonDao jsonDao() throws ClassNotFoundException {
 
-    Class.forName("org.h2.Driver");
-    String url = "jdbc:h2:./job.h2.db";
+//    Class.forName("org.h2.Driver"); // not necessary
+    String url = "jdbc:h2:./job";
     H2JsonDao bean = new H2JsonDao();
 
     // > Create SQLite data source

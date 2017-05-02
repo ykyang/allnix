@@ -15,13 +15,18 @@
  */
 package org.allnix.sql;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
-import java.util.Random;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 import org.allnix.test.TestJsonDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.MapPropertySource;
+import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.StandardEnvironment;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -32,25 +37,39 @@ import org.testng.annotations.Test;
 public class TestH2JsonDao extends TestJsonDao {
   static private final Logger logger = LoggerFactory.getLogger(TestH2JsonDao.class);
   
-  private H2JsonDao dao;
+  private SQLJsonDao dao;
   static private final String JOB_INPUT = "JobInput";
   private AnnotationConfigApplicationContext ctx;
   
   @BeforeClass
   void beforeClass() throws Exception {
     logger.debug("beforeTest()");
+    
+    String database = Paths.get("job").toAbsolutePath().toString();
+    
+    // > Set database name
+    logger.info("H2 database name property key: {}", H2JdbcConfig.DATABASE);
+    logger.info("H2 database name: {}", database);
+    
+    ConfigurableEnvironment environment = new StandardEnvironment();
+    MutablePropertySources propertySources = environment.getPropertySources();
+    Map myMap = new HashMap();
+    myMap.put(H2JdbcConfig.DATABASE, database);
+    propertySources.addFirst(new MapPropertySource("MY_MAP", myMap)); 
+    
     ctx = new AnnotationConfigApplicationContext();
+    ctx.setEnvironment(environment);
     ctx.register(
-      H2JsonDaoConfig.class
+      H2JdbcConfig.class
     );
     ctx.refresh();
     ctx.registerShutdownHook();
     
-    dao = ctx.getBean(H2JsonDao.class);
+    dao = ctx.getBean(SQLJsonDao.class);
     dao.createTable(JOB_INPUT);
   }
   
-  @Test(threadPoolSize = 1, invocationCount = 1)
+  @Test(threadPoolSize = 4, invocationCount = 4)
   public void testCRUD() {
     super.testCRUD(dao, JOB_INPUT);
   }
@@ -58,5 +77,10 @@ public class TestH2JsonDao extends TestJsonDao {
   @Test(threadPoolSize = 4, invocationCount = 4)
   public void testMultipleCRUD() throws InterruptedException, IOException {
     super.testMultipleCRUD(dao, JOB_INPUT, 1000);
+  }
+  
+  @Test
+  public void testReadUpdate() throws InterruptedException {
+    super.testReadUpdate(dao, JOB_INPUT, 50);
   }
 }

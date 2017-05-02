@@ -15,6 +15,7 @@
  */
 package org.allnix.sql;
 
+import static org.allnix.sql.SqliteJdbcConfig.DATABASE;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,53 +27,42 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  *
- * @author Yi-Kun Yang &lt;ykyang at gmail.com&gt;
+ * @author Yi-Kun Yang &gt;ykyang@gmail.com&lt;
  */
 @Configuration
-public class SqliteJdbcConfig {
-  static private Logger logger = LoggerFactory.getLogger(SqliteJdbcConfig.class);
-  static public final String DATABASE = SqliteJdbcConfig.class.getName()+".database";
+public class H2JdbcConfig {
+  static private Logger logger = LoggerFactory.getLogger(H2JdbcConfig.class);
+  static public final String DATABASE = H2JdbcConfig.class.getName() + ".database";
   
   @Autowired
   private ConfigurableEnvironment env;
   
   @Bean
-  public BasicDataSource sqliteDataSource() {
-    String databaseName = env.getProperty(DATABASE);
-    String url = "jdbc:sqlite:" + databaseName;
-    logger.info("BasicDataSource URL: {}", url);
+  public BasicDataSource h2DataSource() {
+    String database = env.getProperty(DATABASE);
+    String url = "jdbc:h2:"+database;
+
+    // > Create H2 data source
     BasicDataSource bean = new BasicDataSource();
     bean.setUrl(url);
     
-    // > Maximum number of connection = 1
-    // > SQLite cannot have more than 1 connection
-    // > in multi-thread mode
-    bean.setMaxTotal(1);
-    
     return bean;
   }
-  
-  @Bean
-  public JdbcTemplate sqliteJdbcTemplate() {
-    JdbcTemplate bean = new JdbcTemplate();
-    
-    // > Initialize SQLite driver; does not seem to be necessary
-    // boolean success = SQLiteJDBCLoader.initialize();
-    bean.setDataSource(sqliteDataSource());
-    
-    // > Not waiting for data actually writing to the disk
-    // > The performance is not acceptable for my use case
-    // > without this setting.
-    bean.execute("pragma synchronous = off;");
 
+  @Bean  
+  public JdbcTemplate h2JdbcTemplate() {
+    JdbcTemplate bean = new JdbcTemplate();
+    bean.setDataSource(h2DataSource());
+    
     return bean;
   }
   
   @Bean
-  public SQLiteJsonDao sqliteJsonDao() {
-    SQLiteJsonDao bean = new SQLiteJsonDao();
-    bean.setJdbcTemplate(sqliteJdbcTemplate());
+  public SQLJsonDao jsonDao() {
+    SQLJsonDao bean = new SQLJsonDao();
+    bean.setJdbcTemplate(h2JdbcTemplate());
     
     return bean;
   }
+  
 }
