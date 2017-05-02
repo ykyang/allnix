@@ -20,8 +20,16 @@ import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
- * DAO for storing JSON as String in SQL database.
- *
+ * A DAO for storing JSON in SQLite
+ * 
+ * See TestSQLiteJsonDao for usage example.  Stores 
+ * <pre>
+ * | Id       | JSON |
+ * +----------+------+
+ * | CHAR(36) | TEXT |
+ * </pre>
+ * in SQLite.  The Id column is meant for UUID.
+ * 
  * @author Yi-Kun Yang &gt;ykyang@gmail.com&lt;
  */
 public class SQLJsonDao implements JsonDao {
