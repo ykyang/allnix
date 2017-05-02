@@ -64,6 +64,10 @@ public class TestJsonDao {
     actual = dao.read(tableName, id);
     Assert.assertEquals(actual, json);
 
+    // Create an existing record
+    ans = dao.create(tableName, id, json);
+    Assert.assertFalse(ans);
+    
     // Read an non-existent record
     actual = dao.read(tableName, "non-existent ID");
     Assert.assertNull(actual);
