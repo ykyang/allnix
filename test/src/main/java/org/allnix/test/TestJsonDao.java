@@ -211,7 +211,8 @@ public class TestJsonDao {
      list.stream().forEach((v) -> {
       v.join();
     });
-    
+   
+    dao.delete(tableName, id);
 //    doneSignal.await();
   }
 }
