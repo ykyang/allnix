@@ -29,29 +29,29 @@ import org.springframework.jdbc.core.JdbcTemplate;
  * @author Yi-Kun Yang &gt;ykyang@gmail.com&lt;
  */
 @Configuration
-public class H2JdbcConfig {
-  static private Logger logger = LoggerFactory.getLogger(H2JdbcConfig.class);
-  static public final String DATABASE = H2JdbcConfig.class.getName() + ".database";
+public class HsqlJdbcConfig {
+  static private Logger logger = LoggerFactory.getLogger(HsqlJdbcConfig.class);
+  static public final String DATABASE = HsqlJdbcConfig.class.getName() + ".database";
   
   @Autowired
   private ConfigurableEnvironment env;
   
   @Bean
-  public BasicDataSource h2DataSource() {
+  public BasicDataSource hsqlDataSource() {
     String database = env.getProperty(DATABASE);
-    String url = "jdbc:h2:"+database;
+    String url = "jdbc:hsqldb:file:"+database;
 
     // > Create H2 data source
     BasicDataSource bean = new BasicDataSource();
     bean.setUrl(url);
     
     return bean;
-  }
-
+  } 
+  
   @Bean  
-  public JdbcTemplate h2JdbcTemplate() {
+  public JdbcTemplate hsqlJdbcTemplate() {
     JdbcTemplate bean = new JdbcTemplate();
-    bean.setDataSource(h2DataSource());
+    bean.setDataSource(hsqlDataSource());
     
     return bean;
   }
@@ -59,9 +59,8 @@ public class H2JdbcConfig {
   @Bean
   public SqlJsonDao jsonDao() {
     SqlJsonDao bean = new SqlJsonDao();
-    bean.setJdbcTemplate(h2JdbcTemplate());
+    bean.setJdbcTemplate(hsqlJdbcTemplate());
     
     return bean;
   }
-  
 }
