@@ -16,7 +16,6 @@
 package org.allnix.sql;
 
 import org.apache.commons.dbcp2.BasicDataSource;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.sqlite.SQLiteJDBCLoader;
 
 /**
  *
@@ -35,9 +33,8 @@ public class SqliteJdbcConfig {
   static private Logger logger = LoggerFactory.getLogger(SqliteJdbcConfig.class);
   static public final String DATABASE = SqliteJdbcConfig.class.getName()+".database";
   
-   @Autowired
-   private ConfigurableEnvironment env;
-
+  @Autowired
+  private ConfigurableEnvironment env;
   
   @Bean
   public BasicDataSource sqliteDataSource() {
@@ -57,22 +54,10 @@ public class SqliteJdbcConfig {
   
   @Bean
   public JdbcTemplate sqliteJdbcTemplate() {
-    try {
     JdbcTemplate bean = new JdbcTemplate(sqliteDataSource(), true);
     
-    // > Initialize SQLite driver
-    boolean success = SQLiteJDBCLoader.initialize();
-
-    // > TODO: Check success
-    
-    // > Create SQLite data source
-//    BasicDataSource basicDataSource = new BasicDataSource();
-//    basicDataSource.setUrl("jdbc:sqlite:" + databaseName);
-    // > Maximum number of connection = 1
-    // > SQLite cannot have more than 1 connection
-    // > in multi-thread mode
-//    basicDataSource.setMaxTotal(1);
-
+    // > Initialize SQLite driver; does not seem to be necessary
+    // boolean success = SQLiteJDBCLoader.initialize();
     bean.setDataSource(sqliteDataSource());
     
     // > Not waiting for data actually writing to the disk
@@ -81,12 +66,7 @@ public class SqliteJdbcConfig {
     bean.execute("pragma synchronous = off;");
 
     return bean;
-    } catch( Exception e) {
-      logger.error(ExceptionUtils.getStackTrace(e));
-      throw new RuntimeException(e);
-    }
   }
-  
   
   @Bean
   public SQLiteJsonDao sqliteJsonDao() {
@@ -95,6 +75,4 @@ public class SqliteJdbcConfig {
     
     return bean;
   }
-  
-  
 }
