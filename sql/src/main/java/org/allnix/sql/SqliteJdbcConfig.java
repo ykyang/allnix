@@ -33,6 +33,7 @@ import org.sqlite.SQLiteJDBCLoader;
 @Configuration
 public class SqliteJdbcConfig {
   static private Logger logger = LoggerFactory.getLogger(SqliteJdbcConfig.class);
+  static public final String DATABASE = SqliteJdbcConfig.class.getName()+".database";
   
    @Autowired
    private ConfigurableEnvironment env;
@@ -40,9 +41,12 @@ public class SqliteJdbcConfig {
   
   @Bean
   public BasicDataSource sqliteDataSource() {
-    String databaseName = env.getProperty("databaseFileName");
+    String databaseName = env.getProperty(DATABASE);
+    String url = "jdbc:sqlite:" + databaseName;
+    logger.info("BasicDataSource URL: {}", url);
     BasicDataSource bean = new BasicDataSource();
-    bean.setUrl("jdbc:sqlite:" + databaseName);
+    bean.setUrl(url);
+    
     // > Maximum number of connection = 1
     // > SQLite cannot have more than 1 connection
     // > in multi-thread mode

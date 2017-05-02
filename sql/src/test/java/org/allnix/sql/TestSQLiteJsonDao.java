@@ -54,10 +54,10 @@ public class TestSQLiteJsonDao extends TestJsonDao {
   private SQLiteJsonDao dao;
   static private final String JOB_INPUT = "JobInput";
 
-  private ObjectMapper mapper;
+//  private ObjectMapper mapper;
   private String databaseFileName;
-  private String template;
-  private Random random;
+//  private String template;
+//  private Random random;
   private AnnotationConfigApplicationContext ctx;
 
   @BeforeClass(alwaysRun = false)
@@ -66,35 +66,37 @@ public class TestSQLiteJsonDao extends TestJsonDao {
     
     databaseFileName = "job.sqlite.db";
     
+    // > Set database name
+    logger.info("SQLite database name property key: {}", SqliteJdbcConfig.DATABASE);
+    logger.info("SQLite database name: {}", databaseFileName);
+    
     ConfigurableEnvironment environment = new StandardEnvironment();
     MutablePropertySources propertySources = environment.getPropertySources();
     Map myMap = new HashMap();
-    myMap.put("databaseFileName", databaseFileName);
+    myMap.put(SqliteJdbcConfig.DATABASE, databaseFileName);
     propertySources.addFirst(new MapPropertySource("MY_MAP", myMap));
     
     ctx = new AnnotationConfigApplicationContext();
     ctx.setEnvironment(environment);
     ctx.register(
-//      SqliteJdbcConfig.class
-//      TestDatabaseNameConfig.class,  // Specify database name
-//      SQLiteJsonDaoConfig.class // Load DAO
+      SqliteJdbcConfig.class
     );
     ctx.refresh();
     ctx.registerShutdownHook();
     
-    template = "{\"id\":\"%s\"}";
+//    template = "{\"id\":\"%s\"}";
     
 //    databaseFileName = ctx.getBean("jobDatabaseName", String.class);
     
 //    BasicDataSource dataSource = ctx.getBean(BasicDataSource.class);
 //    dataSource.setUrl("jdbc:sqlite:" + databaseFileName);
 
-    random = new Random();
+//    random = new Random();
     
     dao = ctx.getBean(SQLiteJsonDao.class);
     dao.createTable(JOB_INPUT);
 
-    mapper = new ObjectMapper();
+//    mapper = new ObjectMapper();
   }
 
   @AfterClass(alwaysRun = false)
@@ -130,47 +132,47 @@ public class TestSQLiteJsonDao extends TestJsonDao {
     super.testCRUD(dao, JOB_INPUT);
   }
   
-  @Test(enabled = false)
-  public void testCRUD1() {
-    String id = "1234567890987654321";
-    String expectedValue = String.format(template, id);
-    boolean result;
-    String actualValue;
-
-    // > Create
-    result = dao.create(JOB_INPUT, id, expectedValue);
-    Assert.assertTrue(result);
-
-    // > Second create should fail
-    result = dao.create(JOB_INPUT, id, expectedValue);
-    Assert.assertFalse(result);
-
-    // > Read
-    actualValue = dao.read(JOB_INPUT, id);
-    Assert.assertEquals(actualValue, expectedValue);
-
-    expectedValue = String.format(template, "1357924680");
-
-    // > Update
-    result = dao.update(JOB_INPUT, id, expectedValue);
-    Assert.assertTrue(result);
-
-    // > Check updated value
-    actualValue = dao.read(JOB_INPUT, id);
-    Assert.assertEquals(actualValue, expectedValue);
-
-    // > Delete
-    result = dao.delete(JOB_INPUT, id);
-    Assert.assertTrue(result);
-
-    // > Read should return null
-    actualValue = dao.read(JOB_INPUT, id);
-    Assert.assertNull(actualValue);
-
-    // > Delete should fail
-    result = dao.delete(JOB_INPUT, id);
-    Assert.assertFalse(result);
-  }
+//  @Test(enabled = false)
+//  public void testCRUD1() {
+//    String id = "1234567890987654321";
+//    String expectedValue = String.format(template, id);
+//    boolean result;
+//    String actualValue;
+//
+//    // > Create
+//    result = dao.create(JOB_INPUT, id, expectedValue);
+//    Assert.assertTrue(result);
+//
+//    // > Second create should fail
+//    result = dao.create(JOB_INPUT, id, expectedValue);
+//    Assert.assertFalse(result);
+//
+//    // > Read
+//    actualValue = dao.read(JOB_INPUT, id);
+//    Assert.assertEquals(actualValue, expectedValue);
+//
+//    expectedValue = String.format(template, "1357924680");
+//
+//    // > Update
+//    result = dao.update(JOB_INPUT, id, expectedValue);
+//    Assert.assertTrue(result);
+//
+//    // > Check updated value
+//    actualValue = dao.read(JOB_INPUT, id);
+//    Assert.assertEquals(actualValue, expectedValue);
+//
+//    // > Delete
+//    result = dao.delete(JOB_INPUT, id);
+//    Assert.assertTrue(result);
+//
+//    // > Read should return null
+//    actualValue = dao.read(JOB_INPUT, id);
+//    Assert.assertNull(actualValue);
+//
+//    // > Delete should fail
+//    result = dao.delete(JOB_INPUT, id);
+//    Assert.assertFalse(result);
+//  }
   
   @Test(threadPoolSize = 4, invocationCount = 4)
   public void testMultipleCRUD() throws InterruptedException, IOException {
@@ -182,69 +184,69 @@ public class TestSQLiteJsonDao extends TestJsonDao {
     super.testReadUpdate(dao, JOB_INPUT, 50);
   }
   
-  @Test(enabled = false, threadPoolSize = 4, invocationCount = 128)
-  public void testMultipleThreadCRUD() throws IOException, InterruptedException {
-    // > Make threads start at different time
-    TimeUnit.MILLISECONDS.sleep(random.nextInt(100));
-    
-    // > Create a million entries
-    List<String> ids = new ArrayList<>();
-    int count = 100;
-    
-    // > Create
-    for (int i = 0; i < count; i++) {
-      String id = UUID.randomUUID().toString();
-      ids.add(id);
-      String text = String.format("{\"id\":\"%s\"}", id);
-      dao.create(JOB_INPUT, id, text);
-    }
-
-    // > Read
-    for ( int i = 0; i < count; i++) {
-      String id = ids.get(i);
-      String text = dao.read(JOB_INPUT, id);
-      ObjectNode objectNode = mapper.readValue(text, ObjectNode.class);
-      Assert.assertEquals(objectNode.get("id").asText(), id);
-    }
-    
-    // > Update: Make id = index
-    for ( int i = 0; i < count; i++) {
-      String id = ids.get(i);
-      String value = String.format(template, Integer.toString(i));
-      boolean ans = dao.update(JOB_INPUT, id, value);
-      Assert.assertTrue(ans);
-    }
-    
-    // > Check if the updated value = index
-    for ( int i = 0; i < count; i++) {
-      String id = ids.get(i);
-      String value = dao.read(JOB_INPUT, id);
-      ObjectNode objectNode = mapper.readValue(value, ObjectNode.class);
-      Assert.assertEquals(objectNode.get("id").asText(), Integer.toString(i));
-    }
-    
-    // > Delete
-    for ( int i = 0; i < count; i++) {
-      String id = ids.get(i);
-      boolean ans = dao.delete(JOB_INPUT, id);
-      Assert.assertTrue(ans);
-    }
-  }
+//  @Test(enabled = false, threadPoolSize = 4, invocationCount = 128)
+//  public void testMultipleThreadCRUD() throws IOException, InterruptedException {
+//    // > Make threads start at different time
+//    TimeUnit.MILLISECONDS.sleep(random.nextInt(100));
+//    
+//    // > Create a million entries
+//    List<String> ids = new ArrayList<>();
+//    int count = 100;
+//    
+//    // > Create
+//    for (int i = 0; i < count; i++) {
+//      String id = UUID.randomUUID().toString();
+//      ids.add(id);
+//      String text = String.format("{\"id\":\"%s\"}", id);
+//      dao.create(JOB_INPUT, id, text);
+//    }
+//
+//    // > Read
+//    for ( int i = 0; i < count; i++) {
+//      String id = ids.get(i);
+//      String text = dao.read(JOB_INPUT, id);
+//      ObjectNode objectNode = mapper.readValue(text, ObjectNode.class);
+//      Assert.assertEquals(objectNode.get("id").asText(), id);
+//    }
+//    
+//    // > Update: Make id = index
+//    for ( int i = 0; i < count; i++) {
+//      String id = ids.get(i);
+//      String value = String.format(template, Integer.toString(i));
+//      boolean ans = dao.update(JOB_INPUT, id, value);
+//      Assert.assertTrue(ans);
+//    }
+//    
+//    // > Check if the updated value = index
+//    for ( int i = 0; i < count; i++) {
+//      String id = ids.get(i);
+//      String value = dao.read(JOB_INPUT, id);
+//      ObjectNode objectNode = mapper.readValue(value, ObjectNode.class);
+//      Assert.assertEquals(objectNode.get("id").asText(), Integer.toString(i));
+//    }
+//    
+//    // > Delete
+//    for ( int i = 0; i < count; i++) {
+//      String id = ids.get(i);
+//      boolean ans = dao.delete(JOB_INPUT, id);
+//      Assert.assertTrue(ans);
+//    }
+//  }
 
   /**
    * Use for generate SQL commands for testing in SQLite command line.
    * @throws java.io.FileNotFoundException
    */
-  @Test(enabled = false)
-  public void generateInsert() throws FileNotFoundException {
-    String template = "INSERT OR IGNORE INTO %s VALUES ('%s', '{\"%s\":\"%s\"}');";
-    int count = 1_000;
-    try (PrintWriter out = new PrintWriter("insert.sql")) {
-      for (int i = 0; i < count; i++) {
-        String uuid = UUID.randomUUID().toString();
-        String sql = String.format(template, JOB_INPUT, uuid, "id", uuid);
-        out.println(sql);
-      }
-    } 
-  }
+//  @Test(enabled = false)
+//  public void generateInsert() throws FileNotFoundException {
+//    String template = "INSERT OR IGNORE INTO %s VALUES ('%s', '{\"%s\":\"%s\"}');";
+//    int count = 1_000;
+//    try (PrintWriter out = new PrintWriter("insert.sql")) {
+//      for (int i = 0; i < count; i++) {
+//        String uuid = UUID.randomUUID().toString();
+//        String sql = String.format(template, JOB_INPUT, uuid, "id", uuid);
+//        out.println(sql);
+//      }
+//    } 
+//  }
 }
