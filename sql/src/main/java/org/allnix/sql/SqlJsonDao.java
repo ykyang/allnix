@@ -32,9 +32,13 @@ import org.springframework.jdbc.core.JdbcTemplate;
  * 
  * @author Yi-Kun Yang &gt;ykyang@gmail.com&lt;
  */
-public class SQLJsonDao implements JsonDao {
+public class SqlJsonDao implements JsonDao {
 
   private JdbcTemplate jdbcTemplate;
+  
+  protected JdbcTemplate jdbcTemplate() {
+    return jdbcTemplate;
+  }
 
   public void setJdbcTemplate(JdbcTemplate value) {
     this.jdbcTemplate = value;

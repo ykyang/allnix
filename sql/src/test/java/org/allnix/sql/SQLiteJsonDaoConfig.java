@@ -38,11 +38,11 @@ public class SQLiteJsonDaoConfig {
   private String databaseName;
 
   @Bean
-  public SQLiteJsonDao newSQLiteJsonDao() throws Exception {
+  public SqliteJsonDao newSQLiteJsonDao() throws Exception {
     // > Initialize SQLite driver
     boolean success = SQLiteJDBCLoader.initialize();
 
-    SQLiteJsonDao bean = new SQLiteJsonDao();
+    SqliteJsonDao bean = new SqliteJsonDao();
 
     // > Create SQLite data source
     BasicDataSource basicDataSource = new BasicDataSource();

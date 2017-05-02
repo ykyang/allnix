@@ -40,7 +40,7 @@ public class TestSqliteJsonDao extends TestJsonDao {
 
   static private final Logger logger = LoggerFactory.getLogger(TestSqliteJsonDao.class);
   
-  private SQLiteJsonDao dao;
+  private SqliteJsonDao dao;
   static private final String JOB_INPUT = "JobInput";
 
   private String databaseFileName;
@@ -70,7 +70,7 @@ public class TestSqliteJsonDao extends TestJsonDao {
     ctx.refresh();
     ctx.registerShutdownHook();
     
-    dao = ctx.getBean(SQLiteJsonDao.class);
+    dao = ctx.getBean(SqliteJsonDao.class);
     dao.createTable(JOB_INPUT);
   }
 

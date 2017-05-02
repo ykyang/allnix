@@ -69,8 +69,8 @@ public class SqliteJdbcConfig {
   }
   
   @Bean
-  public SQLiteJsonDao sqliteJsonDao() {
-    SQLiteJsonDao bean = new SQLiteJsonDao();
+  public SqliteJsonDao sqliteJsonDao() {
+    SqliteJsonDao bean = new SqliteJsonDao();
     bean.setJdbcTemplate(sqliteJdbcTemplate());
     
     return bean;

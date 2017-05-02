@@ -37,7 +37,7 @@ import org.testng.annotations.Test;
 public class TestH2JsonDao extends TestJsonDao {
   static private final Logger logger = LoggerFactory.getLogger(TestH2JsonDao.class);
   
-  private SQLJsonDao dao;
+  private SqlJsonDao dao;
   static private final String JOB_INPUT = "JobInput";
   private AnnotationConfigApplicationContext ctx;
   
@@ -65,7 +65,7 @@ public class TestH2JsonDao extends TestJsonDao {
     ctx.refresh();
     ctx.registerShutdownHook();
     
-    dao = ctx.getBean(SQLJsonDao.class);
+    dao = ctx.getBean(SqlJsonDao.class);
     dao.createTable(JOB_INPUT);
   }
   

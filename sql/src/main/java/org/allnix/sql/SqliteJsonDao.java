@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Yi-Kun Yang.
+ * Copyright 2016 Yi-Kun Yang.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,13 +15,20 @@
  */
 package org.allnix.sql;
 
-import org.springframework.context.annotation.Configuration;
-
 /**
- *
- * @author Yi-Kun Yang &lt;ykyang at gmail.com&gt;
+ * A DAO for storing JSON in SQLite
+ * 
+ * @author Yi-Kun Yang &gt;ykyang@gmail.com&lt;
  */
-@Configuration
-public class SqliteJsonDaoConfig {
-  
+public class SqliteJsonDao extends SqlJsonDao {
+
+  @Override
+  public boolean create(String tableName, String id, String json) {
+    final String insert = "INSERT OR IGNORE INTO %s VALUES (?,?);";
+    
+    String sql = String.format(insert, tableName);
+    int rowAffected = jdbcTemplate().update(sql, id, json);
+
+    return rowAffected == 1;
+  }
 }

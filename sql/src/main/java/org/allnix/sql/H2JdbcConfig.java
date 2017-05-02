@@ -58,8 +58,8 @@ public class H2JdbcConfig {
   }
   
   @Bean
-  public SQLJsonDao jsonDao() {
-    SQLJsonDao bean = new SQLJsonDao();
+  public SqlJsonDao jsonDao() {
+    SqlJsonDao bean = new SqlJsonDao();
     bean.setJdbcTemplate(h2JdbcTemplate());
     
     return bean;
