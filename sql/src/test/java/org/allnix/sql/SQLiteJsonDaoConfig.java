@@ -26,6 +26,7 @@ import org.sqlite.SQLiteJDBCLoader;
 /**
  *
  * @author Yi-Kun Yang &gt;ykyang@gmail.com&lt;
+ * @deprecated 
  */
 @Configuration
 public class SQLiteJsonDaoConfig {

@@ -36,9 +36,9 @@ import org.testng.annotations.Test;
  *
  * @author Yi-Kun Yang &gt;ykyang@gmail.com&lt;
  */
-public class TestSQLiteJsonDao extends TestJsonDao {
+public class TestSqliteJsonDao extends TestJsonDao {
 
-  static private final Logger logger = LoggerFactory.getLogger(TestSQLiteJsonDao.class);
+  static private final Logger logger = LoggerFactory.getLogger(TestSqliteJsonDao.class);
   
   private SQLiteJsonDao dao;
   static private final String JOB_INPUT = "JobInput";
