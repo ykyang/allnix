@@ -57,8 +57,8 @@ public class HsqlJdbcConfig {
   }
   
   @Bean
-  public SqlJsonDao jsonDao() {
-    SqlJsonDao bean = new SqlJsonDao();
+  public HsqlJsonDao jsonDao() {
+    HsqlJsonDao bean = new HsqlJsonDao();
     bean.setJdbcTemplate(hsqlJdbcTemplate());
     
     return bean;

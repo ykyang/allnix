@@ -45,7 +45,7 @@ public class TestHsqlJsonDao extends TestJsonDao {
   void beforeClass() throws Exception {
     logger.debug("beforeTest()");
     
-    String database = Paths.get("job").toAbsolutePath().toString();
+    String database = Paths.get("hsql-job").toAbsolutePath().toString();
     
     // > Set database name
     logger.info("HSQL database name property key: {}", HsqlJdbcConfig.DATABASE);
