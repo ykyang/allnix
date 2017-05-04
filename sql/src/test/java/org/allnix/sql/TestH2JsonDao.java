@@ -16,6 +16,7 @@
 package org.allnix.sql;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,22 +40,24 @@ public class TestH2JsonDao extends TestJsonDao {
   
   private SqlJsonDao dao;
   static private final String JOB_INPUT = "JobInput";
+  private Path databaseFile;
   private AnnotationConfigApplicationContext ctx;
   
   @BeforeClass
   void beforeClass() throws Exception {
     logger.debug("beforeTest()");
     
-    String database = Paths.get("h2-job").toAbsolutePath().toString();
+    Path database = Paths.get("h2-job").toAbsolutePath();
+//    databaseFileName = 
     
     // > Set database name
     logger.info("H2 database name property key: {}", H2JdbcConfig.DATABASE);
-    logger.info("H2 database name: {}", database);
+    logger.info("H2 database name: {}", database.toString());
     
     ConfigurableEnvironment environment = new StandardEnvironment();
     MutablePropertySources propertySources = environment.getPropertySources();
     Map myMap = new HashMap();
-    myMap.put(H2JdbcConfig.DATABASE, database);
+    myMap.put(H2JdbcConfig.DATABASE, database.toString());
     propertySources.addFirst(new MapPropertySource("MY_MAP", myMap)); 
     
     ctx = new AnnotationConfigApplicationContext();

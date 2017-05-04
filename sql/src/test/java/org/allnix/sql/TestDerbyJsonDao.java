@@ -34,8 +34,8 @@ import org.testng.annotations.Test;
  *
  * @author Yi-Kun Yang &gt;ykyang@gmail.com&lt;
  */
-public class TestHsqlJsonDao extends TestJsonDao {
- static private final Logger logger = LoggerFactory.getLogger(TestHsqlJsonDao.class);
+public class TestDerbyJsonDao extends TestJsonDao {
+  static private final Logger logger = LoggerFactory.getLogger(TestDerbyJsonDao.class);
   
   private SqlJsonDao dao;
   static private final String JOB_INPUT = "JobInput";
@@ -45,22 +45,22 @@ public class TestHsqlJsonDao extends TestJsonDao {
   void beforeClass() throws Exception {
     logger.debug("beforeTest()");
     
-    String database = Paths.get("hsql-job").toAbsolutePath().toString();
+    String database = Paths.get("derby-job.db").toAbsolutePath().toString();
     
     // > Set database name
-    logger.info("HSQL database name property key: {}", HsqlJdbcConfig.DATABASE);
-    logger.info("HSQL database name: {}", database);
+    logger.info("Derby database name property key: {}", DerbyJdbcConfig.DATABASE);
+    logger.info("Derby database name: {}", database);
     
     ConfigurableEnvironment environment = new StandardEnvironment();
     MutablePropertySources propertySources = environment.getPropertySources();
     Map myMap = new HashMap();
-    myMap.put(HsqlJdbcConfig.DATABASE, database);
+    myMap.put(DerbyJdbcConfig.DATABASE, database);
     propertySources.addFirst(new MapPropertySource("MY_MAP", myMap)); 
     
     ctx = new AnnotationConfigApplicationContext();
     ctx.setEnvironment(environment);
     ctx.register(
-      HsqlJdbcConfig.class
+      DerbyJdbcConfig.class
     );
     ctx.refresh();
     ctx.registerShutdownHook();
@@ -75,23 +75,23 @@ public class TestHsqlJsonDao extends TestJsonDao {
   }
   
   /**
-   * Slow 
+   * Very slow
    * 
    * @throws InterruptedException
    * @throws IOException 
    */
-  @Test(enabled=false, threadPoolSize = 4, invocationCount = 4)
+  @Test(enabled = false, threadPoolSize = 4, invocationCount = 4)
   public void testMultipleCRUD() throws InterruptedException, IOException {
     super.testMultipleCRUD(dao, JOB_INPUT, 1000);
   }
   
   /**
-   * Slow
+   * Very slow
    * 
    * @throws InterruptedException 
    */
   @Test(enabled = false)
   public void testReadUpdate() throws InterruptedException {
     super.testReadUpdate(dao, JOB_INPUT, 50);
-  } 
+  }
 }

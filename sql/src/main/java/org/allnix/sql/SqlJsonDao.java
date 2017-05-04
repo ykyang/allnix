@@ -49,7 +49,7 @@ public class SqlJsonDao implements JsonDao {
             = "CREATE TABLE IF NOT EXISTS %s (\n"
             + "  Id    CHAR(36)        PRIMARY KEY,\n"
             + "  Json  TEXT            NOT NULL\n"
-            + ");";
+            + ")";
 
     sql = String.format(sql, tableName);
 
@@ -58,7 +58,7 @@ public class SqlJsonDao implements JsonDao {
 
   @Override
   public boolean create(String tableName, String id, String json) {
-    final String insert = "INSERT INTO %s VALUES (?,?);";
+    final String insert = "INSERT INTO %s VALUES (?,?)";
 
     String sql = String.format(insert, tableName);
     try {
