@@ -48,7 +48,7 @@ public class SqlJsonDao implements JsonDao {
     String sql
             = "CREATE TABLE IF NOT EXISTS %s (\n"
             + "  Id    CHAR(36)        PRIMARY KEY,\n"
-            + "  Json  TEXT            NOT NULL\n"
+            + "  Json  CLOB            NOT NULL\n"
             + ")";
 
     sql = String.format(sql, tableName);

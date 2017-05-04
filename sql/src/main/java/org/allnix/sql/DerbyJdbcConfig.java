@@ -31,15 +31,14 @@ import org.springframework.jdbc.core.JdbcTemplate;
 @Configuration
 public class DerbyJdbcConfig {
   static private Logger logger = LoggerFactory.getLogger(DerbyJdbcConfig.class);
-  static public final String DATABASE = DerbyJdbcConfig.class.getName() + ".database";
+  static public final String DATABASE_URL = DerbyJdbcConfig.class.getName() + ".database";
   
   @Autowired
   private ConfigurableEnvironment env;
   
   @Bean
   public BasicDataSource dataSource() {
-    String database = env.getProperty(DATABASE);
-    String url = "jdbc:derby:" + database + ";create=true";
+    String url = env.getProperty(DATABASE_URL);
     
     BasicDataSource bean = new BasicDataSource();
     bean.setUrl(url);
