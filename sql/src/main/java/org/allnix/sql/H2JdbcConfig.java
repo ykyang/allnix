@@ -31,15 +31,14 @@ import org.springframework.jdbc.core.JdbcTemplate;
 @Configuration
 public class H2JdbcConfig {
   static private Logger logger = LoggerFactory.getLogger(H2JdbcConfig.class);
-  static public final String DATABASE = H2JdbcConfig.class.getName() + ".database";
+  static public final String DATABASE_URL = H2JdbcConfig.class.getName() + ".database";
   
   @Autowired
   private ConfigurableEnvironment env;
   
   @Bean
   public BasicDataSource h2DataSource() {
-    String database = env.getProperty(DATABASE);
-    String url = "jdbc:h2:"+database;
+    String url = env.getProperty(DATABASE_URL);
 
     // > Create H2 data source
     BasicDataSource bean = new BasicDataSource();
