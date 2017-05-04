@@ -17,6 +17,8 @@ package org.allnix.sql;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import org.allnix.test.TestJsonDao;
@@ -43,23 +45,31 @@ public class TestSqliteJsonDao extends TestJsonDao {
   private SqliteJsonDao dao;
   static private final String JOB_INPUT = "JobInput";
 
+  private Path databaseFolder;
+  private Path databaseFile;
   private String databaseFileName;
+  
+  private String url;
   private AnnotationConfigApplicationContext ctx;
 
   @BeforeClass(alwaysRun = false)
   void beforeClass() throws Exception {
     logger.debug("beforeTest()");
     
-    databaseFileName = "job.sqlite.db";
+    databaseFileName = "job.db";
+    databaseFolder = Paths.get("sqlite").toAbsolutePath();
+    FileUtils.forceMkdir(databaseFolder.toFile());
+    databaseFile = databaseFolder.resolve(databaseFileName);
+    url = String.format("jdbc:sqlite:%s", databaseFile.toString());
     
     // > Set database name
-    logger.info("SQLite database name property key: {}", SqliteJdbcConfig.DATABASE);
-    logger.info("SQLite database name: {}", databaseFileName);
+    logger.info("SQLite database name property key: {}", SqliteJdbcConfig.DATABASE_URL);
+    logger.info("SQLite database URL: {}", databaseFileName);
     
     ConfigurableEnvironment environment = new StandardEnvironment();
     MutablePropertySources propertySources = environment.getPropertySources();
     Map myMap = new HashMap();
-    myMap.put(SqliteJdbcConfig.DATABASE, databaseFileName);
+    myMap.put(SqliteJdbcConfig.DATABASE_URL, url);
     propertySources.addFirst(new MapPropertySource("MY_MAP", myMap));
     
     ctx = new AnnotationConfigApplicationContext();
@@ -76,7 +86,8 @@ public class TestSqliteJsonDao extends TestJsonDao {
 
   @AfterClass
   void afterClass() throws IOException {
-    FileUtils.deleteQuietly(new File(databaseFileName));
+    ctx.close();
+    FileUtils.deleteQuietly(databaseFolder.toFile());
   }
   
   @Test(threadPoolSize = 4, invocationCount = 4)

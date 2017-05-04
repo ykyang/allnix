@@ -31,16 +31,15 @@ import org.springframework.jdbc.core.JdbcTemplate;
 @Configuration
 public class SqliteJdbcConfig {
   static private Logger logger = LoggerFactory.getLogger(SqliteJdbcConfig.class);
-  static public final String DATABASE = SqliteJdbcConfig.class.getName()+".database";
+  static public final String DATABASE_URL = SqliteJdbcConfig.class.getName()+".database";
   
   @Autowired
   private ConfigurableEnvironment env;
   
   @Bean
   public BasicDataSource sqliteDataSource() {
-    String databaseName = env.getProperty(DATABASE);
-    String url = "jdbc:sqlite:" + databaseName;
-    logger.info("BasicDataSource URL: {}", url);
+    String url = env.getProperty(DATABASE_URL);
+    logger.info("SQLite BasicDataSource URL: {}", url);
     BasicDataSource bean = new BasicDataSource();
     bean.setUrl(url);
     

@@ -42,6 +42,7 @@ public class TestH2JsonDao extends TestJsonDao {
   
   private SqlJsonDao dao;
   static private final String JOB_INPUT = "JobInput";
+  
   private Path databaseFolder;
   private Path databaseFile;
   private String databaseFileName;
@@ -55,6 +56,7 @@ public class TestH2JsonDao extends TestJsonDao {
     
     databaseFileName = "job";
     databaseFolder = Paths.get("h2").toAbsolutePath();
+    FileUtils.forceMkdir(databaseFolder.toFile());
     databaseFile = databaseFolder.resolve(databaseFileName);
     url = String.format("jdbc:h2:%s", databaseFile.toString());
     
@@ -63,7 +65,7 @@ public class TestH2JsonDao extends TestJsonDao {
     
     // > Set database name
     logger.info("H2 database name property key: {}", H2JdbcConfig.DATABASE_URL);
-    logger.info("H2 database url: {}", url);
+    logger.info("H2 database URL: {}", url);
     
     ConfigurableEnvironment environment = new StandardEnvironment();
     MutablePropertySources propertySources = environment.getPropertySources();

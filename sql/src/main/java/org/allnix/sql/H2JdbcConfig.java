@@ -39,7 +39,7 @@ public class H2JdbcConfig {
   @Bean
   public BasicDataSource h2DataSource() {
     String url = env.getProperty(DATABASE_URL);
-
+    logger.info("H2 BasicDataSource URL: {}", url);
     // > Create H2 data source
     BasicDataSource bean = new BasicDataSource();
     bean.setUrl(url);
