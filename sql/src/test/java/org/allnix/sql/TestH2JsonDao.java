@@ -103,6 +103,6 @@ public class TestH2JsonDao extends TestJsonDao {
   
   @Test
   public void testReadUpdate() throws InterruptedException {
-    super.testReadUpdate(dao, JOB_INPUT, 50);
+    super.testReadUpdate(dao, JOB_INPUT, 10);
   }
 }

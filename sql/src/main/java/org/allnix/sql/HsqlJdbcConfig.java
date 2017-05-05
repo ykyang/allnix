@@ -31,15 +31,15 @@ import org.springframework.jdbc.core.JdbcTemplate;
 @Configuration
 public class HsqlJdbcConfig {
   static private Logger logger = LoggerFactory.getLogger(HsqlJdbcConfig.class);
-  static public final String DATABASE = HsqlJdbcConfig.class.getName() + ".database";
+  static public final String DATABASE_URL = HsqlJdbcConfig.class.getName() + ".database";
   
   @Autowired
   private ConfigurableEnvironment env;
   
   @Bean
   public BasicDataSource hsqlDataSource() {
-    String database = env.getProperty(DATABASE);
-    String url = "jdbc:hsqldb:file:"+database;
+    String url = env.getProperty(DATABASE_URL);
+    logger.info("HSQL BasicDataSource URL: {}", url);
 
     // > Create H2 data source
     BasicDataSource bean = new BasicDataSource();
@@ -57,8 +57,8 @@ public class HsqlJdbcConfig {
   }
   
   @Bean
-  public HsqlJsonDao jsonDao() {
-    HsqlJsonDao bean = new HsqlJsonDao();
+  public SqlJsonDao jsonDao() {
+    SqlJsonDao bean = new SqlJsonDao();
     bean.setJdbcTemplate(hsqlJdbcTemplate());
     
     return bean;

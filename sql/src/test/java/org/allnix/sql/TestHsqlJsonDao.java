@@ -16,10 +16,12 @@
 package org.allnix.sql;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import org.allnix.test.TestJsonDao;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -27,6 +29,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.StandardEnvironment;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -39,22 +42,32 @@ public class TestHsqlJsonDao extends TestJsonDao {
   
   private SqlJsonDao dao;
   static private final String JOB_INPUT = "JobInput";
+  
+  private Path databaseFolder;
+  private Path databaseFile;
+  private String databaseFileName;
+  
+  private String url;
   private AnnotationConfigApplicationContext ctx;
   
   @BeforeClass
   void beforeClass() throws Exception {
     logger.debug("beforeTest()");
     
-    String database = Paths.get("hsql-job").toAbsolutePath().toString();
+    databaseFileName = "job";
+    databaseFolder = Paths.get("hsql").toAbsolutePath();
+    FileUtils.forceMkdir(databaseFolder.toFile());
+    databaseFile = databaseFolder.resolve(databaseFileName);
+    url = String.format("jdbc:hsqldb:file:%s", databaseFile.toString());
     
     // > Set database name
-    logger.info("HSQL database name property key: {}", HsqlJdbcConfig.DATABASE);
-    logger.info("HSQL database name: {}", database);
+    logger.info("HSQL database name property key: {}", HsqlJdbcConfig.DATABASE_URL);
+    logger.info("HSQL database URL: {}", url);
     
     ConfigurableEnvironment environment = new StandardEnvironment();
     MutablePropertySources propertySources = environment.getPropertySources();
     Map myMap = new HashMap();
-    myMap.put(HsqlJdbcConfig.DATABASE, database);
+    myMap.put(HsqlJdbcConfig.DATABASE_URL, url);
     propertySources.addFirst(new MapPropertySource("MY_MAP", myMap)); 
     
     ctx = new AnnotationConfigApplicationContext();
@@ -67,6 +80,12 @@ public class TestHsqlJsonDao extends TestJsonDao {
     
     dao = ctx.getBean(SqlJsonDao.class);
     dao.createTable(JOB_INPUT);
+  }
+  
+  @AfterClass
+  void afterClass() {
+    ctx.close();
+    FileUtils.deleteQuietly(databaseFolder.toFile());
   }
   
   @Test(threadPoolSize = 4, invocationCount = 4)

@@ -43,7 +43,7 @@ import org.testng.annotations.Test;
 //    TransactionalTestExecutionListener.class
   })
 @ContextConfiguration(classes = {
-  SQLiteJsonDaoConfig.class,
+//  SQLiteJsonDaoConfig.class,
   TestDatabaseNameConfig.class
 })
 public class TestSpring extends AbstractTestNGSpringContextTests {
@@ -52,7 +52,7 @@ public class TestSpring extends AbstractTestNGSpringContextTests {
   
   private ApplicationContext ctx;
 
-  @BeforeClass(alwaysRun = false)
+  @BeforeClass
   void beforeClass() {
     logger.debug("beforeTest()");
     ctx = applicationContext;
