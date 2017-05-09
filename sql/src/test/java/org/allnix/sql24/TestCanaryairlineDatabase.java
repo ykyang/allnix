@@ -23,6 +23,8 @@ import java.util.Map;
 import org.allnix.sql.H2JdbcConfig;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MapPropertySource;
@@ -42,7 +44,9 @@ import org.testng.annotations.Test;
  *
  * @author Yi-Kun Yang &gt;ykyang@gmail.com&lt;
  */
-public class TestCreateDatabase {
+public class TestCanaryairlineDatabase {
+  static private final Logger logger = LoggerFactory.getLogger(TestCanaryairlineDatabase.class);
+  
   private Path dbFolder;
   private String dbName;
   private Path dbFile;
@@ -53,7 +57,7 @@ public class TestCreateDatabase {
   private JdbcTemplate jdbcTemplate;
   @BeforeClass  
   void beforeClass() throws IOException {
-    dbName = "canaryairline";
+    dbName = "canaryairline-3e254c70";
     dbFolder = Paths.get("h2").toAbsolutePath();
     FileUtils.forceMkdir(dbFolder.toFile());
     dbFile = dbFolder.resolve(dbName);
@@ -94,7 +98,7 @@ public class TestCreateDatabase {
   }
   
   @Test
-  void testQuery() {
+  void testQueryAircraft() {
     final String template = "SELECT * FROM %s.%s";
     String sql = String.format(template, schema, "AIRCRAFT");
     
@@ -102,5 +106,22 @@ public class TestCreateDatabase {
     SqlRowSetMetaData metaData = rowSet.getMetaData();
     
     Assert.assertEquals(metaData.getColumnCount(), 4);
+    rowSet.last();
+    Assert.assertEquals(rowSet.getRow(), 40);
+    
+    rowSet.beforeFirst();
+    while(rowSet.next()) {
+      StringBuilder sb = new StringBuilder();
+      // > Column starts at 1
+      for ( int col = 1; col <= metaData.getColumnCount(); col++) {
+        Object obj = rowSet.getObject(col);
+        if (obj == null) {
+          obj = "{}";
+        }
+        sb.append(obj.toString());
+        sb.append('\t');
+      }
+      logger.debug(sb.toString());
+    }
   }
 }
