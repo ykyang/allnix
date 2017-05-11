@@ -16,6 +16,7 @@
 package org.allnix.sql24;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -31,6 +32,7 @@ import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.StandardEnvironment;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
@@ -97,8 +99,27 @@ public class TestCanaryairlineDatabase {
     FileUtils.deleteQuietly(dbFolder.toFile());
   }
   
+  /**
+   * Insertion failed due to duplicated primary key
+   */
   @Test
-  void testQueryAircraft() {
+  public void testAircraftPrimaryKey() {
+    final String sql = "Insert into CANARYAIRLINES.AIRCRAFT \n"
+            + "(AIRCRAFTCODE,AIRCRAFTTYPE,FREIGHTONLY,SEATING) \n"
+            + "values ('146','British Aerospace BAe146-100',0,82)";
+    
+    try {
+      int rowAffected = jdbcTemplate.update(sql);
+      Assert.fail();
+    } catch (org.springframework.dao.DuplicateKeyException e) {
+      // > Success
+    } catch (DataAccessException e) {
+      Assert.fail();
+    }
+  }
+  
+  @Test
+  void testAircraftDataType() {
     final String template = "SELECT * FROM %s.%s";
     String sql = String.format(template, schema, "AIRCRAFT");
     
@@ -109,19 +130,26 @@ public class TestCanaryairlineDatabase {
     rowSet.last();
     Assert.assertEquals(rowSet.getRow(), 40);
     
-    rowSet.beforeFirst();
-    while(rowSet.next()) {
-      StringBuilder sb = new StringBuilder();
-      // > Column starts at 1
-      for ( int col = 1; col <= metaData.getColumnCount(); col++) {
-        Object obj = rowSet.getObject(col);
-        if (obj == null) {
-          obj = "{}";
-        }
-        sb.append(obj.toString());
-        sb.append('\t');
-      }
-      logger.debug(sb.toString());
-    }
+    Assert.assertEquals(metaData.getColumnClassName(1), String.class.getName());
+    Assert.assertEquals(metaData.getColumnClassName(2), String.class.getName());
+    Assert.assertEquals(metaData.getColumnClassName(3), BigDecimal.class.getName());
+    Assert.assertEquals(metaData.getColumnClassName(4), BigDecimal.class.getName());
+    
+//    int col;
+//    Object obj;
+//    rowSet.beforeFirst();
+//    while(rowSet.next()) {
+//      StringBuilder sb = new StringBuilder();
+//      // > Column starts at 1
+//      for ( col = 1; col <= metaData.getColumnCount(); col++) {
+//        obj = rowSet.getObject(col);
+//        if (obj == null) {
+//          obj = "{}";
+//        }
+//        sb.append(obj.toString());
+//        sb.append('\t');
+//      }
+//      logger.debug(sb.toString());
+//    }
   }
 }
