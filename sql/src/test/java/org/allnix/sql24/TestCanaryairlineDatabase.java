@@ -22,6 +22,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import org.allnix.sql.H2JdbcConfig;
+import org.allnix.sql24.model.Aircraft;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -47,58 +48,65 @@ import org.testng.annotations.Test;
  * @author Yi-Kun Yang &gt;ykyang@gmail.com&lt;
  */
 public class TestCanaryairlineDatabase {
+
   static private final Logger logger = LoggerFactory.getLogger(TestCanaryairlineDatabase.class);
-  
+
   private Path dbFolder;
   private String dbName;
   private Path dbFile;
   private String url;
   private String schema;
-  
+
   private AnnotationConfigApplicationContext ctx;
   private JdbcTemplate jdbcTemplate;
-  @BeforeClass  
+
+  private CanaryAirlineDao dao;
+
+  @BeforeClass
   void beforeClass() throws IOException {
     dbName = "canaryairline-3e254c70";
     dbFolder = Paths.get("h2").toAbsolutePath();
     FileUtils.forceMkdir(dbFolder.toFile());
     dbFile = dbFolder.resolve(dbName);
     url = String.format("jdbc:h2:%s", dbFile.toString());
-    
+
     // > Set H2 database path
     ConfigurableEnvironment environment = new StandardEnvironment();
     MutablePropertySources propertySources = environment.getPropertySources();
     Map myMap = new HashMap();
     myMap.put(H2JdbcConfig.DATABASE_URL, url);
-    propertySources.addFirst(new MapPropertySource("MY_MAP", myMap)); 
-    
+    propertySources.addFirst(new MapPropertySource("MY_MAP", myMap));
+
     ctx = new AnnotationConfigApplicationContext();
     ctx.setEnvironment(environment);
     ctx.register(
-      H2JdbcConfig.class
+            H2JdbcConfig.class
     );
     ctx.refresh();
     ctx.registerShutdownHook();
-    
+
     // > Populate database
     ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
     populator.addScripts(
-      new FileSystemResource("/home/ykyang/work/h2/h2.schema.sql"),
-      new FileSystemResource("/home/ykyang/work/h2/h2.data.sql")
+            new FileSystemResource("/home/ykyang/work/h2/h2.schema.sql"),
+            new FileSystemResource("/home/ykyang/work/h2/h2.data.sql")
     );
     populator.execute(ctx.getBean("h2DataSource", BasicDataSource.class));
-    
+
     jdbcTemplate = ctx.getBean(JdbcTemplate.class);
-    
+
     schema = "CANARYAIRLINES";
+
+    dao = new CanaryAirlineDao();
+    dao.setJdbcTemplate(jdbcTemplate);
   }
-  
+
   @AfterClass
   void afterClass() {
     ctx.close();
     FileUtils.deleteQuietly(dbFolder.toFile());
   }
-  
+
   /**
    * Insertion failed due to duplicated primary key
    */
@@ -107,7 +115,7 @@ public class TestCanaryairlineDatabase {
     final String sql = "Insert into CANARYAIRLINES.AIRCRAFT \n"
             + "(AIRCRAFTCODE,AIRCRAFTTYPE,FREIGHTONLY,SEATING) \n"
             + "values ('146','British Aerospace BAe146-100',0,82)";
-    
+
     try {
       int rowAffected = jdbcTemplate.update(sql);
       Assert.fail();
@@ -117,24 +125,24 @@ public class TestCanaryairlineDatabase {
       Assert.fail();
     }
   }
-  
+
   @Test
-  void testAircraftDataType() {
+  public void testAircraftDataType() {
     final String template = "SELECT * FROM %s.%s";
     String sql = String.format(template, schema, "AIRCRAFT");
-    
+
     SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql);
     SqlRowSetMetaData metaData = rowSet.getMetaData();
-    
+
     Assert.assertEquals(metaData.getColumnCount(), 4);
     rowSet.last();
     Assert.assertEquals(rowSet.getRow(), 40);
-    
+
     Assert.assertEquals(metaData.getColumnClassName(1), String.class.getName());
     Assert.assertEquals(metaData.getColumnClassName(2), String.class.getName());
     Assert.assertEquals(metaData.getColumnClassName(3), BigDecimal.class.getName());
-    Assert.assertEquals(metaData.getColumnClassName(4), BigDecimal.class.getName());
-    
+    Assert.assertEquals(metaData.getColumnClassName(4), Integer.class.getName());
+
 //    int col;
 //    Object obj;
 //    rowSet.beforeFirst();
@@ -151,5 +159,21 @@ public class TestCanaryairlineDatabase {
 //      }
 //      logger.debug(sb.toString());
 //    }
+  }
+
+  @Test
+  public void testAircraftDao() {
+    String aircraftCode;
+    Aircraft aircraft;
+
+    aircraftCode = "146";
+    aircraft = dao.readAircraft(aircraftCode);
+    Assert.assertNotNull(aircraft);
+    Assert.assertEquals(aircraft.getSeating(), Integer.valueOf(82));
+
+    aircraftCode = "310";
+    aircraft = dao.readAircraft(aircraftCode);
+    Assert.assertNotNull(aircraft);
+    Assert.assertEquals(aircraft.getSeating(), Integer.valueOf(198));
   }
 }
