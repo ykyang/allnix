@@ -169,16 +169,38 @@ public class TestCanaryairlineDatabase {
     aircraftCode = "146";
     aircraft = dao.readAircraft(aircraftCode);
     Assert.assertNotNull(aircraft);
+    Assert.assertFalse(aircraft.getFreightOnly());
     Assert.assertEquals(aircraft.getSeating(), Integer.valueOf(82));
 
-    aircraftCode = "310";
+    aircraftCode = "CCC";
     aircraft = dao.readAircraft(aircraftCode);
     Assert.assertNotNull(aircraft);
-    Assert.assertEquals(aircraft.getSeating(), Integer.valueOf(198));
+    Assert.assertFalse(aircraft.getFreightOnly());
+    Assert.assertEquals(aircraft.getSeating(), null);
+    
+    aircraftCode = "WWF";
+    aircraft = dao.readAircraft(aircraftCode);
+    Assert.assertNotNull(aircraft);
+    Assert.assertTrue(aircraft.getFreightOnly());
+    Assert.assertEquals(aircraft.getSeating(), Integer.valueOf(0));
     
     // > No such aircraft
     aircraftCode = "ZZZ";
     aircraft = dao.readAircraft(aircraftCode);
     Assert.assertNull(aircraft);
+    
+    // > Delete non-existent aircraft
+    {
+      aircraftCode = "ZZZ";
+      boolean ans = dao.deleteAircraft(aircraftCode);
+      Assert.assertFalse(ans);
+    }
+    
+    // > Delete a row
+    {
+      aircraftCode = "WWF";
+      boolean ans = dao.deleteAircraft(aircraftCode);
+      Assert.assertTrue(ans);
+    }
   }
 }

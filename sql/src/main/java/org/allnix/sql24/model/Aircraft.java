@@ -24,7 +24,7 @@ import java.math.BigDecimal;
 public class Aircraft {
   private String aircraftCode;
   private String aircraftType;
-  private BigDecimal freightOnly;
+  private Boolean freightOnly;
   private Integer seating;
 
   public String getAircraftCode() {
@@ -43,11 +43,11 @@ public class Aircraft {
     this.aircraftType = aircraftType;
   }
 
-  public BigDecimal getFreightOnly() {
+  public Boolean getFreightOnly() {
     return freightOnly;
   }
 
-  public void setFreightOnly(BigDecimal freightOnly) {
+  public void setFreightOnly(Boolean freightOnly) {
     this.freightOnly = freightOnly;
   }
 

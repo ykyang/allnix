@@ -27,7 +27,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 public class CanaryAirlineDao {
 
   private JdbcTemplate jdbcTemplate;
-
+  private final String SCHEMA = "CANARYAIRLINES";
   public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
     this.jdbcTemplate = jdbcTemplate;
   }
@@ -51,5 +51,15 @@ public class CanaryAirlineDao {
     } catch (IncorrectResultSizeDataAccessException e) {
       return null;
     }
+  }
+  
+  public boolean deleteAircraft(String aircraftCode) {
+    final String sql = String.format(
+            "DELETE FROM %s.%s WHERE AIRCRAFTCODE = ?",
+            SCHEMA, "AIRCRAFT");
+    
+    int rowAffected = jdbcTemplate.update(sql, aircraftCode);
+    
+    return rowAffected == 1;
   }
 }
