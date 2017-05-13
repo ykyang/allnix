@@ -15,6 +15,9 @@
  */
 package org.allnix.sql;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+import javax.sql.DataSource;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,12 +40,22 @@ public class H2JdbcConfig {
   private ConfigurableEnvironment env;
   
   @Bean
-  public BasicDataSource h2DataSource() {
+  public DataSource h2DataSource() {
     String url = env.getProperty(DATABASE_URL);
     logger.info("H2 BasicDataSource URL: {}", url);
     // > Create H2 data source
-    BasicDataSource bean = new BasicDataSource();
-    bean.setUrl(url);
+//    DataSource bean = new BasicDataSource();
+//    bean.setUrl(url);
+
+    HikariConfig config = new HikariConfig();
+    config.setJdbcUrl(url);
+    config.setMaximumPoolSize(10);
+    logger.debug("AutoCommit: {}", config.isAutoCommit());
+//    config.setAutoCommit(false);
+//                config.addDataSourceProperty("cachePrepStmts", "true");
+//                config.addDataSourceProperty("prepStmtCacheSize", "250");
+//                config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+    DataSource bean = new HikariDataSource(config);
     
     return bean;
   }

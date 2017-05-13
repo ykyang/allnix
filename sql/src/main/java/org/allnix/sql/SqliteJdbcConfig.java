@@ -15,6 +15,9 @@
  */
 package org.allnix.sql;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+import javax.sql.DataSource;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,16 +40,22 @@ public class SqliteJdbcConfig {
   private ConfigurableEnvironment env;
   
   @Bean
-  public BasicDataSource sqliteDataSource() {
+  public DataSource sqliteDataSource() {
     String url = env.getProperty(DATABASE_URL);
     logger.info("SQLite BasicDataSource URL: {}", url);
-    BasicDataSource bean = new BasicDataSource();
-    bean.setUrl(url);
-    
-    // > Maximum number of connection = 1
-    // > SQLite cannot have more than 1 connection
-    // > in multi-thread mode
-    bean.setMaxTotal(1);
+//    BasicDataSource bean = new BasicDataSource();
+//    bean.setUrl(url);
+//    
+//    // > Maximum number of connection = 1
+//    // > SQLite cannot have more than 1 connection
+//    // > in multi-thread mode
+//    bean.setMaxTotal(1);
+
+    HikariConfig config = new HikariConfig();
+    config.setJdbcUrl(url);
+    config.setMaximumPoolSize(1);
+    logger.debug("AutoCommit: {}", config.isAutoCommit());
+    DataSource bean = new HikariDataSource(config);
     
     return bean;
   }

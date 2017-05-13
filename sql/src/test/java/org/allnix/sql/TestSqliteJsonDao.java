@@ -38,6 +38,7 @@ import org.testng.annotations.Test;
  *
  * @author Yi-Kun Yang &gt;ykyang@gmail.com&lt;
  */
+@Test(singleThreaded = true)
 public class TestSqliteJsonDao extends TestJsonDao {
 
   static private final Logger logger = LoggerFactory.getLogger(TestSqliteJsonDao.class);
