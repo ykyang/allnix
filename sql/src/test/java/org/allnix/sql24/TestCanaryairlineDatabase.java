@@ -175,5 +175,10 @@ public class TestCanaryairlineDatabase {
     aircraft = dao.readAircraft(aircraftCode);
     Assert.assertNotNull(aircraft);
     Assert.assertEquals(aircraft.getSeating(), Integer.valueOf(198));
+    
+    // > No such aircraft
+    aircraftCode = "ZZZ";
+    aircraft = dao.readAircraft(aircraftCode);
+    Assert.assertNull(aircraft);
   }
 }
