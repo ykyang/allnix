@@ -44,6 +44,7 @@ public class HsqlJdbcConfig {
     // > Create H2 data source
     BasicDataSource bean = new BasicDataSource();
     bean.setUrl(url);
+    logger.debug("Autocommit: {}", bean.getDefaultAutoCommit());
     
     return bean;
   } 

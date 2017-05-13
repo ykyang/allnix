@@ -21,9 +21,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import javax.sql.DataSource;
 import org.allnix.sql.H2JdbcConfig;
 import org.allnix.sql24.model.Aircraft;
-import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,7 +91,7 @@ public class TestCanaryairlineDatabase {
             new FileSystemResource("/home/ykyang/work/h2/h2.schema.sql"),
             new FileSystemResource("/home/ykyang/work/h2/h2.data.sql")
     );
-    populator.execute(ctx.getBean("h2DataSource", BasicDataSource.class));
+    populator.execute(ctx.getBean("h2DataSource", DataSource.class));
 
     jdbcTemplate = ctx.getBean(JdbcTemplate.class);
 
