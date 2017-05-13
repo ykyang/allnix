@@ -37,6 +37,7 @@ import org.testng.annotations.Test;
  *
  * @author Yi-Kun Yang &lt;ykyang at gmail.com&gt;
  */
+@Test(singleThreaded = true)
 public class TestH2JsonDao extends TestJsonDao {
   static private final Logger logger = LoggerFactory.getLogger(TestH2JsonDao.class);
   
