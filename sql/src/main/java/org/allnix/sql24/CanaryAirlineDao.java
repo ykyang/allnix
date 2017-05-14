@@ -87,4 +87,8 @@ public class CanaryAirlineDao {
       return null;
     }
   }
+  
+  public Aircraft readAircraft(AircraftFleet aircraftFleet) {
+    return readAircraft(aircraftFleet.getAircraftCode());
+  }
 }

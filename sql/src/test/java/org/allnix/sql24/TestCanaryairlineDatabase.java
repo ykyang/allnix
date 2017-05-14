@@ -214,6 +214,7 @@ public class TestCanaryairlineDatabase {
   public void testAircraftFleetDao() {
     int aircraftFleetId;
     AircraftFleet aircraftFleet;
+    Aircraft aircraft;
     
     aircraftFleetId = 224;
     aircraftFleet = dao.readAircraftFleet(aircraftFleetId);
@@ -222,5 +223,21 @@ public class TestCanaryairlineDatabase {
     Assert.assertEquals(aircraftFleet.getAircraftDesignator(), "UVPY-709");
     Assert.assertEquals(aircraftFleet.getStatus(), "ACTIVE");
     Assert.assertEquals(aircraftFleet.getHomeAirportId().intValue(), 1912);
+    
+    // > Get Aircraft from AircraftFleet
+    aircraft = dao.readAircraft(aircraftFleet);
+    Assert.assertNotNull(aircraft);
+    Assert.assertEquals(aircraft.getAircraftCode(), "735");
+    Assert.assertEquals(aircraft.getAircraftType(), "Boeing 737-500");
+    Assert.assertFalse(aircraft.getFreightOnly());
+    Assert.assertEquals(aircraft.getSeating(), Integer.valueOf(108));
+    
+    aircraftFleetId = 223;
+    aircraftFleet = dao.readAircraftFleet(aircraftFleetId);
+    Assert.assertNotNull(aircraftFleet);
+    Assert.assertEquals(aircraftFleet.getAircraftCode(), "L10");
+    Assert.assertEquals(aircraftFleet.getAircraftDesignator(), "XMDV-273");
+    Assert.assertEquals(aircraftFleet.getStatus(), "ACTIVE");
+    Assert.assertEquals(aircraftFleet.getHomeAirportId().intValue(), 3901);
   }
 }
