@@ -16,7 +16,6 @@
 package org.allnix.sql24;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -24,6 +23,7 @@ import java.util.Map;
 import javax.sql.DataSource;
 import org.allnix.sql.H2JdbcConfig;
 import org.allnix.sql24.model.Aircraft;
+import org.allnix.sql24.model.AircraftFleet;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -138,10 +138,11 @@ public class TestCanaryairlineDatabase {
     rowSet.last();
     Assert.assertEquals(rowSet.getRow(), 40);
 
-    Assert.assertEquals(metaData.getColumnClassName(1), String.class.getName());
-    Assert.assertEquals(metaData.getColumnClassName(2), String.class.getName());
-    Assert.assertEquals(metaData.getColumnClassName(3), BigDecimal.class.getName());
-    Assert.assertEquals(metaData.getColumnClassName(4), Integer.class.getName());
+    // > Database dependent???
+//    Assert.assertEquals(metaData.getColumnClassName(1), String.class.getName());
+//    Assert.assertEquals(metaData.getColumnClassName(2), String.class.getName());
+//    Assert.assertEquals(metaData.getColumnClassName(3), Boolean.class.getName());
+//    Assert.assertEquals(metaData.getColumnClassName(4), Integer.class.getName());
 
 //    int col;
 //    Object obj;
@@ -169,18 +170,24 @@ public class TestCanaryairlineDatabase {
     aircraftCode = "146";
     aircraft = dao.readAircraft(aircraftCode);
     Assert.assertNotNull(aircraft);
+    Assert.assertEquals(aircraft.getAircraftCode(), aircraftCode);
+    Assert.assertEquals(aircraft.getAircraftType(), "British Aerospace BAe146-100");
     Assert.assertFalse(aircraft.getFreightOnly());
     Assert.assertEquals(aircraft.getSeating(), Integer.valueOf(82));
 
     aircraftCode = "CCC";
     aircraft = dao.readAircraft(aircraftCode);
     Assert.assertNotNull(aircraft);
+    Assert.assertEquals(aircraft.getAircraftCode(), aircraftCode);
+    Assert.assertEquals(aircraft.getAircraftType(), "Boeing");
     Assert.assertFalse(aircraft.getFreightOnly());
     Assert.assertEquals(aircraft.getSeating(), null);
     
     aircraftCode = "WWF";
     aircraft = dao.readAircraft(aircraftCode);
     Assert.assertNotNull(aircraft);
+    Assert.assertEquals(aircraft.getAircraftCode(), aircraftCode);
+    Assert.assertEquals(aircraft.getAircraftType(), "Westwind Freighter");
     Assert.assertTrue(aircraft.getFreightOnly());
     Assert.assertEquals(aircraft.getSeating(), Integer.valueOf(0));
     
@@ -202,5 +209,18 @@ public class TestCanaryairlineDatabase {
       boolean ans = dao.deleteAircraft(aircraftCode);
       Assert.assertTrue(ans);
     }
+  }
+  @Test
+  public void testAircraftFleetDao() {
+    int aircraftFleetId;
+    AircraftFleet aircraftFleet;
+    
+    aircraftFleetId = 224;
+    aircraftFleet = dao.readAircraftFleet(aircraftFleetId);
+    Assert.assertNotNull(aircraftFleet);
+    Assert.assertEquals(aircraftFleet.getAircraftCode(), "735");
+    Assert.assertEquals(aircraftFleet.getAircraftDesignator(), "UVPY-709");
+    Assert.assertEquals(aircraftFleet.getStatus(), "ACTIVE");
+    Assert.assertEquals(aircraftFleet.getHomeAirportId().intValue(), 1912);
   }
 }

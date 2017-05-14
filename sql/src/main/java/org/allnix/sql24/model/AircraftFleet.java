@@ -19,11 +19,20 @@ package org.allnix.sql24.model;
  *
  * @author Yi-Kun Yang &gt;ykyang@gmail.com&lt;
  */
-public class Aircraft {
-  private String aircraftCode;
-  private String aircraftType;
-  private Boolean freightOnly;
-  private Integer seating;
+public class AircraftFleet {
+   private int aircraftFleetId;
+   private String aircraftCode;
+   private String aircraftDesignator;
+   private String status;
+   private Integer homeAirportId;
+
+  public int getAircraftFleetId() {
+    return aircraftFleetId;
+  }
+
+  public void setAircraftFleetId(int aircraftFleetId) {
+    this.aircraftFleetId = aircraftFleetId;
+  }
 
   public String getAircraftCode() {
     return aircraftCode;
@@ -33,27 +42,27 @@ public class Aircraft {
     this.aircraftCode = aircraftCode;
   }
 
-  public String getAircraftType() {
-    return aircraftType;
+  public String getAircraftDesignator() {
+    return aircraftDesignator;
   }
 
-  public void setAircraftType(String aircraftType) {
-    this.aircraftType = aircraftType;
+  public void setAircraftDesignator(String aircraftDesignator) {
+    this.aircraftDesignator = aircraftDesignator;
   }
 
-  public Boolean getFreightOnly() {
-    return freightOnly;
+  public String getStatus() {
+    return status;
   }
 
-  public void setFreightOnly(Boolean freightOnly) {
-    this.freightOnly = freightOnly;
+  public void setStatus(String status) {
+    this.status = status;
   }
 
-  public Integer getSeating() {
-    return seating;
+  public Integer getHomeAirportId() {
+    return homeAirportId;
   }
 
-  public void setSeating(Integer seating) {
-    this.seating = seating;
+  public void setHomeAirportId(Integer homeAirportId) {
+    this.homeAirportId = homeAirportId;
   }
 }

@@ -16,25 +16,35 @@
 package org.allnix.sql24;
 
 import org.allnix.sql24.model.Aircraft;
+import org.allnix.sql24.model.AircraftFleet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 
 /**
  *
  * @author Yi-Kun Yang &gt;ykyang@gmail.com&lt;
  */
 public class CanaryAirlineDao {
-
+  static private final Logger logger = LoggerFactory.getLogger(CanaryAirlineDao.class);
   private JdbcTemplate jdbcTemplate;
   private final String SCHEMA = "CANARYAIRLINES";
+  private final RowMapper<AircraftFleet> aircraftFleetMapper;
+
   public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
     this.jdbcTemplate = jdbcTemplate;
   }
 
+  public CanaryAirlineDao() {
+    aircraftFleetMapper = new BeanPropertyRowMapper(AircraftFleet.class);
+  }
+
   /**
-   * 
-   * @param aircraftCode Aircraft code 
+   *
+   * @param aircraftCode Aircraft code
    * @return Aircraft or null if aircraftCode does not exist
    */
   public Aircraft readAircraft(String aircraftCode) {
@@ -52,14 +62,29 @@ public class CanaryAirlineDao {
       return null;
     }
   }
-  
+
   public boolean deleteAircraft(String aircraftCode) {
     final String sql = String.format(
             "DELETE FROM %s.%s WHERE AIRCRAFTCODE = ?",
             SCHEMA, "AIRCRAFT");
-    
+
     int rowAffected = jdbcTemplate.update(sql, aircraftCode);
-    
+
     return rowAffected == 1;
+  }
+
+  public AircraftFleet readAircraftFleet(int aircraftFleetId) {
+    final String sql = String.format(
+            "SELECT * FROM %s.%s WHERE AIRCRAFTFLEETID = ?",
+            SCHEMA, "AIRCRAFTFLEET");
+
+    try {
+      AircraftFleet ans = jdbcTemplate.queryForObject(sql, aircraftFleetMapper,
+              aircraftFleetId);
+
+      return ans;
+    } catch (IncorrectResultSizeDataAccessException e) {
+      return null;
+    }
   }
 }
