@@ -91,4 +91,14 @@ public class CanaryAirlineDao {
   public Aircraft readAircraft(AircraftFleet aircraftFleet) {
     return readAircraft(aircraftFleet.getAircraftCode());
   }
+  
+  public boolean deleteAircraftFleet(int aircraftFleetId) {
+    final String sql = String.format(
+            "DELETE FROM %s.%s WHERE %s = ?",
+            SCHEMA, "AIRCRAFTFLEET", "AIRCRAFTFLEETID");
+
+    int rowAffected = jdbcTemplate.update(sql, aircraftFleetId);
+
+    return rowAffected == 1;
+  }
 }

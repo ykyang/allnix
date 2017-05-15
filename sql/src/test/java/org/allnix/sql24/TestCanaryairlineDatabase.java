@@ -208,6 +208,9 @@ public class TestCanaryairlineDatabase {
       aircraftCode = "WWF";
       boolean ans = dao.deleteAircraft(aircraftCode);
       Assert.assertTrue(ans);
+      // > Read deleted aircraft
+      aircraft = dao.readAircraft(aircraftCode);
+      Assert.assertNull(aircraft);
     }
   }
   @Test
@@ -216,6 +219,7 @@ public class TestCanaryairlineDatabase {
     AircraftFleet aircraftFleet;
     Aircraft aircraft;
     
+    // > Read
     aircraftFleetId = 224;
     aircraftFleet = dao.readAircraftFleet(aircraftFleetId);
     Assert.assertNotNull(aircraftFleet);
@@ -232,6 +236,7 @@ public class TestCanaryairlineDatabase {
     Assert.assertFalse(aircraft.getFreightOnly());
     Assert.assertEquals(aircraft.getSeating(), Integer.valueOf(108));
     
+    // > Read
     aircraftFleetId = 223;
     aircraftFleet = dao.readAircraftFleet(aircraftFleetId);
     Assert.assertNotNull(aircraftFleet);
@@ -239,5 +244,24 @@ public class TestCanaryairlineDatabase {
     Assert.assertEquals(aircraftFleet.getAircraftDesignator(), "XMDV-273");
     Assert.assertEquals(aircraftFleet.getStatus(), "ACTIVE");
     Assert.assertEquals(aircraftFleet.getHomeAirportId().intValue(), 3901);
+    
+    // > Delete a non-existent aircraft fleet
+    {
+      aircraftFleetId = 1231;
+      boolean ans = dao.deleteAircraftFleet(aircraftFleetId);
+      Assert.assertFalse(ans);
+    }
+    // > Delete a row
+    {
+      aircraftFleetId = 210;
+      aircraftFleet = dao.readAircraftFleet(aircraftFleetId);
+      Assert.assertNotNull(aircraftFleet);
+      
+      boolean ans = dao.deleteAircraftFleet(aircraftFleetId);
+      Assert.assertTrue(ans);
+      
+      aircraftFleet = dao.readAircraftFleet(aircraftFleetId);
+      Assert.assertNull(aircraftFleet);
+    }
   }
 }
