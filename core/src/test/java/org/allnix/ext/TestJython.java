@@ -16,6 +16,8 @@
 package org.allnix.ext;
 
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import org.python.core.PyInteger;
 import org.python.core.PyObject;
 import org.python.util.PythonInterpreter;
@@ -67,5 +69,23 @@ public class TestJython {
     
     obj = interp.get("c");
     Assert.assertEquals(obj.asDouble(), 43.0 + 34.0);
+  }
+  @Test
+  public void testMemory() {
+    StringWriter script = new StringWriter();
+    PrintWriter out = new PrintWriter(script, true);
+    Double porv_mult_al = 1.0;
+    out.println("import sys");
+    out.println("import math");
+    out.println(String.format("PORV_MULT_AL = %s", porv_mult_al));
+    out.println("PERMX_MULT_CT = PORV_MULT_AL * 2");
+    
+    PythonInterpreter interp;
+    interp = new PythonInterpreter();
+    logger.debug("Python Script:\n{}", script.toString());
+    interp.exec(script.toString());
+    PyObject obj;
+    obj = interp.get("PERMX_MULT_CT");
+    Assert.assertEquals(obj.asDouble(), porv_mult_al * 2);
   }
 }
