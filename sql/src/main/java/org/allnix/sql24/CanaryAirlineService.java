@@ -15,10 +15,27 @@
  */
 package org.allnix.sql24;
 
+import org.allnix.sql24.model.Aircraft;
+import org.springframework.transaction.annotation.Transactional;
+
 /**
  *
  * @author Yi-Kun Yang &gt;ykyang@gmail.com&lt;
  */
 public class CanaryAirlineService {
+  private AircraftDao aircraftDao;
+
+  public void setAircraftDao(AircraftDao aircraftDao) {
+    this.aircraftDao = aircraftDao;
+  }
   
+  @Transactional(readOnly = true)
+  public Aircraft findOneAircraft(String aircraftCode) {
+    return aircraftDao.findOne(aircraftCode);
+  }
+  
+  @Transactional(readOnly = false)
+  public void deleteAircraft(String aircraftCode) {
+    aircraftDao.deleteAircraft(aircraftCode);
+  }
 }

@@ -22,11 +22,15 @@ import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import javax.sql.DataSource;
+import org.allnix.sql.H2JdbcConfig;
+import static org.allnix.sql.H2JdbcConfig.DATABASE_URL;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -38,24 +42,30 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  */
 @Configuration
 @EnableTransactionManagement
-public class CanaryAirlineConfig {
-  static private Logger logger = LoggerFactory.getLogger(CanaryAirlineConfig.class);
+public class TestCanaryAirlineConfig {
+  static private Logger logger = LoggerFactory.getLogger(TestCanaryAirlineConfig.class);
+  static public final String DATABASE_URL = TestCanaryAirlineConfig.class.
+          getName() + ".database";
+
+  @Autowired
+  private ConfigurableEnvironment env;
   
   @Bean
   public DataSource dataSource() {
-    Path path = Paths.get("canary-airline-a694a2cf").toAbsolutePath();
-    try {
-      FileUtils.forceMkdir(path.toFile());
-    } catch (IOException e) {
-      throw new UncheckedIOException(e);
-    }
-    path = path.resolve("h2");
-    String url = String.format("jdbc:h2:%s", path.toString());
+    String url = env.getProperty(DATABASE_URL);
+    logger.info("Canary Airline URL: {}", url);
+//    Path path = Paths.get("canary-airline-19b6e409").toAbsolutePath();
+//    try {
+//      FileUtils.forceMkdir(path.toFile());
+//    } catch (IOException e) {
+//      throw new UncheckedIOException(e);
+//    }
+//    path = path.resolve("h2");
+//    String url = String.format("jdbc:h2:%s", path.toString());
 
     HikariConfig config = new HikariConfig();
     config.setJdbcUrl(url);
     config.setMaximumPoolSize(10);
-    logger.debug("AutoCommit: {}", config.isAutoCommit());
     config.setAutoCommit(false);
 //                config.addDataSourceProperty("cachePrepStmts", "true");
 //                config.addDataSourceProperty("prepStmtCacheSize", "250");
@@ -64,17 +74,25 @@ public class CanaryAirlineConfig {
 
     return bean;
   }
-  
-  @Bean
-  public AircraftDao aircraft() {
-    AircraftDao bean = new AircraftDao();
-    bean.setJdbcTemplate(new JdbcTemplate(dataSource()));
-    
-    return bean;
-  }
-  
+
   @Bean
   public PlatformTransactionManager transactionManager() throws IOException {
     return new DataSourceTransactionManager(dataSource());
+  }
+
+  @Bean
+  public AircraftDao aircraftDao() {
+    AircraftDao bean = new AircraftDao();
+    bean.setJdbcTemplate(new JdbcTemplate(dataSource()));
+
+    return bean;
+  }
+
+  @Bean
+  public CanaryAirlineService service() {
+    CanaryAirlineService bean = new CanaryAirlineService();
+    bean.setAircraftDao(aircraftDao());
+
+    return bean;
   }
 }
