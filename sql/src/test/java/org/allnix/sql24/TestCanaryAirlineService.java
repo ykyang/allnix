@@ -18,6 +18,7 @@ package org.allnix.sql24;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -50,8 +51,10 @@ public class TestCanaryAirlineService {
           TestCanaryAirlineService.class);
 
   private Path dbFolder;
-  private String dbName;
-  private Path dbFile;
+  private String dbName; // without .mv.db extension
+  private String h2DbName; // == dbName.mv.db
+  private Path dbFile; // without .mv.db extension
+  private Path h2DbFile; // == dbFile.mv.db
   private String url;
 
   private AnnotationConfigApplicationContext ctx;
@@ -60,23 +63,38 @@ public class TestCanaryAirlineService {
   @BeforeClass
   void beforeClass() throws IOException {
     dbName = "canaryairline";
+    h2DbName = dbName + ".mv.db";
     dbFolder = Paths.get("h2-3e254c70").toAbsolutePath();
+    
+    // > Clean up database folder
+    if ( dbFolder.toFile().exists()) {
+      FileUtils.deleteQuietly(dbFolder.toFile());
+    }
     FileUtils.forceMkdir(dbFolder.toFile());
+
     dbFile = dbFolder.resolve(dbName);
+    h2DbFile = dbFolder.resolve(h2DbName);
+    
+    // > Copy database
+    InputStream in = this.getClass().getClassLoader()
+        .getResourceAsStream(h2DbName);
+    FileUtils.copyToFile(in, h2DbFile.toFile());
+    
     // > Use H2 database
     url = String.format("jdbc:h2:%s", dbFile.toString());
 
     // > Populate database
-    HikariDataSource dataSource = dataSource();
-    ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-    populator.addScripts(
-            new FileSystemResource("/home/ykyang/work/h2/h2.schema.sql"),
-            new FileSystemResource("/home/ykyang/work/h2/h2.data.sql")
-    );
-    populator.execute(dataSource);
-    dataSource.close();
+//    HikariDataSource dataSource = dataSource();
+//    ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+//    populator.addScripts(
+//            new FileSystemResource("/home/ykyang/work/h2/h2.schema.sql"),
+//            new FileSystemResource("/home/ykyang/work/h2/h2.data.sql")
+//    );
+//    populator.execute(dataSource);
+//    dataSource.close();
     
     // > Set H2 database path
+    // > through ConfigurableEnvironment
     ConfigurableEnvironment environment = new StandardEnvironment();
     MutablePropertySources propertySources = environment.getPropertySources();
     Map<String,Object> myMap = new HashMap<>();
@@ -92,22 +110,22 @@ public class TestCanaryAirlineService {
     service = ctx.getBean(CanaryAirlineService.class);
   }
   
-  public HikariDataSource dataSource() {
-    logger.info("Canary Airline URL: {}", url);
-
-    HikariConfig config = new HikariConfig();
-    config.setJdbcUrl(url);
-    config.setMaximumPoolSize(1);
-    config.setAutoCommit(true);
-    HikariDataSource bean = new HikariDataSource(config);
-    
-    return bean;
-  }
+//  public HikariDataSource dataSource() {
+//    logger.info("Canary Airline URL: {}", url);
+//
+//    HikariConfig config = new HikariConfig();
+//    config.setJdbcUrl(url);
+//    config.setMaximumPoolSize(1);
+//    config.setAutoCommit(true);
+//    HikariDataSource bean = new HikariDataSource(config);
+//    
+//    return bean;
+//  }
   
   @AfterClass
   void afterClass() {
     ctx.close();
-    FileUtils.deleteQuietly(dbFolder.toFile());
+//    FileUtils.deleteQuietly(dbFolder.toFile());
   }
 
   @Test
@@ -122,5 +140,43 @@ public class TestCanaryAirlineService {
     Assert.assertEquals(aircraft.getAircraftType(), "British Aerospace BAe146-100");
     Assert.assertFalse(aircraft.getFreightOnly());
     Assert.assertEquals(aircraft.getSeating(), Integer.valueOf(82));
+    
+    aircraftCode = "CCC";
+    aircraft = service.findOneAircraft(aircraftCode);
+    Assert.assertNotNull(aircraft);
+    Assert.assertEquals(aircraft.getAircraftCode(), aircraftCode);
+    Assert.assertEquals(aircraft.getAircraftType(), "Boeing");
+    Assert.assertFalse(aircraft.getFreightOnly());
+    Assert.assertEquals(aircraft.getSeating(), null);
+    
+    aircraftCode = "WWF";
+    aircraft = service.findOneAircraft(aircraftCode);
+    Assert.assertNotNull(aircraft);
+    Assert.assertEquals(aircraft.getAircraftCode(), aircraftCode);
+    Assert.assertEquals(aircraft.getAircraftType(), "Westwind Freighter");
+    Assert.assertTrue(aircraft.getFreightOnly());
+    Assert.assertEquals(aircraft.getSeating(), Integer.valueOf(0));
+    
+    // > No such aircraft
+    aircraftCode = "ZZZ";
+    aircraft = service.findOneAircraft(aircraftCode);
+    Assert.assertNull(aircraft);
+    
+    // > Delete non-existent aircraft
+    {
+      aircraftCode = "ZZZ";
+      service.deleteAircraft(aircraftCode);
+//      Assert.assertFalse(ans);
+    }
+    
+    // > Delete a row
+    {
+      aircraftCode = "WWF";
+      service.deleteAircraft(aircraftCode);
+//      Assert.assertTrue(ans);
+      // > Read deleted aircraft
+      aircraft = service.findOneAircraft(aircraftCode);
+      Assert.assertNull(aircraft);
+    }
   }
 }
