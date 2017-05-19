@@ -30,6 +30,16 @@ public class CanaryAirlineService {
   }
   
   @Transactional(readOnly = true)
+  public long countAircraft() {
+    return aircraftDao.count();
+  }
+  
+  @Transactional(readOnly = true)
+  public Iterable<Aircraft> findAllAircraft() {
+    return aircraftDao.findAll();
+  }
+  
+  @Transactional(readOnly = true)
   public Aircraft findOneAircraft(String aircraftCode) {
     return aircraftDao.findOne(aircraftCode);
   }

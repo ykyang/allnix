@@ -133,6 +133,15 @@ public class TestCanaryAirlineService {
       String aircraftCode;
     Aircraft aircraft;
 
+    // > Entry not null
+    Iterable<Aircraft> itb = service.findAllAircraft();
+    itb.forEach((i)->{
+      Assert.assertNotNull(i);
+    });
+    
+    // > Test row count
+    Assert.assertEquals(service.countAircraft(), 40);
+    
     aircraftCode = "146";
     aircraft = service.findOneAircraft(aircraftCode);
     Assert.assertNotNull(aircraft);
