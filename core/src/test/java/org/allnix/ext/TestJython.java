@@ -87,8 +87,8 @@ public class TestJython {
     Double porv_mult_al = 1.0;
     out.println("import sys");
     out.println("import math");
-    out.println(String.format("PORV_MULT_AL = %s", porv_mult_al));
-    out.println("PERMX_MULT_CT = PORV_MULT_AL * 2");
+    out.printf("PORV_MULT_AL = %s\n", porv_mult_al);
+    out.printf("PERMX_MULT_CT = PORV_MULT_AL * 2\n");
     
     PythonInterpreter interp;
     interp = new PythonInterpreter();
