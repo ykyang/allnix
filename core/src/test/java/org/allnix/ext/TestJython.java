@@ -27,13 +27,17 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- *
+ * Learn how to use Jython
+ * 
  * @author Yi-Kun Yang &gt;ykyang@gmail.com&lt;
  */
 public class TestJython {
 
   static private final Logger logger = LoggerFactory.getLogger(TestJython.class);
 
+  /**
+   * Construct a simple Python script line by line
+   */
   @Test
   public void test() {
     PythonInterpreter interp;
@@ -49,6 +53,9 @@ public class TestJython {
     Assert.assertEquals(obj.asInt(),42);
   }
   
+  /**
+   * Test execute a Python script from file
+   */
   @Test
   public void testFile() {
     InputStream in = this.getClass().getClassLoader()
@@ -70,6 +77,9 @@ public class TestJython {
     obj = interp.get("c");
     Assert.assertEquals(obj.asDouble(), 43.0 + 34.0);
   }
+  /**
+   * Test running a Python script from memory
+   */
   @Test
   public void testMemory() {
     StringWriter script = new StringWriter();
@@ -77,8 +87,8 @@ public class TestJython {
     Double porv_mult_al = 1.0;
     out.println("import sys");
     out.println("import math");
-    out.println(String.format("PORV_MULT_AL = %s", porv_mult_al));
-    out.println("PERMX_MULT_CT = PORV_MULT_AL * 2");
+    out.printf("PORV_MULT_AL = %s\n", porv_mult_al);
+    out.printf("PERMX_MULT_CT = PORV_MULT_AL * 2\n");
     
     PythonInterpreter interp;
     interp = new PythonInterpreter();
