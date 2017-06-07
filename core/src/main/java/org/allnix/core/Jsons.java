@@ -16,6 +16,8 @@
 package org.allnix.core;
 
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Retrieve db.key[0].key[1]...key[n-1]
@@ -25,15 +27,25 @@ import java.util.Map;
  * @author Yi-Kun Yang &gt;ykyang@gmail.com&lt;
  */
 public class Jsons {
-
+  static private final Logger logger = LoggerFactory.getLogger(Jsons.class);
+  
   static public <T> T get(Map<String, Object> db, String... keys) {
+    int length = keys.length;
+    
+    if (length == 0) {
+      return null;
+    }
+    
     try {
       Map<String, Object> obj = db;
-      int length = keys.length;
+      
       for (int i = 0; i < length - 1; i++) {
         obj = (Map<String, Object>) obj.get(keys[i]);
       }
-
+      
+      // > Note: a ClassCastException won't be thrown here
+      // > I think it is a Java thing that the casting is done
+      // > outside of this method
       return (T) obj.get(keys[length - 1]); 
     } catch (NullPointerException | ClassCastException e) {
       return null;

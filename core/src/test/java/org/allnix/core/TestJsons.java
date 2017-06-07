@@ -66,6 +66,13 @@ public class TestJsons {
   @Test
   public void testGet() {
     {
+      // > No keys
+      String ans = Jsons.get(db);
+      Assert.assertNull(ans);
+    }
+    
+    {
+      // > Get a string
       String ans = Jsons.get(db, "a", "b", "c");
       Assert.assertEquals(ans, theString);
 
@@ -74,18 +81,20 @@ public class TestJsons {
       Assert.assertNull(ans);
     }
     {
+      // > Get a double
       Double ans = Jsons.get(db, "a", "b", "d");
       Assert.assertEquals(ans, theDouble);
-
       
       // > type mismatch
-      try {
+      try { 
         ans = Jsons.get(db, "a", "b", "c");
         Assert.fail();
       } catch (ClassCastException e) {
+        // > Passed
       }
     }
     {
+      // > Convert Double to double
       double ans = Jsons.get(db, "a", "b", "d");
       Assert.assertEquals(ans, theDouble);
 
@@ -94,6 +103,7 @@ public class TestJsons {
         ans = Jsons.get(db, "a", "b", "c");
         Assert.fail();
       } catch (ClassCastException e) {
+        // > Passed
       }
     }
   }
