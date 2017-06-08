@@ -51,4 +51,80 @@ public class Jsons {
       return null;
     }
   }
+  /**
+   * Merge data into template then return the merged map
+   * <p>
+   * The template will be modified and the data will be used by the returning
+   * map.  If this is unacceptable then the caller should make a deep copy
+   * before make this call.
+   * <b>User data:</b>
+   * <pre>
+   * {
+   *   "a":"AA",
+   *   "c":{
+   *     "e":"EE"
+   *   },
+   *   "i":["l", "m"],
+   *   "w":"This will be in the merged result" 
+   * }
+   * </pre>
+   * <p>
+   * <b>Template:</b>
+   * <pre>
+   * {
+   *   "a":"A", 
+   *   "b":"B",
+   *   "c":{
+   *     "e":"E",
+   *     "f":{"g":"G"},
+   *   },
+   *   "d":{"h":"H"},
+   *   "i":["j", "k"]
+   * }
+   * </pre>
+   * <p>
+   * <b>Merged result:</b>
+   * <pre>
+   * {
+   *   "a":"AA", 
+   *   "b":"B",
+   *   "c":{
+   *     "e":"EE",
+   *     "f":{"g":"G"},
+   *   },
+   *   "d":{"h":"H"},
+   *   "i":["l", "m"]
+   * }
+   * </pre> Notice the list "i" is in template is completely replaced by the one
+   * from user input.
+   *
+   *
+   * @param data User input JSON
+   * @param template Template JSON, merged with user input after the call
+   */
+  static public void merge(Map<String, Object> data,
+                           Map<String, Object> template) {
+
+    Map<String, Object> result = template;
+
+    for (Map.Entry<String, Object> entry : data.entrySet()) {
+      String dataKey = entry.getKey();
+      Object dataValue = entry.getValue();
+
+      if (dataValue instanceof Map) {
+        Map dataMap = (Map) dataValue;
+        Object templateObj = template.get(dataKey);
+        if (templateObj instanceof Map) {
+          Map templateMap = (Map) templateObj;
+
+          // >Recursive
+          merge(dataMap, templateMap);
+        } else {
+          throw new RuntimeException("Expect Map in template with key: " + dataKey);
+        }
+      } else {
+        result.put(dataKey, dataValue);
+      }
+    }
+  }
 }
