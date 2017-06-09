@@ -15,6 +15,7 @@
  */
 package org.allnix.core;
 
+import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,5 +51,33 @@ public class Jsons {
     } catch (NullPointerException | ClassCastException e) {
       return null;
     }
+  }
+  
+  /**
+   * Set a value into hierarchy of maps
+   * 
+   * Maps along the path specified by the keys does not need to exist
+   * before this call.  Missing maps will be created with HashMap<String,Object>
+   * @param db
+   * @param value
+   * @param keys 
+   */
+  static public void set(Map<String,Object> db, Object value, String... keys) {
+    if (keys.length == 0) {
+      return;
+    }
+    
+    Map<String,Object> obj = db;
+    for ( int i = 0; i < keys.length-1; i++) {
+      Map<String,Object> o = (Map<String,Object>) obj.get(keys[i]);
+      if ( o == null ) {
+        o = new HashMap<String,Object>();
+        obj.put(keys[i], o);
+      }
+      obj = o;
+    }
+    
+    obj.put(keys[keys.length-1], value);
+    
   }
 }

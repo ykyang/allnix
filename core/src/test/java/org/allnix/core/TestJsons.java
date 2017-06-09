@@ -117,4 +117,27 @@ public class TestJsons {
     Assert.assertEquals(ans, theString);
   }
 
+  /**
+   * <pre>
+   * {
+   *   "abc": {
+   *     "def":{
+   *       "xyz": 3.14
+   *     }
+   *   }
+   * }
+   * </pre>
+   */
+  @Test
+  public void testSet() {
+    
+    Map<String,Object> json = new HashMap<>();
+    
+    
+    
+    Jsons.set(json, 3.14, "abc", "def", "xyz");
+
+    Double ans = Jsons.get(json, "abc", "def", "xyz");
+    Assert.assertEquals(ans, 3.14);
+  }
 }
