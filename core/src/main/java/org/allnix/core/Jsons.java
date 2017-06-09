@@ -31,6 +31,24 @@ public class Jsons {
 
   static private final Logger logger = LoggerFactory.getLogger(Jsons.class);
 
+  /**
+   * Convenient method to assign object to a map object
+   * 
+   * If the keys are "a", "b", "c" then
+   * <pre>
+   * {
+   *   "a":{
+   *     "b":{"C":object}
+   *   }
+   * }
+   * </pre>
+   * 
+   * Any missing maps along the path will be created using HashMap.
+   * 
+   * @param json The map object
+   * @param value The object to be assigned
+   * @param keys key sequence to the object
+   */
   static void set(Map<String, Object> json, Object value, String... keys) {
     int length = keys.length;
 
@@ -51,7 +69,26 @@ public class Jsons {
     obj.put(keys[length-1], value);
   }
 
-  static public <T> T get(Map<String, Object> db, String... keys) {
+  /**
+   * Convenient method to retrieve an object from map
+   * 
+   * If the keys are "a", "b", "c" then
+   * <pre>
+   * {
+   *   "a":{
+   *     "b":{"C":object}
+   *   }
+   * }
+   * </pre>
+   * 
+   * A ClassCastException is thrown if assigned to wrong type.
+   * 
+   * @param <T> return type, it is caller's responsibility to make sure type match
+   * @param json
+   * @param keys key sequence to the object
+   * @return the object or null if the path does not exist
+   */
+  static public <T> T get(Map<String, Object> json, String... keys) {
     int length = keys.length;
 
     if (length == 0) {
@@ -59,7 +96,7 @@ public class Jsons {
     }
 
     try {
-      Map<String, Object> obj = db;
+      Map<String, Object> obj = json;
 
       for (int i = 0; i < length - 1; i++) {
         obj = (Map<String, Object>) obj.get(keys[i]);
