@@ -15,9 +15,11 @@
  */
 package org.allnix.core;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang3.SerializationUtils;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -31,6 +33,8 @@ public class TestJsons {
   private String theString;
   private Double theDouble;
   private Map<String, Object> db;
+  private HashMap<String, Object> template;
+  private HashMap<String, Object> data;
 
   /**
    * Construct
@@ -52,17 +56,95 @@ public class TestJsons {
   public void beforeClass() {
     theString = "This is a string";
     theDouble = 13.17;
-    Map<String, Object> a, b;
-    db = Collections.synchronizedMap(new HashMap<>());
-    a = Collections.synchronizedMap(new HashMap<>());
-    b = Collections.synchronizedMap(new HashMap<>());
+//    Map<String, Object> a, b;
+    db = new HashMap<>();
+//    a = Collections.synchronizedMap(new HashMap<>());
+//    b = Collections.synchronizedMap(new HashMap<>());
+//
+//    db.put("a", a);
+//    a.put("b", b);
+//    b.put("c", theString);
+//    b.put("d", theDouble);
 
-    db.put("a", a);
-    a.put("b", b);
-    b.put("c", theString);
-    b.put("d", theDouble);
+    Jsons.set(db, theString, "a", "b", "c");
+    Jsons.set(db, theDouble, "a", "b", "d");
+
+    // > 
+    template = new HashMap<>();
+    data = new HashMap<>();
+    
+    Jsons.set(template, "A", "a");
+    Jsons.set(template, "B", "b");
+    Jsons.set(template, "E", "c", "e");
+    Jsons.set(template, "G", "c", "f", "g");
+    Jsons.set(template, "H", "d", "h");
+    Jsons.set(template, Arrays.asList("j", "k"), "i");
+    
+    Jsons.set(data, "AA", "a");
+    Jsons.set(data, "EE", "c", "e");
+    Jsons.set(data, Arrays.asList("l", "m"), "i");
+    Jsons.set(data, "extra", "w");
   }
 
+  @Test
+  public void testData() {
+    Map<String,Object> t = SerializationUtils.clone(template);
+    Map<String,Object> d = SerializationUtils.clone(data);
+    
+    { // > Test template
+      String ans = Jsons.get(t, "c", "f", "g");
+      Assert.assertEquals(ans, "G");
+      
+      ans = Jsons.get(t, "d", "h");
+      Assert.assertEquals(ans, "H");
+    }
+    
+    { // > Test template
+      List<String> ans = Jsons.get(t, "i");
+      Assert.assertEquals(ans.get(0), "j");
+      Assert.assertEquals(ans.get(1), "k");
+    }
+    
+    { // > Test data
+      String ans = Jsons.get(d, "c", "e");
+      Assert.assertEquals(ans, "EE");
+    }
+    { // > Test data
+      List<String> ans = Jsons.get(d, "i");
+      Assert.assertEquals(ans.get(0), "l");
+      Assert.assertEquals(ans.get(1), "m");
+    }
+  }
+  
+  @Test
+  public void testMerge() {
+    Map<String,Object> t = SerializationUtils.clone(template);
+    Map<String,Object> d = SerializationUtils.clone(data);
+    
+    Jsons.merge(d, t);
+
+    // > t should have data from d
+    
+    { // > Test data
+      String ans = Jsons.get(t, "c", "e");
+      Assert.assertEquals(ans, "EE");
+      
+      ans = Jsons.get(t, "c", "f", "g");
+      Assert.assertEquals(ans, "G");
+      
+      ans = Jsons.get(t, "d", "h");
+      Assert.assertEquals(ans, "H");
+      
+      ans = Jsons.get(t, "w");
+      Assert.assertEquals(ans, "extra");
+    }
+    
+    { // > Test data
+      List<String> ans = Jsons.get(t, "i");
+      Assert.assertEquals(ans.get(0), "l");
+      Assert.assertEquals(ans.get(1), "m");
+    }
+  }
   @Test
   public void testGet() {
     {
@@ -70,7 +152,7 @@ public class TestJsons {
       String ans = Jsons.get(db);
       Assert.assertNull(ans);
     }
-    
+
     {
       // > Get a string
       String ans = Jsons.get(db, "a", "b", "c");
@@ -84,9 +166,9 @@ public class TestJsons {
       // > Get a double
       Double ans = Jsons.get(db, "a", "b", "d");
       Assert.assertEquals(ans, theDouble);
-      
+
       // > type mismatch
-      try { 
+      try {
         ans = Jsons.get(db, "a", "b", "c");
         Assert.fail();
       } catch (ClassCastException e) {
