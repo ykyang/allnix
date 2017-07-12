@@ -15,6 +15,7 @@
  */
 package com.netbeansrcp.taskmodel;
 
+import com.netbeansrcp.taskidgenerator.api.TaskIdGenerator;
 import com.netbeansrcp.taskmodel.api.Task;
 import com.netbeansrcp.taskmodel.api.Task.Priority;
 import java.beans.PropertyChangeListener;
@@ -24,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import org.openide.util.Lookup;
 
 /**
  *
@@ -46,7 +48,9 @@ public class TaskImpl implements Task {
   }
 
   public TaskImpl(String name, String parentId) {
-    this.id = "" + System.currentTimeMillis();
+    TaskIdGenerator idGen = Lookup.getDefault().lookup(TaskIdGenerator.class);
+    
+    this.id = idGen.generateId();
     this.name = name;
     this.parentId = parentId;
     this.due = new Date();
