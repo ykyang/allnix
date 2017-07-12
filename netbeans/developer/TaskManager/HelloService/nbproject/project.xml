@@ -6,7 +6,9 @@
             <code-name-base>com.netbeansrcp.helloservice</code-name-base>
             <suite-component/>
             <module-dependencies/>
-            <public-packages/>
+            <public-packages>
+                <package>com.netbeansrcp.helloservice</package>
+            </public-packages>
         </data>
     </configuration>
 </project>
