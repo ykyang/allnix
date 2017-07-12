@@ -13,6 +13,7 @@ import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
+import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
 
 @ActionID(
@@ -40,6 +41,11 @@ public final class MyFirstAction implements ActionListener {
     
     io.getOut().println("Standand output");
     io.getErr().println("Error output");
+    
+    JobService jobService = Lookup.getDefault().lookup(JobService.class);
+    
+    jobService.submit(io.getOut());
+    jobService.submit(io.getErr());
     
     io.getOut().close();
     io.getErr().close();
