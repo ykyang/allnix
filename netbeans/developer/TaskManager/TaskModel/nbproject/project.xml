@@ -6,7 +6,9 @@
             <code-name-base>com.netbeansrcp.taskmodel</code-name-base>
             <suite-component/>
             <module-dependencies/>
-            <public-packages/>
+            <public-packages>
+                <package>com.netbeansrcp.taskmodel.api</package>
+            </public-packages>
         </data>
     </configuration>
 </project>

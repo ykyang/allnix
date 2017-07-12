@@ -15,17 +15,94 @@
  */
 package com.netbeansrcp.taskeditor;
 
+import com.netbeansrcp.taskmodel.TaskImpl;
+import com.netbeansrcp.taskmodel.api.Task;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.util.Date;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+
 /**
  *
  * @author Yi-Kun Yang &lt;ykyang at gmail.com&gt;
  */
 public class TaskEditorPanel extends javax.swing.JPanel {
 
+  private Task task = new TaskImpl();
+
   /**
    * Creates new form TaskEditorPanel
    */
   public TaskEditorPanel() {
     initComponents();
+    updateForm();
+  }
+
+  private DocumentListener docListener = new DocumentListener() {
+    @Override
+    public void insertUpdate(DocumentEvent evt) {
+      TaskEditorPanel.this.updateTask();
+    }
+
+    @Override
+    public void removeUpdate(DocumentEvent evt) {
+      TaskEditorPanel.this.updateTask();
+    }
+
+    @Override
+    public void changedUpdate(DocumentEvent evt) {
+      TaskEditorPanel.this.updateTask();
+    }
+  };
+
+  private void updateTask() {
+    task.setName(nameTextField.getText());
+
+    Date due = null;
+    try {
+      due = DateFormat.getDateInstance().parse(dateTextField.getText());
+    } catch (ParseException e) {
+      due = new Date();
+    }
+    task.setDue(due);
+
+    // > Set value only when slider is not moving
+    if (!prioritySlider.getValueIsAdjusting()) {
+      switch (prioritySlider.getValue()) {
+        case 0:
+          task.setPrio(Task.Priority.LOW);
+          break;
+        case 1:
+          task.setPrio(Task.Priority.MEDIUM);
+          break;
+        case 2:
+          task.setPrio(Task.Priority.HIGH);
+          break;
+      }
+    }
+
+    task.setProgr(progressSlider.getValue());
+    task.setDescr(descriptionTextArea.getText());
+  }
+
+  private void updateForm() {
+    idTextField.setText(task.getId());
+    parentIdTextField.setText(task.getParentId());
+    nameTextField.setText(task.getName());
+    dateTextField.setText(DateFormat.getDateInstance().format(task.getDue()));
+
+    descriptionTextArea.setText(task.getDescr());
+
+    if (Task.Priority.LOW.equals(task.getPrio())) {
+      prioritySlider.setValue(0);
+    } else if (Task.Priority.MEDIUM.equals(task.getPrio())) {
+      prioritySlider.setValue(1);
+    } else {
+      prioritySlider.setValue(2);
+    }
+
+    progressSlider.setValue(task.getProgr());
   }
 
   /**
@@ -45,14 +122,14 @@ public class TaskEditorPanel extends javax.swing.JPanel {
     jLabel5 = new javax.swing.JLabel();
     jLabel6 = new javax.swing.JLabel();
     jLabel7 = new javax.swing.JLabel();
-    jTextField1 = new javax.swing.JTextField();
-    jTextField2 = new javax.swing.JTextField();
-    jTextField3 = new javax.swing.JTextField();
-    jTextField4 = new javax.swing.JTextField();
-    jSlider1 = new javax.swing.JSlider();
-    jSlider2 = new javax.swing.JSlider();
+    idTextField = new javax.swing.JTextField();
+    parentIdTextField = new javax.swing.JTextField();
+    nameTextField = new javax.swing.JTextField();
+    dateTextField = new javax.swing.JTextField();
+    prioritySlider = new javax.swing.JSlider();
+    progressSlider = new javax.swing.JSlider();
     jScrollPane1 = new javax.swing.JScrollPane();
-    jTextArea1 = new javax.swing.JTextArea();
+    descriptionTextArea = new javax.swing.JTextArea();
 
     org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(TaskEditorPanel.class, "TaskEditorPanel.jLabel1.text")); // NOI18N
 
@@ -68,39 +145,50 @@ public class TaskEditorPanel extends javax.swing.JPanel {
 
     org.openide.awt.Mnemonics.setLocalizedText(jLabel7, org.openide.util.NbBundle.getMessage(TaskEditorPanel.class, "TaskEditorPanel.jLabel7.text")); // NOI18N
 
-    jTextField1.setEditable(false);
-    jTextField1.setText(org.openide.util.NbBundle.getMessage(TaskEditorPanel.class, "TaskEditorPanel.jTextField1.text")); // NOI18N
-    jTextField1.setEnabled(false);
+    idTextField.setEditable(false);
+    idTextField.setText(org.openide.util.NbBundle.getMessage(TaskEditorPanel.class, "TaskEditorPanel.idTextField.text")); // NOI18N
+    idTextField.setEnabled(false);
 
-    jTextField2.setEditable(false);
-    jTextField2.setText(org.openide.util.NbBundle.getMessage(TaskEditorPanel.class, "TaskEditorPanel.jTextField2.text")); // NOI18N
-    jTextField2.setEnabled(false);
+    parentIdTextField.setEditable(false);
+    parentIdTextField.setText(org.openide.util.NbBundle.getMessage(TaskEditorPanel.class, "TaskEditorPanel.parentIdTextField.text")); // NOI18N
+    parentIdTextField.setEnabled(false);
 
-    jTextField3.setText(org.openide.util.NbBundle.getMessage(TaskEditorPanel.class, "TaskEditorPanel.jTextField3.text")); // NOI18N
+    nameTextField.setText(org.openide.util.NbBundle.getMessage(TaskEditorPanel.class, "TaskEditorPanel.nameTextField.text")); // NOI18N
 
-    jTextField4.setText(org.openide.util.NbBundle.getMessage(TaskEditorPanel.class, "TaskEditorPanel.jTextField4.text")); // NOI18N
-    jTextField4.addActionListener(new java.awt.event.ActionListener() {
+    dateTextField.setText(org.openide.util.NbBundle.getMessage(TaskEditorPanel.class, "TaskEditorPanel.dateTextField.text")); // NOI18N
+    dateTextField.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
-        jTextField4ActionPerformed(evt);
+        dateTextFieldActionPerformed(evt);
       }
     });
 
-    jSlider1.setMajorTickSpacing(1);
-    jSlider1.setMaximum(2);
-    jSlider1.setPaintLabels(true);
-    jSlider1.setPaintTicks(true);
-    jSlider1.setSnapToTicks(true);
-    jSlider1.setValue(0);
+    prioritySlider.setMajorTickSpacing(1);
+    prioritySlider.setMaximum(2);
+    prioritySlider.setPaintLabels(true);
+    prioritySlider.setPaintTicks(true);
+    prioritySlider.setSnapToTicks(true);
+    prioritySlider.setValue(0);
+    prioritySlider.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    prioritySlider.addChangeListener(new javax.swing.event.ChangeListener() {
+      public void stateChanged(javax.swing.event.ChangeEvent evt) {
+        prioritySliderStateChanged(evt);
+      }
+    });
 
-    jSlider2.setMajorTickSpacing(25);
-    jSlider2.setMinorTickSpacing(5);
-    jSlider2.setPaintLabels(true);
-    jSlider2.setPaintTicks(true);
-    jSlider2.setSnapToTicks(true);
+    progressSlider.setMajorTickSpacing(25);
+    progressSlider.setMinorTickSpacing(5);
+    progressSlider.setPaintLabels(true);
+    progressSlider.setPaintTicks(true);
+    progressSlider.setSnapToTicks(true);
+    progressSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+      public void stateChanged(javax.swing.event.ChangeEvent evt) {
+        progressSliderStateChanged(evt);
+      }
+    });
 
-    jTextArea1.setColumns(20);
-    jTextArea1.setRows(5);
-    jScrollPane1.setViewportView(jTextArea1);
+    descriptionTextArea.setColumns(20);
+    descriptionTextArea.setRows(5);
+    jScrollPane1.setViewportView(descriptionTextArea);
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
     this.setLayout(layout);
@@ -119,15 +207,15 @@ public class TaskEditorPanel extends javax.swing.JPanel {
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
           .addComponent(jScrollPane1)
-          .addComponent(jTextField1)
+          .addComponent(idTextField)
           .addGroup(layout.createSequentialGroup()
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-              .addComponent(jSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-              .addComponent(jSlider2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+              .addComponent(prioritySlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+              .addComponent(progressSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGap(0, 0, Short.MAX_VALUE))
-          .addComponent(jTextField2)
-          .addComponent(jTextField3)
-          .addComponent(jTextField4))
+          .addComponent(parentIdTextField)
+          .addComponent(nameTextField)
+          .addComponent(dateTextField))
         .addGap(78, 78, 78))
     );
     layout.setVerticalGroup(
@@ -136,41 +224,54 @@ public class TaskEditorPanel extends javax.swing.JPanel {
         .addContainerGap()
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(jLabel1)
-          .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+          .addComponent(idTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(jLabel2)
-          .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+          .addComponent(parentIdTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(jLabel3)
-          .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+          .addComponent(nameTextField))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(jLabel4)
-          .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+          .addComponent(dateTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
           .addComponent(jLabel5)
-          .addComponent(jSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+          .addComponent(prioritySlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
           .addComponent(jLabel6)
-          .addComponent(jSlider2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+          .addComponent(progressSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
           .addComponent(jLabel7)
           .addComponent(jScrollPane1))
         .addGap(30, 30, 30))
     );
+
+    nameTextField.getAccessibleContext().setAccessibleName(org.openide.util.NbBundle.getMessage(TaskEditorPanel.class, "TaskEditorPanel.nameTextField.AccessibleContext.accessibleName")); // NOI18N
   }// </editor-fold>//GEN-END:initComponents
 
-  private void jTextField4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField4ActionPerformed
+  private void dateTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dateTextFieldActionPerformed
     // TODO add your handling code here:
-  }//GEN-LAST:event_jTextField4ActionPerformed
+  }//GEN-LAST:event_dateTextFieldActionPerformed
+
+  private void prioritySliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_prioritySliderStateChanged
+    updateTask();
+  }//GEN-LAST:event_prioritySliderStateChanged
+
+  private void progressSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_progressSliderStateChanged
+    updateTask();
+  }//GEN-LAST:event_progressSliderStateChanged
 
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
+  private javax.swing.JTextField dateTextField;
+  private javax.swing.JTextArea descriptionTextArea;
+  private javax.swing.JTextField idTextField;
   private javax.swing.JLabel jLabel1;
   private javax.swing.JLabel jLabel2;
   private javax.swing.JLabel jLabel3;
@@ -179,12 +280,9 @@ public class TaskEditorPanel extends javax.swing.JPanel {
   private javax.swing.JLabel jLabel6;
   private javax.swing.JLabel jLabel7;
   private javax.swing.JScrollPane jScrollPane1;
-  private javax.swing.JSlider jSlider1;
-  private javax.swing.JSlider jSlider2;
-  private javax.swing.JTextArea jTextArea1;
-  private javax.swing.JTextField jTextField1;
-  private javax.swing.JTextField jTextField2;
-  private javax.swing.JTextField jTextField3;
-  private javax.swing.JTextField jTextField4;
+  private javax.swing.JTextField nameTextField;
+  private javax.swing.JTextField parentIdTextField;
+  private javax.swing.JSlider prioritySlider;
+  private javax.swing.JSlider progressSlider;
   // End of variables declaration//GEN-END:variables
 }
