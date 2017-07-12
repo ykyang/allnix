@@ -154,6 +154,7 @@ public class TaskEditorPanel extends javax.swing.JPanel {
     parentIdTextField.setEnabled(false);
 
     nameTextField.setText(org.openide.util.NbBundle.getMessage(TaskEditorPanel.class, "TaskEditorPanel.nameTextField.text")); // NOI18N
+    nameTextField.getDocument().addDocumentListener(docListener);
 
     dateTextField.setText(org.openide.util.NbBundle.getMessage(TaskEditorPanel.class, "TaskEditorPanel.dateTextField.text")); // NOI18N
     dateTextField.addActionListener(new java.awt.event.ActionListener() {
@@ -161,6 +162,7 @@ public class TaskEditorPanel extends javax.swing.JPanel {
         dateTextFieldActionPerformed(evt);
       }
     });
+    dateTextField.getDocument().addDocumentListener(docListener);
 
     prioritySlider.setMajorTickSpacing(1);
     prioritySlider.setMaximum(2);
@@ -188,6 +190,7 @@ public class TaskEditorPanel extends javax.swing.JPanel {
 
     descriptionTextArea.setColumns(20);
     descriptionTextArea.setRows(5);
+    descriptionTextArea.getDocument().addDocumentListener(docListener);
     jScrollPane1.setViewportView(descriptionTextArea);
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);

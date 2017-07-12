@@ -61,7 +61,7 @@ public interface Task extends Serializable {
   public void addPropertyChangeListener(PropertyChangeListener listener);
 
   public void removePropertyChangeListener(PropertyChangeListener listener);
-  
+
   public static final String PROP_NAME = "name";
   public static final String PROP_DUE = "due";
   public static final String PROP_PRIO = "prio";
