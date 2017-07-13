@@ -86,6 +86,9 @@ public final class TaskLogTopComponent extends TopComponent implements
   // End of variables declaration//GEN-END:variables
   @Override
   public void componentOpened() {
+//    TopComponent taskEditor = WindowManager.getDefault().findTopComponent("TaskEditorTopComponent");
+//    taskEditor.addPropertyChangeListener(this);
+    
     Task task = WindowManager.getDefault().findTopComponent("TaskEditorTopComponent").
       getLookup().lookup(Task.class);
     listModel.addElement(task);
