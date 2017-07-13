@@ -29,7 +29,7 @@ import javax.swing.event.DocumentListener;
  */
 public class TaskEditorPanel extends javax.swing.JPanel {
 
-  private Task task = new TaskImpl();
+  public Task task = new TaskImpl();
 
   /**
    * Creates new form TaskEditorPanel

@@ -20,6 +20,7 @@ import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
+import org.openide.util.lookup.Lookups;
 
 /**
  * Top component which displays something.
@@ -52,6 +53,7 @@ public final class TaskEditorTopComponent extends TopComponent {
     setName(Bundle.CTL_TaskEditorTopComponent());
     setToolTipText(Bundle.HINT_TaskEditorTopComponent());
 
+    associateLookup(Lookups.singleton(taskEditorPanel1.task));
   }
 
   /**
