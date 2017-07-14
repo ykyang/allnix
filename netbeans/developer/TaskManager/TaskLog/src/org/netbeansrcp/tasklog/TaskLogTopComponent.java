@@ -12,6 +12,7 @@ import java.util.Enumeration;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import org.netbeans.api.settings.ConvertAsProperties;
+import org.netbeansrcp.tasksource.api.TaskSource;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.util.Lookup;
@@ -90,8 +91,12 @@ public final class TaskLogTopComponent extends TopComponent implements
   // End of variables declaration//GEN-END:variables
   @Override
   public void componentOpened() {
-    TopComponent taskEditor = WindowManager.getDefault().findTopComponent("TaskEditorTopComponent");
-    result = taskEditor.getLookup().lookupResult(Task.class);
+//    TopComponent taskEditor = WindowManager.getDefault().findTopComponent("TaskEditorTopComponent");
+//    result = taskEditor.getLookup().lookupResult(Task.class);
+//    result.addLookupListener(this);
+    
+    TaskSource taskSource = Lookup.getDefault().lookup(TaskSource.class);
+    result = taskSource.getLookup().lookupResult(Task.class);
     result.addLookupListener(this);
     
     for (Task task : result.allInstances()) {
