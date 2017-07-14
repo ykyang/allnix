@@ -15,12 +15,18 @@
  */
 package com.netbeansrcp.taskeditor;
 
+import com.netbeansrcp.taskmodel.api.Task;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.List;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
-import org.openide.util.lookup.Lookups;
+import org.openide.util.lookup.AbstractLookup;
+import org.openide.util.lookup.InstanceContent;
 
 /**
  * Top component which displays something.
@@ -47,15 +53,34 @@ import org.openide.util.lookup.Lookups;
   "HINT_TaskEditorTopComponent=This is a TaskEditor window"
 })
 public final class TaskEditorTopComponent extends TopComponent {
-
+  private InstanceContent ic = new InstanceContent();
+  private PropertyChangeListener taskChangeListener = new ListenForTaskChanges();
+  
   public TaskEditorTopComponent() {
     initComponents();
     setName(Bundle.CTL_TaskEditorTopComponent());
     setToolTipText(Bundle.HINT_TaskEditorTopComponent());
 
-    associateLookup(Lookups.singleton(taskEditorPanel1.task));
+    taskEditorPanel1.addPropertyChangeListener(taskChangeListener);
+    
+//    associateLookup(Lookups.singleton(taskEditorPanel1.task));
+    ic.add(taskEditorPanel1.task);
+    associateLookup(new AbstractLookup(ic));
   }
 
+  private class ListenForTaskChanges implements PropertyChangeListener {
+
+    @Override
+    public void propertyChange(PropertyChangeEvent event) {
+      if(TaskEditorPanel.PROP_TASK.equals(event.getPropertyName())) {
+        List<Task> newContent = new ArrayList<>();
+        newContent.add(taskEditorPanel1.task);
+        TaskEditorTopComponent.this.ic.set(newContent, null); 
+      }
+    }
+  }
+
+  
   /**
    * This method is called from within the constructor to
    * initialize the form.

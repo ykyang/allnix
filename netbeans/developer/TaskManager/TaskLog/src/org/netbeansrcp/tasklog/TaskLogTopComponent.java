@@ -14,6 +14,9 @@ import javax.swing.JList;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
+import org.openide.util.Lookup;
+import org.openide.util.LookupEvent;
+import org.openide.util.LookupListener;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 import org.openide.windows.WindowManager;
@@ -43,8 +46,9 @@ import org.openide.windows.WindowManager;
   "HINT_TaskLogTopComponent=This is a TaskLog window"
 })
 public final class TaskLogTopComponent extends TopComponent implements 
-  PropertyChangeListener {
+  PropertyChangeListener, LookupListener {
 
+  private Lookup.Result<Task> result;
   private DefaultListModel<Task> listModel = new DefaultListModel<>();
   
   public TaskLogTopComponent() {
@@ -86,13 +90,21 @@ public final class TaskLogTopComponent extends TopComponent implements
   // End of variables declaration//GEN-END:variables
   @Override
   public void componentOpened() {
-//    TopComponent taskEditor = WindowManager.getDefault().findTopComponent("TaskEditorTopComponent");
+    TopComponent taskEditor = WindowManager.getDefault().findTopComponent("TaskEditorTopComponent");
+    result = taskEditor.getLookup().lookupResult(Task.class);
+    result.addLookupListener(this);
+    
+    for (Task task : result.allInstances()) {
+      listModel.addElement(task);
+      task.addPropertyChangeListener(this);
+    }
+    
 //    taskEditor.addPropertyChangeListener(this);
     
-    Task task = WindowManager.getDefault().findTopComponent("TaskEditorTopComponent").
-      getLookup().lookup(Task.class);
-    listModel.addElement(task);
-    task.addPropertyChangeListener(this);
+//    Task task = WindowManager.getDefault().findTopComponent("TaskEditorTopComponent").
+//      getLookup().lookup(Task.class);
+//    listModel.addElement(task);
+//    task.addPropertyChangeListener(this);
   }
 
   @Override
@@ -100,6 +112,8 @@ public final class TaskLogTopComponent extends TopComponent implements
     for ( Enumeration<Task> e = listModel.elements(); e.hasMoreElements(); ) {
       e.nextElement().removePropertyChangeListener(this);
     }
+    
+    result = null;
   }
 
   @Override
@@ -107,6 +121,14 @@ public final class TaskLogTopComponent extends TopComponent implements
     jList1.repaint();
   }
 
+  @Override
+  public void resultChanged(LookupEvent event) {
+    Lookup.Result<Task> rslt = (Lookup.Result<Task>) event.getSource();
+    for (Task task : rslt.allInstances()) {
+      this.listModel.addElement(task);
+      task.addPropertyChangeListener(this);
+    }
+  }
   void writeProperties(java.util.Properties p) {
     // better to version settings since initial version as advocated at
     // http://wiki.apidesign.org/wiki/PropertyFiles
