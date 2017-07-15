@@ -17,6 +17,7 @@ package com.netbeansrcp.taskeditor;
 
 import com.netbeansrcp.taskmodel.TaskImpl;
 import com.netbeansrcp.taskmodel.api.Task;
+import com.netbeansrcp.taskmodel.api.TaskManager;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.text.DateFormat;
@@ -24,6 +25,7 @@ import java.text.ParseException;
 import java.util.Date;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import org.openide.util.Lookup;
 
 /**
  *
@@ -32,7 +34,8 @@ import javax.swing.event.DocumentListener;
 public class TaskEditorPanel extends javax.swing.JPanel {
 
   public static final String PROP_TASK = "TASK";
-  public Task task = new TaskImpl();
+  private TaskManager taskManager;
+  public Task task; // = new TaskImpl();
   private boolean noUpdate = false;
   private PropertyChangeSupport pcs;
 
@@ -40,6 +43,13 @@ public class TaskEditorPanel extends javax.swing.JPanel {
    * Creates new form TaskEditorPanel
    */
   public TaskEditorPanel() {
+    if (taskManager == null) {
+      taskManager = Lookup.getDefault().lookup(TaskManager.class);
+    }
+    
+    if (taskManager != null) {
+      task = taskManager.createTask();
+    }
     initComponents();
     updateForm();
   }
@@ -313,10 +323,13 @@ public class TaskEditorPanel extends javax.swing.JPanel {
   }//GEN-LAST:event_progressSliderStateChanged
 
   private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-    Task oldTask = task;
-    task = new TaskImpl();
-    pcs.firePropertyChange(PROP_TASK, oldTask, task);
-    updateForm();
+    Task localTask = taskManager.createTask();
+    localTask.setName(task.getName());
+    localTask.setDue(task.getDue());
+//    Task oldTask = task;
+//    task = new TaskImpl();
+//    pcs.firePropertyChange(PROP_TASK, oldTask, task);
+//    updateForm();
   }//GEN-LAST:event_jButton1ActionPerformed
 
 
