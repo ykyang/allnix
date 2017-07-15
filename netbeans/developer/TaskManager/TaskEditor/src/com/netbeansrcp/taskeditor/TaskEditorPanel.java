@@ -15,7 +15,6 @@
  */
 package com.netbeansrcp.taskeditor;
 
-import com.netbeansrcp.taskmodel.TaskImpl;
 import com.netbeansrcp.taskmodel.api.Task;
 import com.netbeansrcp.taskmodel.api.TaskManager;
 import java.beans.PropertyChangeListener;
@@ -43,6 +42,7 @@ public class TaskEditorPanel extends javax.swing.JPanel {
    * Creates new form TaskEditorPanel
    */
   public TaskEditorPanel() {
+    // > Why would this ever be not NULL?
     if (taskManager == null) {
       taskManager = Lookup.getDefault().lookup(TaskManager.class);
     }

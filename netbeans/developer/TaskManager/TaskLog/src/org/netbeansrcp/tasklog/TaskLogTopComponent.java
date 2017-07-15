@@ -12,7 +12,6 @@ import java.util.Enumeration;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import org.netbeans.api.settings.ConvertAsProperties;
-import org.netbeansrcp.tasksource.api.TaskSource;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.util.Lookup;

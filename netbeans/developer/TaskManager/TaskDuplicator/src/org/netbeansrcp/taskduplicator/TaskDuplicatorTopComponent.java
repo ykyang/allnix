@@ -5,8 +5,8 @@
  */
 package org.netbeansrcp.taskduplicator;
 
-import com.netbeansrcp.taskmodel.TaskImpl;
 import com.netbeansrcp.taskmodel.api.Task;
+import com.netbeansrcp.taskmodel.api.TaskManager;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.DateFormat;
@@ -51,11 +51,14 @@ import org.openide.windows.WindowManager;
 public final class TaskDuplicatorTopComponent extends TopComponent implements 
   PropertyChangeListener, LookupListener {
 
+  private TaskManager taskManager;
   private Lookup.Result<Task> result;
   private Task task;
   private InstanceContent ic = new InstanceContent();
   
   public TaskDuplicatorTopComponent() {
+    taskManager = Lookup.getDefault().lookup(TaskManager.class);
+    
     initComponents();
     setName(Bundle.CTL_TaskDuplicatorTopComponent());
     setToolTipText(Bundle.HINT_TaskDuplicatorTopComponent());
@@ -72,7 +75,7 @@ public final class TaskDuplicatorTopComponent extends TopComponent implements
   @Override
   public void resultChanged(LookupEvent arg0) {
     Task[] tasks = this.result.allInstances().
-      toArray(new com.netbeansrcp.taskmodel.TaskImpl[]{});
+      toArray(new Task[1]);
     Task newTask = tasks[tasks.length - 1];
     task.removePropertyChangeListener(this);
     task = newTask;
@@ -185,19 +188,19 @@ public final class TaskDuplicatorTopComponent extends TopComponent implements
           .addComponent(descriptionLabel))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
         .addComponent(jButton1)
-        .addContainerGap(128, Short.MAX_VALUE))
+        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
     );
   }// </editor-fold>//GEN-END:initComponents
 
   private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-    Task t = new TaskImpl();
+    Task t = taskManager.createTask();
     t.setName(this.task.getName());
     t.setDue(this.task.getDue());
     t.setPrio(this.task.getPrio());
     t.setProgr(this.task.getProgr());
     t.setDescr(this.task.getDescr());
     
-    List<Task> tasks = new ArrayList<Task>(); 
+    List<Task> tasks = new ArrayList<>(); 
     tasks.add(t);
     // > Make the new task available through Lookup
     this.ic.set(tasks, null);

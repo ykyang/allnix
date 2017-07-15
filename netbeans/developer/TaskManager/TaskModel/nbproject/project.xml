@@ -24,7 +24,6 @@
                 </dependency>
             </module-dependencies>
             <public-packages>
-                <package>com.netbeansrcp.taskmodel</package>
                 <package>com.netbeansrcp.taskmodel.api</package>
             </public-packages>
         </data>
