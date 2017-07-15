@@ -33,13 +33,13 @@ public class TaskSourceImpl implements TaskSource {
     List<Lookup> list = new ArrayList<>();
     Lookup lookup;
     
-    lookup = WindowManager.getDefault()
-      .findTopComponent("TaskEditorTopComponent").getLookup();
-    list.add(lookup);
+//    lookup = WindowManager.getDefault()
+//      .findTopComponent("TaskEditorTopComponent").getLookup();
+//    list.add(lookup);
 
-    lookup = WindowManager.getDefault()
-      .findTopComponent("TaskDuplicatorTopComponent").getLookup();
-    list.add(lookup);
+//    lookup = WindowManager.getDefault()
+//      .findTopComponent("TaskDuplicatorTopComponent").getLookup();
+//    list.add(lookup);
     
     ProxyLookup pl = new ProxyLookup(list.toArray(new Lookup[2]));
     

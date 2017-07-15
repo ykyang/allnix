@@ -20,6 +20,7 @@ import org.openide.util.LookupEvent;
 import org.openide.util.LookupListener;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
+import org.openide.util.Utilities;
 import org.openide.windows.WindowManager;
 
 /**
@@ -95,8 +96,9 @@ public final class TaskLogTopComponent extends TopComponent implements
 //    result = taskEditor.getLookup().lookupResult(Task.class);
 //    result.addLookupListener(this);
     
-    TaskSource taskSource = Lookup.getDefault().lookup(TaskSource.class);
-    result = taskSource.getLookup().lookupResult(Task.class);
+//    TaskSource taskSource = Lookup.getDefault().lookup(TaskSource.class);
+//    result = taskSource.getLookup().lookupResult(Task.class);
+    result = Utilities.actionsGlobalContext().lookupResult(Task.class);
     result.addLookupListener(this);
     
     for (Task task : result.allInstances()) {
