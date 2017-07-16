@@ -42,16 +42,17 @@ public class TaskEditorPanel extends javax.swing.JPanel {
    * Creates new form TaskEditorPanel
    */
   public TaskEditorPanel() {
-    // > Why would this ever be not NULL?
-    if (taskManager == null) {
-      taskManager = Lookup.getDefault().lookup(TaskManager.class);
-    }
-    
-    if (taskManager != null) {
-      task = taskManager.createTask();
-    }
+//    // > Why would this ever be not NULL?
+//    if (taskManager == null) {
+//      taskManager = Lookup.getDefault().lookup(TaskManager.class);
+//    }
+//    
+//    if (taskManager != null) {
+//      task = taskManager.createTask();
+//    }
     initComponents();
-    updateForm();
+    pcs = new PropertyChangeSupport(this);
+//    updateForm();
   }
 
   @Override
@@ -85,6 +86,13 @@ public class TaskEditorPanel extends javax.swing.JPanel {
     }
   };
 
+  public void updateTask(Task task) {
+    Task oldTask = this.task;
+    this.task = task;
+    pcs.firePropertyChange(PROP_TASK, oldTask, task);
+    updateForm();
+  }
+  
   private void updateTask() {
     if (noUpdate) {
       return;

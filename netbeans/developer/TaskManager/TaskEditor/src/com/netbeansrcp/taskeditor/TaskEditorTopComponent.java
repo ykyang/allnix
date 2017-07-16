@@ -16,13 +16,17 @@
 package com.netbeansrcp.taskeditor;
 
 import com.netbeansrcp.taskmodel.api.Task;
+import com.netbeansrcp.taskmodel.api.TaskManager;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
+import org.openide.util.Lookup;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.lookup.AbstractLookup;
@@ -53,21 +57,77 @@ import org.openide.util.lookup.InstanceContent;
   "HINT_TaskEditorTopComponent=This is a TaskEditor window"
 })
 public final class TaskEditorTopComponent extends TopComponent {
+  static private Map<Task, TaskEditorTopComponent> tcByTask;
+  static TaskManager taskManager;
+  static {
+    tcByTask = new HashMap<>();
+  }
+  
+  static public TaskEditorTopComponent findInstance(Task task) {
+    TaskEditorTopComponent tc = tcByTask.get(task);
+    if (tc == null) {
+      tc = new TaskEditorTopComponent(task);
+    }
+    if (taskManager == null) {
+      taskManager = Lookup.getDefault().lookup(TaskManager.class);
+      taskManager.addPropertyChangeListener(new ListenForRemovedNodes());
+    }
+    
+    return tc;
+  }
+  
+  static private class ListenForRemovedNodes implements PropertyChangeListener {
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+      if ( TaskManager.PROP_TASKLIST_REMOVE.equals(evt.getPropertyName())) {
+        Task task = (Task) evt.getNewValue();
+        TaskEditorTopComponent tc = tcByTask.get(task);
+        if (tc != null) {
+          tc.close();
+          tcByTask.remove(task);
+        }
+      }
+    }
+  }
+  
   private InstanceContent ic = new InstanceContent();
   private PropertyChangeListener taskChangeListener = new ListenForTaskChanges();
   
   public TaskEditorTopComponent() {
+//    initComponents();
+//    setName(Bundle.CTL_TaskEditorTopComponent());
+//    setToolTipText(Bundle.HINT_TaskEditorTopComponent());
+//
+//    taskEditorPanel1.addPropertyChangeListener(taskChangeListener);
+//    
+////    associateLookup(Lookups.singleton(taskEditorPanel1.task));
+//    ic.add(taskEditorPanel1.task);
+//    associateLookup(new AbstractLookup(ic));
+
+    this(Lookup.getDefault().lookup(TaskManager.class));
+  }
+
+  public TaskEditorTopComponent(TaskManager taskManager) {
+    this((taskManager != null) ? taskManager.createTask() : null);
+  }
+  
+  public TaskEditorTopComponent(Task task) {
     initComponents();
     setName(Bundle.CTL_TaskEditorTopComponent());
     setToolTipText(Bundle.HINT_TaskEditorTopComponent());
-
-    taskEditorPanel1.addPropertyChangeListener(taskChangeListener);
     
-//    associateLookup(Lookups.singleton(taskEditorPanel1.task));
+    taskEditorPanel1.updateTask(task);
     ic.add(taskEditorPanel1.task);
     associateLookup(new AbstractLookup(ic));
+    tcByTask.put(task, this);
   }
-
+  
+  public String getTaskId() {
+    Task task = taskEditorPanel1.task;
+    return (task != null) ? task.getId() : "";
+  }
+  
   private class ListenForTaskChanges implements PropertyChangeListener {
 
     @Override
