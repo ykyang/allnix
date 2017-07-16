@@ -24,14 +24,16 @@ import java.text.ParseException;
 import java.util.Date;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import org.openide.util.Lookup;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Yi-Kun Yang &lt;ykyang at gmail.com&gt;
  */
 public class TaskEditorPanel extends javax.swing.JPanel {
-
+  static final Logger logger = LoggerFactory.getLogger(TaskEditorPanel.class);
+  
   public static final String PROP_TASK = "TASK";
   private TaskManager taskManager;
   public Task task; // = new TaskImpl();
@@ -42,6 +44,7 @@ public class TaskEditorPanel extends javax.swing.JPanel {
    * Creates new form TaskEditorPanel
    */
   public TaskEditorPanel() {
+    logger.info("TaskEditorPanel");
 //    // > Why would this ever be not NULL?
 //    if (taskManager == null) {
 //      taskManager = Lookup.getDefault().lookup(TaskManager.class);
