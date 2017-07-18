@@ -16,12 +16,21 @@
 package com.netbeansrcp.duelist;
 
 import java.util.Calendar;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
+import javax.swing.JComponent;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
+import org.openide.explorer.ExplorerManager;
+import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.ListView;
+import org.openide.nodes.AbstractNode;
+import org.openide.nodes.Children;
+import org.openide.nodes.Node;
+import org.openide.util.Lookup;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 
@@ -50,8 +59,11 @@ import org.openide.util.NbBundle.Messages;
   "CTL_DueListTopComponent=DueList Window",
   "HINT_DueListTopComponent=This is a DueList window"
 })
-public final class DueListTopComponent extends TopComponent {
+public final class DueListTopComponent extends TopComponent implements ExplorerManager.Provider {
 
+  private ExplorerManager em;
+  private Lookup lookup;
+  
   public DueListTopComponent() {
     initComponents();
     setName(Bundle.CTL_DueListTopComponent());
@@ -60,8 +72,27 @@ public final class DueListTopComponent extends TopComponent {
     int kw = Calendar.getInstance().get(Calendar.WEEK_OF_YEAR);
     SpinnerModel spinnerModel = new SpinnerNumberModel(kw, 1, 52, 1);
     jSpinner1.setModel(spinnerModel);
+    
+    em = new ExplorerManager();
+    
+    ActionMap map = getActionMap();
+    InputMap keys = getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+    
+    lookup = ExplorerUtils.createLookup(em, map);
+    associateLookup(lookup);
+    
+    Children children = new TaskChildren(jSpinner1);
+    
+    Node root = new AbstractNode(children);
+    em.setRootContext(root);
+    em.getRootContext().setDisplayName("DueTasks");
   }
 
+  @Override
+  public ExplorerManager getExplorerManager() {
+    return em;
+  }
+  
   /**
    * This method is called from within the constructor to initialize the form.
    * WARNING: Do NOT modify this code. The content of this method is always
