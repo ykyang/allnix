@@ -24,6 +24,7 @@ import java.text.ParseException;
 import java.util.Date;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import org.openide.util.Lookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +48,7 @@ public class TaskEditorPanel extends javax.swing.JPanel {
     logger.info("TaskEditorPanel");
 //    // > Why would this ever be not NULL?
 //    if (taskManager == null) {
-//      taskManager = Lookup.getDefault().lookup(TaskManager.class);
+    taskManager = Lookup.getDefault().lookup(TaskManager.class);
 //    }
 //    
 //    if (taskManager != null) {
