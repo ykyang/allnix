@@ -62,7 +62,7 @@ public class TaskChildren extends Children.Array implements
     cal.add(Calendar.WEEK_OF_YEAR, 1);
     endTime = cal.getTimeInMillis();
 
-    List<Task> dueTasks = new ArrayList<Task>();
+    List<Task> dueTasks = new ArrayList<>();
     if (taskManager != null) {
       List<Task> topLevelTasks = taskManager.getTopLevelTask();
       for (Task topLevelTask : topLevelTasks) {
@@ -70,7 +70,7 @@ public class TaskChildren extends Children.Array implements
       }
     }
 
-    Collection<Node> dueNodes = new ArrayList<Node>(dueTasks.size());
+    Collection<Node> dueNodes = new ArrayList<>(dueTasks.size());
     for (Task task : dueTasks) {
       dueNodes.add(new TaskNode(task));
       task.addPropertyChangeListener(this);
@@ -94,6 +94,7 @@ public class TaskChildren extends Children.Array implements
     add(initCollection().toArray(new Node[]{}));
   }
 
+  @Override
   public void propertyChange(PropertyChangeEvent arg0) {
     if ((arg0.getSource() instanceof Task) && TaskManager.PROP_TASKLIST_ADD.equals(
       arg0.getPropertyName()) || TaskManager.PROP_TASKLIST_REMOVE.equals(
@@ -107,6 +108,7 @@ public class TaskChildren extends Children.Array implements
     }
   }
 
+  @Override
   public void stateChanged(ChangeEvent arg0) {
     this.updateNodes();
   }
