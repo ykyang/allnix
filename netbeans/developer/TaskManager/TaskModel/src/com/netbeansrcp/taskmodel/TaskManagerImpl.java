@@ -37,6 +37,25 @@ public class TaskManagerImpl implements TaskManager {
   public TaskManagerImpl() {
     topLevelTaskList = new ArrayList<>();
     pcs = new PropertyChangeSupport(this);
+    
+    Task t1 = createTask();
+    t1.setName("Todo 1");
+    
+    Task t2 = createTask("Todo 1.1", t1.getId());
+    t2 = createTask("Todo 1.2", t1.getId());
+    t2 = createTask("Todo 1.3", t1.getId());
+    createTask("Todo 1.3.1", t2.getId());
+    
+    t1 = createTask();
+    t1.setName("Todo 2");
+    
+    t2 = createTask("Todo 2.1", t1.getId());
+    t2 = createTask("Todo 2.2", t1.getId());
+    t2 = createTask("Todo 2.3", t1.getId());
+    t1 = createTask("Todo 2.3.1", t2.getId());
+    
+    t2 = createTask("Todo 2.3.1.1", t1.getId());
+    t2 = createTask("Todo 2.3.1.2", t1.getId());
   }
 
   @Override
