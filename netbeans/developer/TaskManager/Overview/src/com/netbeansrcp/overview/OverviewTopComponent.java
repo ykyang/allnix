@@ -13,6 +13,7 @@ import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
+import org.openide.explorer.view.BeanTreeView;
 import org.openide.explorer.view.ListView;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Node;
@@ -66,6 +67,9 @@ public final class OverviewTopComponent extends TopComponent implements
     Node root = new AbstractNode(new TopLevelTaskChildren());
     em.setRootContext(root);
     em.getRootContext().setDisplayName("Overview");
+    
+    BeanTreeView view = (BeanTreeView) jScrollPane2;
+    view.setRootVisible(false);
   }
 
   public ExplorerManager getExplorerManager() {
@@ -79,7 +83,7 @@ public final class OverviewTopComponent extends TopComponent implements
   // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
   private void initComponents() {
 
-    jScrollPane2 = new ListView();
+    jScrollPane2 = new BeanTreeView();
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
     this.setLayout(layout);
