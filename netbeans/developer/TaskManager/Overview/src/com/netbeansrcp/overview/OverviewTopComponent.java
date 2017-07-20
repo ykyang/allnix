@@ -14,7 +14,6 @@ import org.openide.awt.ActionReference;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.BeanTreeView;
-import org.openide.explorer.view.ListView;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Node;
 import org.openide.util.Lookup;
@@ -51,7 +50,10 @@ public final class OverviewTopComponent extends TopComponent implements
 
   private ExplorerManager em;
   private Lookup lookup;
-  
+  private BeanTreeView view;
+//  public BeanTreeView getView() {
+//    return view;
+//  }
   public OverviewTopComponent() {
     initComponents();
     setName(Bundle.CTL_OverviewTopComponent());
@@ -68,8 +70,9 @@ public final class OverviewTopComponent extends TopComponent implements
     em.setRootContext(root);
     em.getRootContext().setDisplayName("Overview");
     
-    BeanTreeView view = (BeanTreeView) jScrollPane2;
+    view = (BeanTreeView) jScrollPane2;
     view.setRootVisible(false);
+//    view.setCursor(Utilities.createProgressCursor(view));
   }
 
   public ExplorerManager getExplorerManager() {
