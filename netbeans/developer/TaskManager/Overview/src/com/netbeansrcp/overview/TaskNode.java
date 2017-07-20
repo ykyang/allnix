@@ -19,6 +19,8 @@ import com.netbeansrcp.taskmodel.api.Task;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import org.openide.nodes.AbstractNode;
+import org.openide.nodes.Children;
+import org.openide.util.Lookup;
 import org.openide.util.lookup.Lookups;
 
 /**
@@ -28,11 +30,22 @@ import org.openide.util.lookup.Lookups;
 public class TaskNode extends AbstractNode implements PropertyChangeListener {
 
   public TaskNode(Task task) {
-    super(new TaskChildren(task), Lookups.singleton(task));
-
+    this(task, Lookups.singleton(task));
+//    super(new TaskChildren(task), Lookups.singleton(task));
+//
+//    setName(task.getId());
+//    setDisplayName(task.getName());
+//    // > TODO: Add icon
+//    task.addPropertyChangeListener(this);
+  }
+  
+  public TaskNode(Task task, Lookup lookup) {
+    super(Children.create(new TaskChildFactory(task), true), lookup);
+    
     setName(task.getId());
     setDisplayName(task.getName());
-    // > TODO: Add icon
+    // > TODO p. 137 Add icons
+    
     task.addPropertyChangeListener(this);
   }
   
