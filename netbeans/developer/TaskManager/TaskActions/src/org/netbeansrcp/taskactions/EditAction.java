@@ -9,12 +9,15 @@ import com.netbeansrcp.taskeditor.TaskEditorTopComponent;
 import com.netbeansrcp.taskmodel.api.Task;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
+import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.ContextAwareAction;
 import org.openide.util.Lookup;
@@ -32,7 +35,10 @@ import org.openide.util.actions.Presenter;
   displayName = "#CTL_EditAction",
   lazy=false
 )
-@ActionReference(path = "Menu/Edit", position = 0)
+@ActionReferences({
+  @ActionReference(path = "Menu/Edit", position = 0),
+  @ActionReference(path = "Toolbars/Task")
+})
 @Messages("CTL_EditAction=Edit")
 public final class EditAction extends AbstractAction implements LookupListener,
   Presenter.Toolbar, ContextAwareAction, Presenter.Popup {

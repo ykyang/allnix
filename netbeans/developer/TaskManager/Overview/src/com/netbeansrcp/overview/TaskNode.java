@@ -18,9 +18,14 @@ package com.netbeansrcp.overview;
 import com.netbeansrcp.taskmodel.api.Task;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import javax.swing.Action;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.util.Lookup;
+import org.openide.util.Utilities;
 import org.openide.util.lookup.Lookups;
 
 /**
@@ -76,5 +81,29 @@ public class TaskNode extends AbstractNode implements PropertyChangeListener {
     if ( Task.PROP_NAME.equals(propertyName) || Task.PROP_PRIO.equals(propertyName)) {
       setDisplayName(event.getNewValue().toString());
     }
+  }
+  
+  @Override
+  public Action getPreferredAction() {
+   Action action = Utilities.actionsForPath("Tasks/Nodes/Task/PreferredAction").get(0);
+   return action;
+  }
+  
+  @Override
+  public Action[] getActions(boolean context) {
+    List<Action> actions = new ArrayList<>();
+    actions.addAll(getRegisteredActions());
+    actions.addAll(Arrays.asList(super.getActions(context)));
+    System.out.println("Action count: "+ actions.size());
+    return actions.toArray(new Action[actions.size()]);
+  }
+  
+  static List<? extends Action> registeredActions;
+  protected static List<? extends Action> getRegisteredActions() {
+    if ( registeredActions == null) {
+      registeredActions = Utilities.actionsForPath("Tasks/Nodes/Task/Actions");
+    }
+    
+    return registeredActions;
   }
 }
