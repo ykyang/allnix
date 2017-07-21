@@ -94,7 +94,7 @@ public class TaskNode extends AbstractNode implements PropertyChangeListener {
     List<Action> actions = new ArrayList<>();
     actions.addAll(getRegisteredActions());
     actions.addAll(Arrays.asList(super.getActions(context)));
-    System.out.println("Action count: "+ actions.size());
+//    System.out.println("Action count: "+ actions.size());
     return actions.toArray(new Action[actions.size()]);
   }
   
