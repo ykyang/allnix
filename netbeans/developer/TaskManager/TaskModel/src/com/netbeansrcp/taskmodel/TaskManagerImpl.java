@@ -86,12 +86,13 @@ public class TaskManagerImpl implements TaskManager {
       return;
     }
 
-    Task parent = getTask(id);
+    Task parent = getTask(task.getParentId());
     if (parent != null) {
       parent.remove(task);
+    } else {
+      topLevelTaskList.remove(task);
     }
-
-    topLevelTaskList.remove(task);
+    
     pcs.firePropertyChange(PROP_TASKLIST_REMOVE, parent, task);
   }
 

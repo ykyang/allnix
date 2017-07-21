@@ -19,6 +19,7 @@ import com.netbeansrcp.taskmodel.api.Task;
 import com.netbeansrcp.taskmodel.api.TaskManager;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
+import java.util.Collection;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JButton;
@@ -32,61 +33,57 @@ import org.openide.util.Lookup;
 import org.openide.util.LookupEvent;
 import org.openide.util.LookupListener;
 import org.openide.util.NbBundle.Messages;
+import org.openide.util.Utilities;
 import org.openide.util.actions.Presenter;
 
 @ActionID(
   category = "Task",
-  id = "org.netbeansrcp.taskactions.AddAction"
+  id = "org.netbeansrcp.taskactions.DeleteAction"
 )
 @ActionRegistration(
-  displayName = "#CTL_AddAction",
-  lazy = false
+  displayName = "#CTL_DeleteAction",
+  lazy=false
 )
 @ActionReferences({
-  @ActionReference(path = "Menu/Edit", position = 1300),
-  @ActionReference(path="Toolbars/Task")
+  @ActionReference(path = "Toolbars/Task")
 })
-@Messages("CTL_AddAction=Add Action")
-public final class AddAction extends AbstractAction implements
-  Presenter.Toolbar, Presenter.Popup, ContextAwareAction, LookupListener {
+@Messages("CTL_DeleteAction=Delete Task")
+public final class DeleteAction extends AbstractAction implements
+  ContextAwareAction, LookupListener, Presenter.Popup, Presenter.Toolbar {
 
   private Lookup.Result<Task> result;
-  private JButton toolbarButton;
-
-  public AddAction() {
-    super("Create New Task...");
+  
+  public DeleteAction() {
+    this(Utilities.actionsGlobalContext());
   }
-
-  private AddAction(Lookup lookup) {
-    super("Create New Task...");
-
+  
+  public DeleteAction(Lookup lookup) {
+    super("Delete Task");
+    
     result = lookup.lookupResult(Task.class);
     result.addLookupListener(this);
-    // > Initialize???
-    resultChanged(new LookupEvent(result));
+    resultChanged(null);
   }
-
-//  private AddAction(String label) {
-//    super(label);
-//  }
+  
   @Override
-  public void actionPerformed(ActionEvent e) {
-    TaskManager taskManager = Lookup.getDefault().lookup(TaskManager.class);
-    
-    Task task = null;
-    if ( result != null && !result.allClasses().isEmpty()) {
-      task = result.allInstances().iterator().next();
-      task = taskManager.createTask("New Sub Task", task.getId());
-    } else {
-      task = taskManager.createTask();
+  public void actionPerformed(ActionEvent event) {
+    if ( result == null) {
+      return;
     }
     
-    EditAction.openInTaskEditor(task);
+    Collection<? extends Task> tasks = result.allInstances();
+    Task task = tasks.iterator().next();
+    TaskManager taskManager = Lookup.getDefault().lookup(TaskManager.class);
+    try {
+      taskManager.removeTask(task.getId());
+    } catch (NullPointerException e) {
+      // log
+    }
   }
 
   @Override
-  public Action createContextAwareInstance(Lookup lkp) {
-    return new AddAction(lkp);
+  public Action createContextAwareInstance(Lookup actionContext) {
+    return new DeleteAction(actionContext);
   }
 
   @Override
@@ -96,19 +93,11 @@ public final class AddAction extends AbstractAction implements
 
   @Override
   public Component getToolbarPresenter() {
-    if ( toolbarButton == null) {
-      toolbarButton = new JButton(this);
-    }
-    
-    return toolbarButton;
+    return new JButton(this);
   }
 
   @Override
-  public void resultChanged(LookupEvent le) {
-    if ( result.allInstances().isEmpty()) {
-      setEnabled(false);
-    } else {
-      setEnabled(true);
-    }
+  public void resultChanged(LookupEvent ev) {
+    setEnabled(!result.allInstances().isEmpty());
   }
 }

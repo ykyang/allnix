@@ -47,7 +47,7 @@ public class TaskChildFactory extends ChildFactory<Task> implements
 
   @Override
   protected boolean createKeys(List<Task> list) {
-    final long delay = 500;
+    final long delay = 100;
 
     ProgressHandle handle = ProgressHandle.createHandle("Creating subtasks...");
     // > Deprecated: 
