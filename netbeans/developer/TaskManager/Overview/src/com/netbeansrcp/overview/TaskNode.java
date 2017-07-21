@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.swing.Action;
+import org.openide.filesystems.FileUtil;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.util.Lookup;
@@ -85,8 +86,13 @@ public class TaskNode extends AbstractNode implements PropertyChangeListener {
   
   @Override
   public Action getPreferredAction() {
-   Action action = Utilities.actionsForPath("Tasks/Nodes/Task/PreferredAction").get(0);
-   return action;
+//   Action action = Utilities.actionsForPath("Tasks/Nodes/Task/PreferredAction").get(0);
+
+    Action action = 
+      FileUtil.getConfigObject("Actions/Task/org-netbeansrcp-taskactions-EditAction.instance", 
+                               Action.class);
+
+    return action;
   }
   
   @Override
@@ -101,7 +107,8 @@ public class TaskNode extends AbstractNode implements PropertyChangeListener {
   static List<? extends Action> registeredActions;
   protected static List<? extends Action> getRegisteredActions() {
     if ( registeredActions == null) {
-      registeredActions = Utilities.actionsForPath("Tasks/Nodes/Task/Actions");
+//      registeredActions = Utilities.actionsForPath("Tasks/Nodes/Task/Actions");
+      registeredActions = Utilities.actionsForPath("Actions/Task");
     }
     
     return registeredActions;
