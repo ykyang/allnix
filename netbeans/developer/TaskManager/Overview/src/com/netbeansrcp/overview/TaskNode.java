@@ -57,23 +57,24 @@ public class TaskNode extends AbstractNode implements PropertyChangeListener {
   
   @Override
   public String getHtmlDisplayName() {
-    // > TODO: Use a template
-    String html = "<font color='";
+    String color = "000000";
+
     Task task = getLookup().lookup(Task.class);
     switch(task.getPrio()) {
       case LOW:
-        html += "0000FF"; // blue
+        color = "74a5c9"; // blue
         break;
       case MEDIUM:
-        html += "000000"; // black
+        color = "000000"; // black
         break;
       case HIGH:
-        html += "FF0000"; // red
+        color = "98002e"; // red
         break;
     }
     
-    html += "'>" + task.getName() + "</font>";
-    return html;
+    String html = "<font color='%s'>%s</font>";
+    
+    return String.format(html, color, task.getName());
   }
   
   @Override
