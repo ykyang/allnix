@@ -29,11 +29,11 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.LocalFileSystem;
 import org.openide.util.lookup.ServiceProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -41,7 +41,8 @@ import org.openide.util.lookup.ServiceProvider;
  */
 @ServiceProvider(service = TaskManager.class)
 public class TaskManagerImpl implements TaskManager {
-
+  static final private Logger logger = LoggerFactory.getLogger(TaskManagerImpl.class);
+  
   private List<Task> topLevelTaskList;
   private PropertyChangeSupport pcs;
   private FileObject root;
@@ -70,12 +71,12 @@ public class TaskManagerImpl implements TaskManager {
     t2 = createTask("Todo 2.3.1.2", t3.getId());
 
     try {
-      File file = new File("/home/yikuny/jpe/tasks/");
+      File file = new File("/home/ykyang/tmp/jpe/tasks/");
       LocalFileSystem fs = new LocalFileSystem();
       fs.setRootDirectory(file);
       root = fs.getRoot();
-    } catch (PropertyVetoException ex) {
-    } catch (IOException ex) {
+    } catch (PropertyVetoException | IOException ex) {
+      ex.printStackTrace();
     }
 
     this.save(t1);
@@ -84,10 +85,10 @@ public class TaskManagerImpl implements TaskManager {
 
     removeTask(t1.getId());
     removeTask(t3.getId());
-    System.out.println("Count of known TopLevelTasks before deleting: " + topLevelTaskList.size());
+    System.out.println("Count of known TopLevelTasks after deleting: " + topLevelTaskList.size());
     
     loadTasks();
-    System.out.println("Count of known TopLevelTasks before deleting: " + topLevelTaskList.size());
+    System.out.println("Count of known TopLevelTasks after loading: " + topLevelTaskList.size());
   }
 
   @Override
@@ -185,6 +186,7 @@ public class TaskManagerImpl implements TaskManager {
       fo = root.createData(task.getId() + ".tsk");
       save(task, fo);
     } catch (IOException ex) {
+      ex.printStackTrace();
     }
 
     return fo;
@@ -194,6 +196,7 @@ public class TaskManagerImpl implements TaskManager {
     ObjectOutputStream out = null;
     try {
       out = new ObjectOutputStream(new BufferedOutputStream(fo.getOutputStream()));
+      out.writeObject(task);
     } catch (IOException ex) {
     } finally {
       try {
@@ -203,6 +206,7 @@ public class TaskManagerImpl implements TaskManager {
     }
   }
   
+  @Override
   public Task load(FileObject fo) {
     Task task = null;
     ObjectInputStream in = null;
@@ -216,7 +220,9 @@ public class TaskManagerImpl implements TaskManager {
         pcs.firePropertyChange(PROP_TASKLIST_ADD, null, task);
       }
     } catch (IOException ex) {
+      ex.printStackTrace();
     } catch (ClassNotFoundException ex) {
+      ex.printStackTrace();
     } finally {
       try {
         in.close();
@@ -228,6 +234,7 @@ public class TaskManagerImpl implements TaskManager {
   }
   
   private void loadTasks() {
+    logger.info("root.getChildren(): {}", root.getChildren().length);
     for (FileObject fo : root.getChildren()) {
       if("tsk".equalsIgnoreCase(fo.getExt())) {
         load(fo);

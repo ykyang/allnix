@@ -223,16 +223,21 @@ public final class TaskDuplicatorTopComponent extends TopComponent implements
   @Override
   public void componentOpened() {
     TopComponent taskEditor = WindowManager.getDefault().findTopComponent("TaskEditorTopComponent");
-    result = taskEditor.getLookup().lookupResult(Task.class);
-    result.addLookupListener(this);
     
-    task = (Task)(result.allInstances().toArray())[0];
-    task.addPropertyChangeListener(this);
+    result = taskEditor.getLookup().lookupResult(Task.class);
+    if ( result != null) {
+      result.addLookupListener(this);
+    
+      task = (Task)(result.allInstances().toArray())[0];
+      task.addPropertyChangeListener(this);
+    }    
   }
 
   @Override
   public void componentClosed() {
-    task.removePropertyChangeListener(this);
+    if (task != null) {
+      task.removePropertyChangeListener(this);
+    }
     result = null;
   }
 
