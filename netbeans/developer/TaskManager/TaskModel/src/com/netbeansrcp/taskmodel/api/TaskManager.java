@@ -17,6 +17,7 @@ package com.netbeansrcp.taskmodel.api;
 
 import java.beans.PropertyChangeListener;
 import java.util.List;
+import org.openide.filesystems.FileObject;
 
 /**
  *
@@ -36,4 +37,7 @@ public interface TaskManager {
   void addPropertyChangeListener(PropertyChangeListener listener);
   void removePropertyChangeListener(PropertyChangeListener listener);
   
+  FileObject save(Task task);
+  void save(Task task, FileObject fo);
+  Task load(FileObject fo);
 }
