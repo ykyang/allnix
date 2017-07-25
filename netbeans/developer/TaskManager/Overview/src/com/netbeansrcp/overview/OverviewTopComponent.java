@@ -73,6 +73,7 @@ public final class OverviewTopComponent extends TopComponent implements
     view = (BeanTreeView) jScrollPane2;
     view.setRootVisible(false);
 //    view.setCursor(Utilities.createProgressCursor(view));
+    view.setDragSource(true);
   }
 
   public ExplorerManager getExplorerManager() {
