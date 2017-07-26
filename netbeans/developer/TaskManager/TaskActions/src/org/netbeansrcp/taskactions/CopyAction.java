@@ -91,7 +91,7 @@ public final class CopyAction extends AbstractAction implements LookupListener,
     if ( parentId != null && !parentId.isEmpty()) {
       target = taskManager.createTask(source.getName(), parentId);
     } else {
-      target = taskManager.createTask();
+      target = taskManager.createTask().getLookup().lookup(Task.class);
       target.setName(source.getName());
     }
     

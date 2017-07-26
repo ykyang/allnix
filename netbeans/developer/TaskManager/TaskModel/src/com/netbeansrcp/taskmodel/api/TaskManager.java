@@ -18,6 +18,7 @@ package com.netbeansrcp.taskmodel.api;
 import java.beans.PropertyChangeListener;
 import java.util.List;
 import org.openide.filesystems.FileObject;
+import org.openide.loaders.DataObject;
 
 /**
  *
@@ -25,10 +26,11 @@ import org.openide.filesystems.FileObject;
  */
 public interface TaskManager {
 
-  Task createTask();
+//  Task createTask();
   Task createTask(String name, String parentId);
   void removeTask(String id);
-  List<Task> getTopLevelTask();
+//  List<Task> getTopLevelTask();
+  List<DataObject> getTopLevelTask();
   Task getTask(String id);
   
   static final String PROP_TASKLIST_ADD = "TASK_LIST_ADD";
@@ -40,4 +42,7 @@ public interface TaskManager {
   FileObject save(Task task);
   void save(Task task, FileObject fo);
   Task load(FileObject fo);
+  
+  DataObject createTask();
+//   public void loadTasks();
 }

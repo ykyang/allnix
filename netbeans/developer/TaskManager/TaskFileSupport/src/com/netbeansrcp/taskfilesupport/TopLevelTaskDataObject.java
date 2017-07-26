@@ -1,0 +1,132 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.netbeansrcp.taskfilesupport;
+
+import com.netbeansrcp.overview.TaskNode;
+import com.netbeansrcp.taskmodel.api.Task;
+import com.netbeansrcp.taskmodel.api.TaskManager;
+import java.io.IOException;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionReferences;
+import org.openide.filesystems.FileObject;
+import org.openide.filesystems.MIMEResolver;
+import org.openide.loaders.DataObject;
+import org.openide.loaders.DataObjectExistsException;
+import org.openide.loaders.MultiDataObject;
+import org.openide.loaders.MultiFileLoader;
+import org.openide.nodes.Node;
+import org.openide.util.Lookup;
+import org.openide.util.NbBundle.Messages;
+import org.openide.util.lookup.AbstractLookup;
+import org.openide.util.lookup.InstanceContent;
+
+@Messages({
+  "LBL_TopLevelTask_LOADER=Files of TopLevelTask"
+})
+@MIMEResolver.ExtensionRegistration(
+  displayName = "#LBL_TopLevelTask_LOADER",
+  mimeType = "application/x-task",
+  extension = {"tsk", "task"}
+)
+@DataObject.Registration(
+  mimeType = "application/x-task",
+//  iconBase = "SET/PATH/TO/ICON/HERE",
+  displayName = "#LBL_TopLevelTask_LOADER",
+  position = 300
+)
+@ActionReferences({
+  @ActionReference(
+    path = "Loaders/application/x-task/Actions",
+    id = @ActionID(category = "System", id = "org.openide.actions.OpenAction"),
+    position = 100,
+    separatorAfter = 200
+  ),
+  @ActionReference(
+    path = "Loaders/application/x-task/Actions",
+    id = @ActionID(category = "Edit", id = "org.openide.actions.CutAction"),
+    position = 300
+  ),
+  @ActionReference(
+    path = "Loaders/application/x-task/Actions",
+    id = @ActionID(category = "Edit", id = "org.openide.actions.CopyAction"),
+    position = 400,
+    separatorAfter = 500
+  ),
+  @ActionReference(
+    path = "Loaders/application/x-task/Actions",
+    id = @ActionID(category = "Edit", id = "org.openide.actions.DeleteAction"),
+    position = 600
+  ),
+  @ActionReference(
+    path = "Loaders/application/x-task/Actions",
+    id = @ActionID(category = "System", id = "org.openide.actions.RenameAction"),
+    position = 700,
+    separatorAfter = 800
+  ),
+  @ActionReference(
+    path = "Loaders/application/x-task/Actions",
+    id = @ActionID(category = "System",
+      id = "org.openide.actions.SaveAsTemplateAction"),
+    position = 900,
+    separatorAfter = 1000
+  ),
+  @ActionReference(
+    path = "Loaders/application/x-task/Actions",
+    id = @ActionID(category = "System",
+      id = "org.openide.actions.FileSystemAction"),
+    position = 1100,
+    separatorAfter = 1200
+  ),
+  @ActionReference(
+    path = "Loaders/application/x-task/Actions",
+    id = @ActionID(category = "System", id = "org.openide.actions.ToolsAction"),
+    position = 1300
+  ),
+  @ActionReference(
+    path = "Loaders/application/x-task/Actions",
+    id = @ActionID(category = "System",
+      id = "org.openide.actions.PropertiesAction"),
+    position = 1400
+  )
+})
+public class TopLevelTaskDataObject extends MultiDataObject {
+  private InstanceContent ic;
+  private Lookup lookup;
+  private TaskManager taskManager;
+  
+  public TopLevelTaskDataObject(FileObject pf, MultiFileLoader loader) throws
+    DataObjectExistsException, IOException {
+    super(pf, loader);
+    
+    ic = new InstanceContent();
+    lookup = new AbstractLookup(ic);
+    
+    taskManager = Lookup.getDefault().lookup(TaskManager.class);
+    
+    if ( taskManager != null) {
+      Task task = taskManager.load(pf);
+      ic.add(task);
+    }
+    
+//    registerEditor("application/x-task", false);
+  }
+
+  protected Node createNodeDelegate() {
+    return new TaskNode(lookup.lookup(Task.class), lookup);
+  }
+  
+  @Override
+  public Lookup getLookup() {
+    return lookup;
+  }
+  
+  @Override
+  protected int associateLookup() {
+    return 1;
+  }
+
+}

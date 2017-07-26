@@ -335,7 +335,7 @@ public class TaskEditorPanel extends javax.swing.JPanel {
   }//GEN-LAST:event_progressSliderStateChanged
 
   private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-    Task localTask = taskManager.createTask();
+    Task localTask = taskManager.createTask().getLookup().lookup(Task.class);
     localTask.setName(task.getName());
     localTask.setDue(task.getDue());
 //    Task oldTask = task;

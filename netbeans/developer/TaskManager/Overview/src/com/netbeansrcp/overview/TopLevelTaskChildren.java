@@ -19,6 +19,7 @@ import com.netbeansrcp.taskmodel.api.Task;
 import com.netbeansrcp.taskmodel.api.TaskManager;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import org.openide.loaders.DataObject;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 import org.openide.util.Lookup;
@@ -27,7 +28,7 @@ import org.openide.util.Lookup;
  *
  * @author Yi-Kun Yang &gt;ykyang@gmail.com&lt;
  */
-public class TopLevelTaskChildren extends Children.Keys<Task> implements
+public class TopLevelTaskChildren extends Children.Keys<DataObject> implements
         PropertyChangeListener {
 
   private TaskManager taskManager;
@@ -36,6 +37,7 @@ public class TopLevelTaskChildren extends Children.Keys<Task> implements
     taskManager = Lookup.getDefault().lookup(TaskManager.class);
 
     if (taskManager != null) {
+//      taskManager.loadTasks();
       taskManager.addPropertyChangeListener(this);
     }
   }
@@ -50,8 +52,8 @@ public class TopLevelTaskChildren extends Children.Keys<Task> implements
   }
 
   @Override
-  protected Node[] createNodes(Task t) {
-    return new Node[]{new TaskNode(t)};
+  protected Node[] createNodes(DataObject t) {
+    return new Node[]{t.getNodeDelegate()};
   }
 
   @Override

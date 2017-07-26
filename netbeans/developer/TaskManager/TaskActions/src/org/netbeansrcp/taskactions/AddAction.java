@@ -78,7 +78,8 @@ public final class AddAction extends AbstractAction implements
       task = result.allInstances().iterator().next();
       task = taskManager.createTask("New Sub Task", task.getId());
     } else {
-      task = taskManager.createTask();
+      task = taskManager.createTask().getLookup().lookup(Task.class);
+      task.setName("New Task");
     }
     
     EditAction.openInTaskEditor(task);

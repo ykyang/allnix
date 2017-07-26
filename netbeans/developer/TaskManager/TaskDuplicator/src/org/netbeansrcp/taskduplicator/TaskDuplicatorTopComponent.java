@@ -193,7 +193,7 @@ public final class TaskDuplicatorTopComponent extends TopComponent implements
   }// </editor-fold>//GEN-END:initComponents
 
   private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-    Task t = taskManager.createTask();
+    Task t = taskManager.createTask().getLookup().lookup(Task.class);
     t.setName(this.task.getName());
     t.setDue(this.task.getDue());
     t.setPrio(this.task.getPrio());

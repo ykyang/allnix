@@ -26,6 +26,7 @@ import java.util.List;
 import javax.swing.JSpinner;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import org.openide.loaders.DataObject;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 import org.openide.util.Lookup;
@@ -64,8 +65,9 @@ public class TaskChildren extends Children.Array implements
 
     List<Task> dueTasks = new ArrayList<>();
     if (taskManager != null) {
-      List<Task> topLevelTasks = taskManager.getTopLevelTask();
-      for (Task topLevelTask : topLevelTasks) {
+      List<DataObject> topLevelTaskDaos = taskManager.getTopLevelTask();
+      for (DataObject dao : topLevelTaskDaos) {
+        Task topLevelTask = dao.getLookup().lookup(Task.class);
         findDueTasks(topLevelTask, dueTasks);
       }
     }
