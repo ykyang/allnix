@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
+import tech.tablesaw.api.DoubleColumn;
 import tech.tablesaw.api.Table;
 import tech.tablesaw.io.csv.CsvReadOptions;
 import tech.tablesaw.io.csv.CsvReader;
@@ -31,7 +32,20 @@ import tech.tablesaw.io.csv.CsvReader;
 @TestInstance(Lifecycle.PER_CLASS)
 public class TablesawTest {
  
+    
     @Test
+    public void writeCsvTest() throws IOException {
+        Table df = Table.create("CSV");
+        double[] a = {1., 2., 3.};
+        double[] b = {10., 20., 30.};
+        
+        df.addColumn(new DoubleColumn("a", a));
+        df.addColumn(new DoubleColumn("b", b));
+        
+        df.write().csv("CSV.csv");
+    }
+    
+//    @Test
     public void testCsv() throws IOException {
         /*
         ColumnType[] columnTypes = {
