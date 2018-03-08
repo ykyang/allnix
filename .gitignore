@@ -14,3 +14,8 @@ gradle-app.setting
 .nb-gradle/
 .nb-gradle-properties
 
+# Eclipse
+**/.classpath
+**/.project
+**/.settings
+**/bin

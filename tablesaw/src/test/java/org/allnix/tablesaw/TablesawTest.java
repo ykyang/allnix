@@ -20,8 +20,13 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import tech.tablesaw.api.DoubleColumn;
+import tech.tablesaw.api.QueryHelper;
 import tech.tablesaw.api.Table;
+import tech.tablesaw.columns.ColumnReference;
 import tech.tablesaw.io.csv.CsvReadOptions;
 import tech.tablesaw.io.csv.CsvReader;
 
@@ -31,7 +36,7 @@ import tech.tablesaw.io.csv.CsvReader;
  */
 @TestInstance(Lifecycle.PER_CLASS)
 public class TablesawTest {
- 
+    static private Logger logger = LoggerFactory.getLogger(TablesawTest.class);
     
     @Test
     public void writeCsvTest() throws IOException {
@@ -43,6 +48,27 @@ public class TablesawTest {
         df.addColumn(new DoubleColumn("b", b));
         
         df.write().csv("CSV.csv");
+    }
+    
+    @Test
+    public void learn() throws IOException {
+        Table df = Table.create("CSV");
+        double[] a = {1., 2., 3.};
+        double[] b = {10., 20., 30.};
+        
+        df.addColumn(new DoubleColumn("a", a));
+        df.addColumn(new DoubleColumn("b", b));
+        
+        ColumnReference aref = QueryHelper.column("a");
+        Table filtered = df.selectWhere(aref.isEqualTo(2.));
+        int rowCount = filtered.rowCount();
+        logger.info("row count: {}", rowCount);
+        
+        int colInd = filtered.columnIndex("b");
+        DoubleColumn col = (DoubleColumn) filtered.column(colInd);
+        logger.info("value: {}", col.get(0));
+        
+//        df.write().csv("CSV.csv");
     }
     
 //    @Test
