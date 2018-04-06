@@ -1,5 +1,6 @@
 package org.allnix.mongodb;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -61,12 +62,17 @@ public class DriverTest {
         
 //        ExecutorService es = Executors.newFixedThreadPool(10);
         
+        ByteBuffer bb = ByteBuffer.allocate(Double.BYTES*n);
+        
+        
         Double[] value = new Double[n];
         for ( int j = 0; j < n; j++) {
             value[j]= j+1+13.;
+            bb.putDouble(j, value[j]);
         }
         byte[] b = SerializationUtils.serialize(value);
         logger.info("length: {}", b.length);
+        logger.info("bb length: {}", bb.capacity());
         
         List<Document> docs = new ArrayList<Document>();
         for (int i = start; i <= end; i++) {
@@ -78,10 +84,10 @@ public class DriverTest {
 //            }
             
             Document doc = new Document("name", name)
-                    .append("value", b);
+                    .append("value", bb.array());
             
             docs.add(doc);
-            if ( docs.size() >= 4) {
+            if ( docs.size() >= 10) {
               watch.resume();
 //              coll.insertOne(doc);
               coll.insertMany(docs);
@@ -124,11 +130,13 @@ public class DriverTest {
             byte[] c = new byte[1];
             Binary list = doc.get("value", Binary.class);
             logger.info("length: {}", list.length());
+            ByteBuffer bf = ByteBuffer.wrap(list.getData());
+            Assertions.assertEquals((double)(n+13.), bf.getDouble(n-1));
 //            Assertions.assertEquals(n, list.length()/8);
-            Double[] v = SerializationUtils.deserialize(list.getData());
-            logger.info("v length: {}", v.length);
-            logger.info("v[n-1]: {}", v[n-1]);
-            Assertions.assertEquals((Double)(n+13.), v[n-1]);
+//            Double[] v = SerializationUtils.deserialize(list.getData());
+//            logger.info("v length: {}", v.length);
+//            logger.info("v[n-1]: {}", v[n-1]);
+//            Assertions.assertEquals((Double)(n+13.), v[n-1]);
         }
         logger.info("End query");
     }
