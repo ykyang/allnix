@@ -6,8 +6,10 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.bson.Document;
+import org.bson.types.Binary;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -44,29 +46,42 @@ public class DriverTest {
         
         MongoCollection<Document> coll = db.getCollection("log");
         
-//        coll.createIndex(Indexes.hashed("name"));
+        
 
         int n = 300_000;
-        int start = 10_001;
-        int end = 20_000;
+//        int n = 300;
+        int start = 1;
+        int end = 10_000;
+//        int start = 10_001;
+//        int end = 20_000;
         int docCount = end - start + 1;
         
-//        coll.drop();
+        coll.drop();
+        coll.createIndex(Indexes.hashed("name"));
         
-        ExecutorService es = Executors.newFixedThreadPool(10);
+//        ExecutorService es = Executors.newFixedThreadPool(10);
+        
+        Double[] value = new Double[n];
+        for ( int j = 0; j < n; j++) {
+            value[j]= j+1+13.;
+        }
+        byte[] b = SerializationUtils.serialize(value);
+        logger.info("length: {}", b.length);
         
         List<Document> docs = new ArrayList<Document>();
         for (int i = start; i <= end; i++) {
             String name = "dct_" + Integer.toString(i);
-            Double[] value = new Double[n];
-            for ( int j = 0; j < n; j++) {
-                value[j]= j+1+13.;
-            }
+//            byte[] value = new byte[n];
+//            Double[] value = new Double[n];
+//            for ( int j = 0; j < n; j++) {
+//                value[j]= j+1+13.;
+//            }
+            
             Document doc = new Document("name", name)
-                    .append("value", Arrays.asList(value));
+                    .append("value", b);
             
             docs.add(doc);
-            if ( docs.size() >= 10) {
+            if ( docs.size() >= 4) {
               watch.resume();
 //              coll.insertOne(doc);
               coll.insertMany(docs);
@@ -106,9 +121,14 @@ public class DriverTest {
             if (doc == null) {
                 Assertions.fail("doc is null");
             }
-            List list = doc.get("value", List.class);
-            Assertions.assertEquals(n, list.size());
-            
+            byte[] c = new byte[1];
+            Binary list = doc.get("value", Binary.class);
+            logger.info("length: {}", list.length());
+//            Assertions.assertEquals(n, list.length()/8);
+            Double[] v = SerializationUtils.deserialize(list.getData());
+            logger.info("v length: {}", v.length);
+            logger.info("v[n-1]: {}", v[n-1]);
+            Assertions.assertEquals((Double)(n+13.), v[n-1]);
         }
         logger.info("End query");
     }
