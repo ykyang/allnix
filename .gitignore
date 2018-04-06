@@ -14,3 +14,7 @@ gradle-app.setting
 .nb-gradle/
 .nb-gradle-properties
 
+.classpath
+.project
+.settings/
+bin/
