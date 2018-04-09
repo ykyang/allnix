@@ -22,12 +22,15 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Indexes;
+import com.mongodb.gridfs.GridFS;
+import com.mongodb.gridfs.GridFSInputFile;
 
 @RunWith(JUnitPlatform.class)
 @TestInstance(Lifecycle.PER_CLASS)
@@ -317,7 +320,7 @@ public class DriverTest {
             // - Do NOT delete.  This is how you get ObjectId. - //
             // logger.info("ID: {}", doc.getObjectId("_id"));
         }
-        logger.info("Inser time: {}", watch.getTime());
+        logger.info("Insert time: {}", watch.getTime());
         logger.info("Insert time per doc: {}", watch.getTime()/(double)docCount);
         logger.info("Document count: {}", coll.count());
         
@@ -354,4 +357,49 @@ public class DriverTest {
         logger.info("End query");
     }
     
+    public void insertGridFS() {
+        StopWatch watch = StopWatch.createStarted(); 
+        watch.suspend();
+        
+        MongoClient mc = new MongoClient(host_port);
+        logger.info("Host: {}", mc.getAddress().getHost());
+        
+        DB db = mc.getDB("techlog_gridfs");
+//        MongoDatabase db = mc.getDatabase("techlog_gridfs");
+//        logger.info("Database: {}", db.getName());
+        
+        GridFS gridfs = new GridFS(db, "log");
+        
+        int n = 300_000;
+//      int n = 300;
+      
+      int start = 1;
+      int end = 1000; // 1.2 GB instead of 2.2 GB as calculated
+      
+      int query = (end+start)/2;
+
+      //        int start = 10_001;
+//      int end = 20_000;
+      int docCount = end - start + 1;
+      
+//      db.drop();
+//      coll.createIndex(Indexes.hashed("name"));
+      
+      ByteBuffer byteBuffer = ByteBuffer.allocate(Double.BYTES*n);
+      DoubleBuffer doubleBuffer = byteBuffer.asDoubleBuffer();
+      
+      for ( int j = 0; j < n; j++) {
+          double v = j+1+13.;
+          
+          // - Do not delete
+          // - Pay attention to the index
+          // byteBuffer.putDouble(j*Double.BYTES, v);
+          
+          doubleBuffer.put(j, v);
+      }
+        
+        
+        
+        GridFSInputFile in = gridfs.createFile(data)
+    }
 }
