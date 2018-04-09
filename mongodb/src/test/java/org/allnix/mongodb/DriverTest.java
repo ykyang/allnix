@@ -9,6 +9,7 @@ import java.util.concurrent.Executors;
 
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.time.StopWatch;
+import org.bson.BsonBinary;
 import org.bson.Document;
 import org.bson.types.Binary;
 import org.junit.jupiter.api.Assertions;
@@ -36,22 +37,104 @@ public class DriverTest {
 //    private int port = 8017;
     @Test
     public void insertDouble() {
+        StopWatch watch = StopWatch.createStarted(); 
+        watch.suspend();
+        
     	MongoClient mc = new MongoClient(host_port);
         logger.info("Host: {}", mc.getAddress().getHost());
         
         MongoDatabase db = mc.getDatabase("techlog_double");
         logger.info("Database: {}", db.getName());
+        
+        MongoCollection<Document> coll = db.getCollection("log");
+        
+//        int n = 300_000;
+        int n = 300_000;
+        int start = 1;
+        int end = 10_000;
+//      int start = 10_001;
+//      int end = 20_000;
+        int docCount = end - start + 1;
+
+        coll.drop();
+        coll.createIndex(Indexes.hashed("name"));
+
+        // ExecutorService es = Executors.newFixedThreadPool(10);
+
+
+        Double[] value = new Double[n];
+        for (int j = 0; j < n; j++) {
+            value[j] = j + 1 + 13.;
+        }
+
+        List<Document> docs = new ArrayList<Document>();
+        for (int i = start; i <= end; i++) {
+            String name = "dct_" + Integer.toString(i);
+            // byte[] value = new byte[n];
+            // Double[] value = new Double[n];
+            // for ( int j = 0; j < n; j++) {
+            // value[j]= j+1+13.;
+            // }
+
+            Document doc = new Document("name", name).append("value",
+                    Arrays.asList(value));
+
+            docs.add(doc);
+            if (docs.size() >= 10) {
+                watch.resume();
+                // coll.insertOne(doc);
+                coll.insertMany(docs);
+                watch.suspend();
+
+                docs.clear();
+                logger.info("Inserted: {}", i - start + 1);
+            }
+        }
+        // - Last batch - //
+        if (!docs.isEmpty()) {
+            watch.resume();
+            coll.insertMany(docs);
+            watch.suspend();
+
+            docs.clear();
+            logger.info("Inserted: {}", docCount);
+        }
+
+        logger.info("Inser time: {}", watch.getTime());
+        logger.info("Insert time per doc: {}", watch.getTime() / docCount);
+        logger.info("Document count: {}", coll.count());
+
+        // MongoCursor<Document> cursor = coll.find().iterator();
+        // logger.info("Start all retrivel");
+        // while(cursor.hasNext()) {
+        // Document doc = cursor.next();
+        // System.out.println(doc.getString("name"));
+        // List list = doc.get("value", List.class);
+        // }
+        // logger.info("End all retrivel");
+
+        logger.info("Start query");
+        {
+            Document doc = coll.find(Filters.eq("name", "dct_9999")).first();
+            if (doc == null) {
+                Assertions.fail("doc is null");
+            }
+            List<Double> list = (List<Double>) doc.get("value", List.class);
+            logger.info("length: {}", list.size());
+            Assertions.assertEquals((Double)(n + 13.), list.get(n - 1));
+        }
+        logger.info("End query");
     }
     
     @Test
-    public void insert() {
+    public void insertByte() {
         StopWatch watch = StopWatch.createStarted(); 
         watch.suspend();
         
         MongoClient mc = new MongoClient(host_port);
         logger.info("Host: {}", mc.getAddress().getHost());
         
-        MongoDatabase db = mc.getDatabase("techlog");
+        MongoDatabase db = mc.getDatabase("techlog_byte");
         logger.info("Database: {}", db.getName());
         
         MongoCollection<Document> coll = db.getCollection("log");
@@ -61,7 +144,7 @@ public class DriverTest {
         int n = 300_000;
 //        int n = 300;
         int start = 1;
-        int end = 10_000;
+        int end = 1000;
 //        int start = 10_001;
 //        int end = 20_000;
         int docCount = end - start + 1;
@@ -102,6 +185,9 @@ public class DriverTest {
               coll.insertMany(docs);
               watch.suspend();
               
+              for (Document d : docs) {
+                  logger.info("ID: {}", d.getObjectId("_id"));
+              }
               docs.clear();
               logger.info("Inserted: {}", i-start+1);
             }
@@ -111,7 +197,9 @@ public class DriverTest {
             watch.resume();
             coll.insertMany(docs);
             watch.suspend();
-            
+            for (Document d : docs) {
+                logger.info("ID: {}", d.getObjectId("_id"));
+            }
             docs.clear();
             logger.info("Inserted: {}", docCount);
         }
@@ -137,8 +225,8 @@ public class DriverTest {
                 Assertions.fail("doc is null");
             }
             byte[] c = new byte[1];
-            Binary list = doc.get("value", Binary.class);
-            logger.info("length: {}", list.length());
+            BsonBinary list = doc.get("value", BsonBinary.class);
+            logger.info("length: {}", list.getData().length);
             ByteBuffer bf = ByteBuffer.wrap(list.getData());
             Assertions.assertEquals((double)(n+13.), bf.getDouble(n-1));
 //            Assertions.assertEquals(n, list.length()/8);
