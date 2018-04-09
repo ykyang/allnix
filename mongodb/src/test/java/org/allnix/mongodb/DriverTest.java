@@ -1,6 +1,7 @@
 package org.allnix.mongodb;
 
 import java.nio.ByteBuffer;
+import java.nio.DoubleBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -127,7 +128,7 @@ public class DriverTest {
     }
     
     @Test
-    public void insertByte() {
+    public void insertManyByte() {
         StopWatch watch = StopWatch.createStarted(); 
         watch.suspend();
         
@@ -220,7 +221,8 @@ public class DriverTest {
         
         logger.info("Start query");
         {
-            Document doc = coll.find(Filters.eq("name", "dct_9999")).first();
+            Document doc = coll.find(Filters.eq("name", 
+                    "dct_" + Integer.toString(end-1))).first();
             if (doc == null) {
                 Assertions.fail("doc is null");
             }
@@ -238,5 +240,90 @@ public class DriverTest {
         logger.info("End query");
     }
     
+    @Test
+    public void insertByte() {
+        StopWatch watch = StopWatch.createStarted(); 
+        watch.suspend();
+        
+        MongoClient mc = new MongoClient(host_port);
+        logger.info("Host: {}", mc.getAddress().getHost());
+        
+        MongoDatabase db = mc.getDatabase("techlog_byte");
+        logger.info("Database: {}", db.getName());
+        
+        MongoCollection<Document> coll = db.getCollection("log");
+
+        int n = 300_000;
+//        int n = 300;
+        
+        int start = 1;
+        int end = 1000;
+        
+        int query = (end+start)/2;
+
+        //        int start = 10_001;
+//        int end = 20_000;
+        int docCount = end - start + 1;
+        
+        coll.drop();
+        coll.createIndex(Indexes.hashed("name"));
+        
+        ByteBuffer byteBuffer = ByteBuffer.allocate(Double.BYTES*n);
+        
+        for ( int j = 0; j < n; j++) {
+            double v = j+1+13.;
+            // - Pay attention to the index - //
+            byteBuffer.putDouble(j*Double.BYTES, v);
+        }
+        
+        for (int i = start; i <= end; i++) {
+            String name = "dct_" + Integer.toString(i);
+            
+            Document doc = new Document("name", name)
+                    .append("value", byteBuffer.array());
+            
+            watch.resume();
+            coll.insertOne(doc);
+            watch.suspend();
+            
+            logger.info("Document Ind: {}", i);
+            // - Do NOT delete.  This is how you get ObjectId. - //
+            // logger.info("ID: {}", doc.getObjectId("_id"));
+        }
+        logger.info("Inser time: {}", watch.getTime());
+        logger.info("Insert time per doc: {}", watch.getTime()/(double)docCount);
+        logger.info("Document count: {}", coll.count());
+        
+    
+//        MongoCursor<Document> cursor = coll.find().iterator();
+//        logger.info("Start all retrivel");
+//        while(cursor.hasNext()) {
+//            Document doc = cursor.next();
+//            System.out.println(doc.getString("name"));
+//            List list = doc.get("value", List.class);
+//        }
+//        logger.info("End all retrivel");
+        
+        logger.info("Start query");
+        {
+            Document doc = coll.find(Filters.eq("name", 
+                    "dct_" + Integer.toString(query))).first();
+            if (doc == null) {
+                Assertions.fail("doc is null");
+            }
+            Binary bytes = doc.get("value", Binary.class);
+            
+            logger.info("length: {}", bytes.getData().length);
+            Assertions.assertEquals(n*Double.BYTES, bytes.getData().length);
+            
+            ByteBuffer bf = ByteBuffer.wrap(bytes.getData());
+            for (int j = 0; j < n; j++) {
+                double v = j+1+13;
+                Assertions.assertEquals(v, bf.getDouble(j*Double.BYTES),"Ind = " + Integer.toString(j));
+            }
+            
+        }
+        logger.info("End query");
+    }
     
 }
