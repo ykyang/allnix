@@ -33,7 +33,18 @@ import com.mongodb.client.model.Indexes;
 @TestInstance(Lifecycle.PER_CLASS)
 public class DriverTest {
     static private Logger logger = LoggerFactory.getLogger(DriverTest.class);
-    
+    @Test
+    public void dropAll() {
+        MongoClient mc = new MongoClient(host_port);
+        MongoDatabase db = mc.getDatabase("techlog_double");
+        db.drop();
+        db = mc.getDatabase("techlog");
+        db.drop();
+        db = mc.getDatabase("techlog_byte");
+        db.drop();
+        db = mc.getDatabase("techlog_manybyte");
+        db.drop();
+    }
     private String host_port = "127.0.0.1:8017";
 //    private int port = 8017;
     @Test
@@ -52,11 +63,13 @@ public class DriverTest {
 //        int n = 300_000;
         int n = 300_000;
         int start = 1;
-        int end = 10_000;
+        int end = 1_000;
 //      int start = 10_001;
 //      int end = 20_000;
         int docCount = end - start + 1;
 
+        int query = (end+start)/2;
+        
         coll.drop();
         coll.createIndex(Indexes.hashed("name"));
 
@@ -116,7 +129,7 @@ public class DriverTest {
 
         logger.info("Start query");
         {
-            Document doc = coll.find(Filters.eq("name", "dct_9999")).first();
+            Document doc = coll.find(Filters.eq("name", "dct_" + Integer.toString(query))).first();
             if (doc == null) {
                 Assertions.fail("doc is null");
             }
@@ -135,7 +148,7 @@ public class DriverTest {
         MongoClient mc = new MongoClient(host_port);
         logger.info("Host: {}", mc.getAddress().getHost());
         
-        MongoDatabase db = mc.getDatabase("techlog_byte");
+        MongoDatabase db = mc.getDatabase("techlog_manybyte");
         logger.info("Database: {}", db.getName());
         
         MongoCollection<Document> coll = db.getCollection("log");
@@ -145,27 +158,31 @@ public class DriverTest {
         int n = 300_000;
 //        int n = 300;
         int start = 1;
-        int end = 1000;
+        int end = 1000;  // 1.2 GB instead of 2.2 GB as calculated
 //        int start = 10_001;
 //        int end = 20_000;
         int docCount = end - start + 1;
+
+        int query = (end+start)/2;
         
         coll.drop();
         coll.createIndex(Indexes.hashed("name"));
         
 //        ExecutorService es = Executors.newFixedThreadPool(10);
         
-        ByteBuffer bb = ByteBuffer.allocate(Double.BYTES*n);
-        
+        ByteBuffer byteBuffer = ByteBuffer.allocate(Double.BYTES*n);
+        DoubleBuffer doubleBuffer = byteBuffer.asDoubleBuffer();
         
         Double[] value = new Double[n];
         for ( int j = 0; j < n; j++) {
+            double v = j+1+13.;
             value[j]= j+1+13.;
-            bb.putDouble(j, value[j]);
+//            bb.putDouble(j, value[j]);
+            doubleBuffer.put(j, v);
         }
-        byte[] b = SerializationUtils.serialize(value);
-        logger.info("length: {}", b.length);
-        logger.info("bb length: {}", bb.capacity());
+//        byte[] b = SerializationUtils.serialize(value);
+//        logger.info("length: {}", b.length);
+//        logger.info("bb length: {}", bb.capacity());
         
         List<Document> docs = new ArrayList<Document>();
         for (int i = start; i <= end; i++) {
@@ -177,7 +194,7 @@ public class DriverTest {
 //            }
             
             Document doc = new Document("name", name)
-                    .append("value", bb.array());
+                    .append("value", byteBuffer.array());
             
             docs.add(doc);
             if ( docs.size() >= 10) {
@@ -186,9 +203,9 @@ public class DriverTest {
               coll.insertMany(docs);
               watch.suspend();
               
-              for (Document d : docs) {
-                  logger.info("ID: {}", d.getObjectId("_id"));
-              }
+//              for (Document d : docs) {
+//                  logger.info("ID: {}", d.getObjectId("_id"));
+//              }
               docs.clear();
               logger.info("Inserted: {}", i-start+1);
             }
@@ -198,15 +215,15 @@ public class DriverTest {
             watch.resume();
             coll.insertMany(docs);
             watch.suspend();
-            for (Document d : docs) {
-                logger.info("ID: {}", d.getObjectId("_id"));
-            }
+//            for (Document d : docs) {
+//                logger.info("ID: {}", d.getObjectId("_id"));
+//            }
             docs.clear();
             logger.info("Inserted: {}", docCount);
         }
         
         logger.info("Inser time: {}", watch.getTime());
-        logger.info("Insert time per doc: {}", watch.getTime()/docCount);
+        logger.info("Insert time per doc: {}", watch.getTime()/(double)docCount);
         logger.info("Document count: {}", coll.count());
         
     
@@ -222,15 +239,20 @@ public class DriverTest {
         logger.info("Start query");
         {
             Document doc = coll.find(Filters.eq("name", 
-                    "dct_" + Integer.toString(end-1))).first();
+                    "dct_" + Integer.toString(query))).first();
             if (doc == null) {
                 Assertions.fail("doc is null");
             }
             byte[] c = new byte[1];
-            BsonBinary list = doc.get("value", BsonBinary.class);
+            Binary list = doc.get("value", Binary.class);
             logger.info("length: {}", list.getData().length);
             ByteBuffer bf = ByteBuffer.wrap(list.getData());
-            Assertions.assertEquals((double)(n+13.), bf.getDouble(n-1));
+            DoubleBuffer dB = bf.asDoubleBuffer();
+            for (int j = 0; j < n; j++) {
+                double v = j+1+13;
+                Assertions.assertEquals(v, dB.get(j),"Ind = " + Integer.toString(j));
+            }
+//            Assertions.assertEquals((double)(n+13.), bf.getDouble(n-1));
 //            Assertions.assertEquals(n, list.length()/8);
 //            Double[] v = SerializationUtils.deserialize(list.getData());
 //            logger.info("v length: {}", v.length);
@@ -257,7 +279,7 @@ public class DriverTest {
 //        int n = 300;
         
         int start = 1;
-        int end = 1000;
+        int end = 1000; // 1.2 GB instead of 2.2 GB as calculated
         
         int query = (end+start)/2;
 
@@ -322,9 +344,10 @@ public class DriverTest {
             Assertions.assertEquals(n*Double.BYTES, bytes.getData().length);
             
             ByteBuffer bf = ByteBuffer.wrap(bytes.getData());
+            DoubleBuffer dB = bf.asDoubleBuffer();
             for (int j = 0; j < n; j++) {
                 double v = j+1+13;
-                Assertions.assertEquals(v, bf.getDouble(j*Double.BYTES),"Ind = " + Integer.toString(j));
+                Assertions.assertEquals(v, dB.get(j),"Ind = " + Integer.toString(j));
             }
             
         }
