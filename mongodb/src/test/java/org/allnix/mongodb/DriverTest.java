@@ -32,8 +32,17 @@ import com.mongodb.client.model.Indexes;
 public class DriverTest {
     static private Logger logger = LoggerFactory.getLogger(DriverTest.class);
     
-    private String host_port = "172.16.0.39:8017";
+    private String host_port = "127.0.0.1:8017";
 //    private int port = 8017;
+    @Test
+    public void insertDouble() {
+    	MongoClient mc = new MongoClient(host_port);
+        logger.info("Host: {}", mc.getAddress().getHost());
+        
+        MongoDatabase db = mc.getDatabase("techlog_double");
+        logger.info("Database: {}", db.getName());
+    }
+    
     @Test
     public void insert() {
         StopWatch watch = StopWatch.createStarted(); 

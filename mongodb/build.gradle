@@ -6,6 +6,11 @@
  * user guide available at https://docs.gradle.org/4.3.1/userguide/java_library_plugin.html
  */
 
+/*
+ * Run single test
+ * ./gradlew test --tests "*DriverTest.insert"
+ */
+
 // Apply the java-library plugin to add support for Java Library
 apply plugin: 'java'
 apply plugin: 'java-library'
