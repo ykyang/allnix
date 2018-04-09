@@ -269,11 +269,16 @@ public class DriverTest {
         coll.createIndex(Indexes.hashed("name"));
         
         ByteBuffer byteBuffer = ByteBuffer.allocate(Double.BYTES*n);
+        DoubleBuffer doubleBuffer = byteBuffer.asDoubleBuffer();
         
         for ( int j = 0; j < n; j++) {
             double v = j+1+13.;
-            // - Pay attention to the index - //
-            byteBuffer.putDouble(j*Double.BYTES, v);
+            
+            // - Do not delete
+            // - Pay attention to the index
+            // byteBuffer.putDouble(j*Double.BYTES, v);
+            
+            doubleBuffer.put(j, v);
         }
         
         for (int i = start; i <= end; i++) {
