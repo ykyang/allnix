@@ -1,5 +1,7 @@
 package org.allnix.mongodb;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 import java.util.ArrayList;
@@ -22,14 +24,18 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.gridfs.GridFSBucket;
+import com.mongodb.client.gridfs.GridFSBuckets;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Indexes;
 import com.mongodb.gridfs.GridFS;
+import com.mongodb.gridfs.GridFSDBFile;
 import com.mongodb.gridfs.GridFSInputFile;
 
 @RunWith(JUnitPlatform.class)
@@ -46,6 +52,8 @@ public class DriverTest {
         db = mc.getDatabase("techlog_byte");
         db.drop();
         db = mc.getDatabase("techlog_manybyte");
+        db.drop();
+        db = mc.getDatabase("techlog_gridfs");
         db.drop();
     }
     private String host_port = "127.0.0.1:8017";
@@ -313,7 +321,7 @@ public class DriverTest {
                     .append("value", byteBuffer.array());
             
             watch.resume();
-            coll.insertOne(doc);
+            coll.insertOne(doc); // 7 ms per insert
             watch.suspend();
             
             logger.info("Document Ind: {}", i);
@@ -357,7 +365,8 @@ public class DriverTest {
         logger.info("End query");
     }
     
-    public void insertGridFS() {
+    @Test
+    public void insertGridFS() throws IOException {
         StopWatch watch = StopWatch.createStarted(); 
         watch.suspend();
         
@@ -365,16 +374,23 @@ public class DriverTest {
         logger.info("Host: {}", mc.getAddress().getHost());
         
         DB db = mc.getDB("techlog_gridfs");
-//        MongoDatabase db = mc.getDatabase("techlog_gridfs");
+        MongoDatabase mongodb = mc.getDatabase("techlog_gridfs");
+        GridFSBucket bucket = GridFSBuckets.create(mongodb, "log");
+        bucket.drop();
+        
+        MongoCollection<Document> coll = mongodb.getCollection("log.files");
+        coll.createIndex(Indexes.hashed("name"));
 //        logger.info("Database: {}", db.getName());
         
         GridFS gridfs = new GridFS(db, "log");
+       
+       
         
         int n = 300_000;
 //      int n = 300;
       
       int start = 1;
-      int end = 1000; // 1.2 GB instead of 2.2 GB as calculated
+      int end = 1000; //  GB instead of 2.2 GB as calculated
       
       int query = (end+start)/2;
 
@@ -384,6 +400,8 @@ public class DriverTest {
       
 //      db.drop();
 //      coll.createIndex(Indexes.hashed("name"));
+      
+      
       
       ByteBuffer byteBuffer = ByteBuffer.allocate(Double.BYTES*n);
       DoubleBuffer doubleBuffer = byteBuffer.asDoubleBuffer();
@@ -399,7 +417,50 @@ public class DriverTest {
       }
         
         
-        
-        GridFSInputFile in = gridfs.createFile(data)
+      for (int i = start; i <= end; i++) {
+          String name = "dct_" + Integer.toString(i);
+          
+          Document doc = new Document("name", name);
+          
+          watch.resume();
+          GridFSInputFile in = gridfs.createFile(byteBuffer.array());
+          in.put("name", name);
+          in.save(); // 16-20 ms per insert
+          watch.suspend();
+          
+          logger.info("Document Ind: {}", i);
+          // - Do NOT delete.  This is how you get ObjectId. - //
+          // logger.info("ID: {}", doc.getObjectId("_id"));
+      }
+//      GridFSInputFile in = gridfs.createFile(byteBuffer.array());
+//      in.save();
+      logger.info("Insert time: {}", watch.getTime());
+      logger.info("Insert time per doc: {}", watch.getTime()/(double)docCount);
+      
+      logger.info("Start query");
+      {
+          BasicDBObject dbo = new BasicDBObject("name", "dct_" + Integer.toString(query));
+          GridFSDBFile out = gridfs.findOne(dbo);
+          if (out == null) {
+              Assertions.fail("doc is null");
+          }
+          
+          ByteArrayOutputStream ob = new ByteArrayOutputStream();
+          out.writeTo(ob);
+//          Binary bytes = doc.get("value", Binary.class);
+          
+//          logger.info("length: {}", bytes.getData().length);
+          Assertions.assertEquals(n*Double.BYTES, ob.size());
+          
+          ByteBuffer bf = ByteBuffer.wrap(ob.toByteArray());
+          DoubleBuffer dB = bf.asDoubleBuffer();
+          for (int j = 0; j < n; j++) {
+              double v = j+1+13;
+              Assertions.assertEquals(v, dB.get(j),"Ind = " + Integer.toString(j));
+          }
+          
+      }
+      logger.info("End query");
+ 
     }
 }
