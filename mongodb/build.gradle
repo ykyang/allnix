@@ -37,6 +37,7 @@ dependencies {
     
     // - MongoDB - //
     compile 'org.mongodb:mongodb-driver:3.6.3'
+    compile 'org.springframework.data:spring-data-mongodb:2.0.6.RELEASE'
     
     // Use JUnit test framework
     //testImplementation 'junit:junit:4.12'
