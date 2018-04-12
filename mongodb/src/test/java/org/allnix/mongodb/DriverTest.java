@@ -278,6 +278,18 @@ public class DriverTest {
     
     @Test
     public void insertByte() {
+        // 15:31:00.433 [Test worker] INFO org.allnix.mongodb.DriverTest -
+        // Insert time: 162547
+        // 15:31:00.433 [Test worker] INFO org.allnix.mongodb.DriverTest -
+        // Insert time per doc: 16.2547
+        // 15:31:00.435 [Test worker] INFO org.allnix.mongodb.DriverTest -
+        // Document count: 10000
+        // 15:31:00.436 [Test worker] INFO org.allnix.mongodb.DriverTest - Start
+        // query
+        // 15:31:00.521 [Test worker] INFO org.allnix.mongodb.DriverTest -
+        // length: 2400000
+        // 15:31:00.584 [Test worker] INFO org.allnix.mongodb.DriverTest - End
+        // query
         StopWatch watch = StopWatch.createStarted(); 
         watch.suspend();
         
