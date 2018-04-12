@@ -1,6 +1,9 @@
 package org.allnix.mongodb;
 
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
@@ -169,7 +172,7 @@ public class DriverTest {
         int n = 300_000;
 //        int n = 300;
         int start = 1;
-        int end = 1000;  // 1.2 GB instead of 2.2 GB as calculated
+        int end = 10000;  // 1.2 GB instead of 2.2 GB as calculated
 //        int start = 10_001;
 //        int end = 20_000;
         int docCount = end - start + 1;
@@ -290,7 +293,7 @@ public class DriverTest {
 //        int n = 300;
         
         int start = 1;
-        int end = 1000; // 1.2 GB instead of 2.2 GB as calculated
+        int end = 10000; // 1.2 GB instead of 2.2 GB as calculated
         
         int query = (end+start)/2;
 
@@ -367,6 +370,15 @@ public class DriverTest {
     
     @Test
     public void insertGridFS() throws IOException {
+        // 15:25:40.392 [Test worker] INFO org.allnix.mongodb.DriverTest -
+        // Insert time: 195960
+        // 15:25:40.392 [Test worker] INFO org.allnix.mongodb.DriverTest -
+        // Insert time per doc: 19.596
+        // 15:25:40.392 [Test worker] INFO org.allnix.mongodb.DriverTest - Start
+        // query
+        // 15:25:40.442 [Test worker] INFO org.allnix.mongodb.DriverTest - End
+        // query
+
         StopWatch watch = StopWatch.createStarted(); 
         watch.suspend();
         
@@ -390,7 +402,7 @@ public class DriverTest {
 //      int n = 300;
       
       int start = 1;
-      int end = 1000; //  GB instead of 2.2 GB as calculated
+      int end = 10000; //  GB instead of 2.2 GB as calculated
       
       int query = (end+start)/2;
 
@@ -424,6 +436,7 @@ public class DriverTest {
           
           watch.resume();
           GridFSInputFile in = gridfs.createFile(byteBuffer.array());
+//          in.setChunkSize(255);
           in.put("name", name);
           in.save(); // 16-20 ms per insert
           watch.suspend();
@@ -462,5 +475,118 @@ public class DriverTest {
       }
       logger.info("End query");
  
+    }
+    
+    @Test
+    public void insertBigGridFS() throws IOException {
+        StopWatch watch = StopWatch.createStarted(); 
+        watch.suspend();
+        
+        MongoClient mc = new MongoClient(host_port);
+        logger.info("Host: {}", mc.getAddress().getHost());
+        
+        DB db = mc.getDB("techlog_big_gridfs");
+        MongoDatabase mongodb = mc.getDatabase("techlog_big_gridfs");
+        GridFSBucket bucket = GridFSBuckets.create(mongodb, "log");
+        bucket.drop();
+        
+        MongoCollection<Document> coll = mongodb.getCollection("log.files");
+        coll.createIndex(Indexes.hashed("name"));
+//        logger.info("Database: {}", db.getName());
+        
+        GridFS gridfs = new GridFS(db, "log");
+       
+       
+        
+        int n = 100_000_000;
+//      int n = 300;
+      
+      int start = 1;
+      int end = 30; //  GB instead of 2.2 GB as calculated
+      
+      int query = (end+start)/2;
+
+      //        int start = 10_001;
+//      int end = 20_000;
+      int docCount = end - start + 1;
+      
+//      db.drop();
+//      coll.createIndex(Indexes.hashed("name"));
+      
+      
+      
+      ByteBuffer byteBuffer = ByteBuffer.allocate(Double.BYTES*n);
+      DoubleBuffer doubleBuffer = byteBuffer.asDoubleBuffer();
+      
+      for ( int j = 0; j < n; j++) {
+          double v = j+1+13.;
+          
+          // - Do not delete
+          // - Pay attention to the index
+          // byteBuffer.putDouble(j*Double.BYTES, v);
+          
+          doubleBuffer.put(j, v);
+      }
+        
+        
+      for (int i = start; i <= end; i++) {
+          String name = "dct_" + Integer.toString(i);
+          
+          Document doc = new Document("name", name);
+          
+          watch.resume();
+          GridFSInputFile in = gridfs.createFile(byteBuffer.array());
+          in.setChunkSize(1024*1024*1 - 1);
+          in.put("name", name);
+          in.save(); // 16-20 ms per insert
+          watch.suspend();
+          
+          logger.info("Document Ind: {}", i);
+          // - Do NOT delete.  This is how you get ObjectId. - //
+          // logger.info("ID: {}", doc.getObjectId("_id"));
+      }
+//      GridFSInputFile in = gridfs.createFile(byteBuffer.array());
+//      in.save();
+      logger.info("Insert time: {}", watch.getTime());
+      logger.info("Insert time per doc: {}", watch.getTime()/(double)docCount);
+      
+      logger.info("Start query");
+      {
+          BasicDBObject dbo = new BasicDBObject("name", "dct_" + Integer.toString(query));
+          GridFSDBFile out = gridfs.findOne(dbo);
+          if (out == null) {
+              Assertions.fail("doc is null");
+          }
+          
+          ByteArrayOutputStream ob = new ByteArrayOutputStream();
+          out.writeTo(ob);
+//          Binary bytes = doc.get("value", Binary.class);
+          
+//          logger.info("length: {}", bytes.getData().length);
+          Assertions.assertEquals(n*Double.BYTES, ob.size());
+          
+          ByteBuffer bf = ByteBuffer.wrap(ob.toByteArray());
+          DoubleBuffer dB = bf.asDoubleBuffer();
+          for (int j = 0; j < n; j++) {
+              double v = j+1+13;
+              Assertions.assertEquals(v, dB.get(j),"Ind = " + Integer.toString(j));
+          }
+          
+      }
+      logger.info("End query");
+ 
+    }
+    @Test
+    public void writeFile() throws IOException {
+        StopWatch watch = StopWatch.createStarted(); 
+        
+        BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream("big.out"));
+        for ( long i = 0; i < 3_000_000_000l*8; i++) {
+            out.write(13);
+        }
+        out.close();
+        watch.suspend();
+        
+        logger.info("Time: {}", watch.getTime());
     }
 }

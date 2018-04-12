@@ -42,8 +42,14 @@ public class AppConfig {
      * @return
      */
     @Bean(name="person")
-    public MongoTemplate mongoTemplate() {
+    public MongoTemplate personMongoTemplate() {
         MongoTemplate bean = new MongoTemplate(mongoClient(), "PersonDb");
+        return bean;
+    }
+    
+    @Bean(name="TechlogDb")
+    public MongoTemplate techlogMongoTemplate() {
+        MongoTemplate bean = new MongoTemplate(mongoClient(), "TechlogDb");
         return bean;
     }
     /*

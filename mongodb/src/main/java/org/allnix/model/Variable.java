@@ -15,11 +15,50 @@
  */
 package org.allnix.model;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.TypeAlias;
+import org.springframework.data.mongodb.core.index.Indexed;
+
 /**
  * 
  * @author Yi-Kun Yang ykyang@gmail.com
  *
  */
+@TypeAlias("Variable")
 public class Variable {
-
+    @Id
+    private String id;
+    private String name;
+    private String familyName;
+    private String wellName;
+    private byte[] array;
+    
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public String getFamilyName() {
+        return familyName;
+    }
+    public void setFamilyName(String familyName) {
+        this.familyName = familyName;
+    }
+    public String getWellName() {
+        return wellName;
+    }
+    public void setWellName(String wellName) {
+        this.wellName = wellName;
+    }
+    public byte[] getArray() {
+        return array;
+    }
+    public void setArray(byte[] array) {
+        this.array = array;
+    }
+    public String getId() {
+        return id;
+    }
+    
 }
