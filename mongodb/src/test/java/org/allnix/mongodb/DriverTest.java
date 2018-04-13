@@ -156,6 +156,19 @@ public class DriverTest {
     
     @Test
     public void insertManyByte() {
+        // - Separate journal/ from db/ - //
+        // 15:13:07.056 [Test worker] INFO org.allnix.mongodb.DriverTest - Inser
+        // time: 85889
+        // 15:13:07.056 [Test worker] INFO org.allnix.mongodb.DriverTest -
+        // Insert time per doc: 8.5889
+        // 15:13:07.150 [Test worker] INFO org.allnix.mongodb.DriverTest -
+        // Document count: 10000
+        // 15:13:07.150 [Test worker] INFO org.allnix.mongodb.DriverTest - Start
+        // query
+        // 15:13:07.457 [Test worker] INFO org.allnix.mongodb.DriverTest -
+        // length: 2400000
+        // 15:13:07.680 [Test worker] INFO org.allnix.mongodb.DriverTest - End
+        // query
         StopWatch watch = StopWatch.createStarted(); 
         watch.suspend();
         
