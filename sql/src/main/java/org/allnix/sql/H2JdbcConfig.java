@@ -76,4 +76,12 @@ public class H2JdbcConfig {
     return bean;
   }
   
+  @Bean
+  public SqlBlobDao blobDao() {
+      SqlBlobDao bean = new SqlBlobDao();
+      bean.setJdbcTemplate(h2JdbcTemplate());
+      
+      return bean;
+  }
+  
 }

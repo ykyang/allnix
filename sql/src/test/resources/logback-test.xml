@@ -26,6 +26,10 @@
 		<logger name="ch.qos.logback" level="error" additivity="false">
 		  <appender-ref ref="STDOUT" />
 		</logger>
+		<logger name="com.zaxxer" level="error" additivity="false">
+		  <appender-ref ref="STDOUT" />
+		</logger>
+		
 		
         <root level="debug">
           <!--appender-ref ref="STDOUT" /-->
