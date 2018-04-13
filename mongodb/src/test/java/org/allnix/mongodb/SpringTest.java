@@ -107,6 +107,15 @@ public class SpringTest {
     public void insertMany() {
         int pack = 50;
         
+        // n = 300,000
+        // end = 100,000
+        // pack = 50
+        // 16:05:07.739 [Test worker] INFO org.allnix.mongodb.SpringTest -
+        // Insert time: 1104426
+        // 16:05:07.739 [Test worker] INFO org.allnix.mongodb.SpringTest -
+        // Insert time per doc: 11.04426
+        // 16:05:07.885 [Test worker] INFO org.allnix.mongodb.SpringTest - Query
+        // time: 145
         
         // pack = 100
         // 15:39:39.408 [Test worker] INFO org.allnix.mongodb.SpringTest -
@@ -149,7 +158,7 @@ public class SpringTest {
         
         int n = 300_000;
         int start = 1;
-        int end = 100_000;
+        int end = 10_000;
 //        int  = (end+start)/2;
         String var_name = "dct_" + Integer.toString((end+start)/2);
         int docCount = end - start + 1;
