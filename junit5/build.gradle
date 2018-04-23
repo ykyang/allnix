@@ -67,7 +67,7 @@ test {
     // see JUnitPlatformOptions
     //excludeTags 'seconds', 'minutes', 'hours', 'days'
    	
-   	includeTags 'minutes', 'seconds', 'manual'
+   	includeTags 'minutes', 'seconds'//, 'manual'
     //includeTags 'fast'
   }
   maxParallelForks = 6
