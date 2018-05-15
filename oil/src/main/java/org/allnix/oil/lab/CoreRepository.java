@@ -15,22 +15,10 @@
  */
 package org.allnix.oil.lab;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import java.util.List;
 
-@Entity
-public class Core {
-	@Id
-	@GeneratedValue
-	private String id;
-	private String name;
-	private double topDepth;
-	private double botDepth;
-	public Core(String name, double top, double bot) {
-	    this.name = name;
-	    this.topDepth = top;
-	    this.botDepth = bot;
-	}
+import org.springframework.data.repository.CrudRepository;
+
+public interface CoreRepository extends CrudRepository<Core, String> {
+    List<Core> findByName(String name);
 }

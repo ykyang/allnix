@@ -15,22 +15,14 @@
  */
 package org.allnix.oil.lab;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-@Entity
-public class Core {
-	@Id
-	@GeneratedValue
-	private String id;
-	private String name;
-	private double topDepth;
-	private double botDepth;
-	public Core(String name, double top, double bot) {
-	    this.name = name;
-	    this.topDepth = top;
-	    this.botDepth = bot;
-	}
+@Configuration
+@EnableJpaRepositories(basePackageClasses= {CoreRepository.class})
+public class TestConfig {
+    
+    @Autowired
+    private CoreRepository coreDao;
 }
