@@ -18,12 +18,14 @@ package org.allnix.oil.lab;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @Configuration
 @EnableJpaRepositories(basePackageClasses= {CoreRepository.class})
 @EntityScan("org.allnix.oil.lab.Core") 
+@ComponentScan
 public class TestConfig {
     
     @Autowired

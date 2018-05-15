@@ -26,8 +26,27 @@ public class Core {
 	@GeneratedValue
 	private String id;
 	private String name;
-	private double topDepth;
+	public String getId() {
+        return id;
+    }
+    public void setId(String id) {
+        this.id = id;
+    }
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public double getBotDepth() {
+        return botDepth;
+    }
+    public void setBotDepth(double botDepth) {
+        this.botDepth = botDepth;
+    }
+    private double topDepth;
 	private double botDepth;
+	public Core() {}
 	public Core(String name, double top, double bot) {
 	    this.name = name;
 	    this.topDepth = top;
