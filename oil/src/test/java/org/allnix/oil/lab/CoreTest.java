@@ -24,15 +24,27 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
+/**
+ * http://www.baeldung.com/spring-boot-testing
+ * 
+ * @author Yi-Kun Yang ykyang@gmail.com
+ *
+ */
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
 @ExtendWith(SpringExtension.class)
 @SpringJUnitConfig(classes = { org.allnix.oil.lab.TestConfig.class })
 @TestInstance(Lifecycle.PER_CLASS)
+@DataJpaTest
+@EnableJpaRepositories(basePackageClasses= {CoreRepository.class})
+@EntityScan("org.allnix.oil.lab.Core")
 public class CoreTest {
     @Autowired
     private CoreRepository coreDao;

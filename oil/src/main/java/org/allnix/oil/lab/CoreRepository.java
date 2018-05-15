@@ -18,7 +18,9 @@ package org.allnix.oil.lab;
 import java.util.List;
 
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface CoreRepository extends CrudRepository<Core, String> {
     List<Core> findByName(String name);
 }
