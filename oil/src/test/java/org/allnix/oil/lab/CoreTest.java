@@ -23,6 +23,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -38,13 +40,14 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
  * @author Yi-Kun Yang ykyang@gmail.com
  *
  */
-//@SpringBootTest(webEnvironment = WebEnvironment.NONE)
-@SpringBootTest
+@SpringBootTest(webEnvironment = WebEnvironment.NONE)
+//@SpringBootTest
 @ExtendWith(SpringExtension.class)
 //@SpringJUnitConfig(classes = { org.allnix.oil.lab.TestConfig.class })
 @TestInstance(Lifecycle.PER_CLASS)
 @DataJpaTest
 public class CoreTest {
+    static final private Logger logger = LoggerFactory.getLogger(CoreTest.class);
     @Autowired
     private CoreRepository coreDao;
     
@@ -55,7 +58,9 @@ public class CoreTest {
         coreDao.save(new Core("Core 2", 1100., 1200.));
         
 //        List<Core> coreList = coreDao.findByName("Core 1");
-         Iterable<Core> it = coreDao.findAll();
-//        Assertions.assertEquals(1, coreList.size());
+        Iterable<Core> itab = coreDao.findAll();
+        itab.forEach((v)->{
+            logger.info(v.getName());
+        });
     }
 }
