@@ -19,18 +19,23 @@ import javax.persistence.EntityManager;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-@Configuration
+
+//@DataJpaTest
 //@EnableJpaRepositories(basePackageClasses= {CoreRepository.class})
-@EntityScan("org.allnix.oil.lab.*") 
-@ComponentScan
-@EnableJpaRepositories("org.allnix.oil.lab")
-@EnableTransactionManagement
+//@EntityScan("org.allnix.oil.lab.*") 
+//@ComponentScan
+//@EnableJpaRepositories("org.allnix.oil.lab")
+//@EnableTransactionManagement
+@Configuration
+@EnableJpaAuditing
 public class TestConfig {
     
     @Autowired

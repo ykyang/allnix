@@ -27,25 +27,40 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 /**
  * http://www.baeldung.com/spring-boot-testing
  * 
+ * This is
+ * 
+ * @SpringJUnitConfig(classes = { TestConfig.class })
+ * 
+ * short for these
+ * 
+ * @ExtendWith(SpringExtension.class)
+ * @ContextConfiguration(classes = {TestConfig.class})
+ * 
  * @author Yi-Kun Yang ykyang@gmail.com
  *
  */
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
 //@SpringBootTest
-@ExtendWith(SpringExtension.class)
 //@SpringJUnitConfig(classes = { org.allnix.oil.lab.TestConfig.class })
+@ExtendWith(SpringExtension.class)
+@Import(TestConfig.class)
+//@ContextConfiguration(classes = {TestConfig.class})
 @TestInstance(Lifecycle.PER_CLASS)
 @DataJpaTest
+//@AutoConfigureTestDatabase
 public class CoreTest {
     static final private Logger logger = LoggerFactory.getLogger(CoreTest.class);
     @Autowired
