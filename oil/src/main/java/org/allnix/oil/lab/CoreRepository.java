@@ -22,5 +22,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CoreRepository extends CrudRepository<Core, Long> {
-//    List<Core> findByName(String name);
+    List<Core> findByName(String name);
 }

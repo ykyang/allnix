@@ -36,6 +36,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.springframework.test.annotation.Commit;
 
 /**
  * http://www.baeldung.com/spring-boot-testing
@@ -66,6 +67,7 @@ public class CoreTest {
     @Autowired
     private CoreRepository coreDao;
     
+    @Commit
     @Test
     @Tag("seconds")
     public void test() {

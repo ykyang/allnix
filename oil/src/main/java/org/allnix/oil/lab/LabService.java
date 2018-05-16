@@ -15,14 +15,24 @@
  */
 package org.allnix.oil.lab;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import java.util.List;
 
-@SpringBootApplication
-public class Application {
-    public static void main(String[] args) {
-        // - Will run the Runner class - //
-//        SpringApplication.run(Application.class).close();
-        SpringApplication.run(Application.class);
+import javax.transaction.Transactional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class LabService {
+    @Autowired
+    private CoreRepository coreDao;
+    
+    @Transactional
+    public void save(Core core) {
+        coreDao.save(core);
+    }
+    @Transactional
+    public List<Core> findByName(String name) {
+        return coreDao.findByName(name);
     }
 }
