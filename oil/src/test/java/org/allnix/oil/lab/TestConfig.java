@@ -15,21 +15,27 @@
  */
 package org.allnix.oil.lab;
 
+import javax.persistence.EntityManager;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
-@EnableJpaRepositories(basePackageClasses= {CoreRepository.class})
-@EntityScan("org.allnix.oil.lab.Core") 
+//@EnableJpaRepositories(basePackageClasses= {CoreRepository.class})
+@EntityScan("org.allnix.oil.lab.*") 
 @ComponentScan
+@EnableJpaRepositories("org.allnix.oil.lab")
+@EnableTransactionManagement
 public class TestConfig {
     
     @Autowired
     private CoreRepository coreDao;
-    @Autowired
-    private TestEntityManager entityManager;
+//    @Autowired
+//    private EntityManager entityManager;
+//    private TestEntityManager entityManager;
 }

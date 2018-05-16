@@ -15,12 +15,13 @@
  */
 package org.allnix.oil.lab;
 
-import java.util.List;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
-
-@Repository
-public interface CoreRepository extends CrudRepository<Core, Long> {
-//    List<Core> findByName(String name);
+@SpringBootApplication
+public class Application {
+    public static void main(String[] args) {
+        // - Will run the Runner class - //
+        SpringApplication.run(Application.class).close();
+    }
 }
