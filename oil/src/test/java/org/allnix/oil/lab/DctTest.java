@@ -15,12 +15,19 @@
  */
 package org.allnix.oil.lab;
 
-import org.springframework.data.annotation.Id;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-public class Core {
+@SpringBootTest(webEnvironment = WebEnvironment.NONE)
+@ExtendWith(SpringExtension.class)
+@SpringJUnitConfig(classes = {  })
+@TestInstance(Lifecycle.PER_CLASS)
+public class DctTest {
 
-	@Id
-	private String id;
-	private String name;
-	private double[] interval;
+	
 }

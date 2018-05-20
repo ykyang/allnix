@@ -17,7 +17,7 @@ package org.allnix.oil;
 
 import java.util.List;
 
-import org.allnix.oil.lab.Core;
+import org.allnix.oil.lab.model.Core;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
