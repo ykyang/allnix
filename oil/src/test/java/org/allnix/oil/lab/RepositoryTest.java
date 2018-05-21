@@ -32,6 +32,7 @@ import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.test.annotation.Commit;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,7 +49,8 @@ public class RepositoryTest {
     @Autowired
     private CoreRepository coreDao;
     
-    @Transactional // I want to see the data 
+    @Commit // I want to see the data
+    @Transactional // For DAO to work  
     @Test
     @Tag("milliseconds")
     public void testCoreRepository() {
