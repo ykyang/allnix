@@ -1,14 +1,9 @@
-wdvglab:
-  data: /f/data/com.wdvglab.data
-  projects: /d/Projects
-  
 ###
 #   Database Settings
 ###
 spring:
   datasource:
-#    url: jdbc:h2:file:/home/ykyang/h2_testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    url: jdbc:h2:mem:example-app;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     platform: h2
     username: sa
     password:
@@ -27,9 +22,10 @@ spring:
 #   H2 Settings
 ###
   h2:
-    console:
+    console: # port = 8080
       enabled: true
       path: /console
       settings:
         trace: false
-        web-allow-others: false
+        web-allow-others: true
+        

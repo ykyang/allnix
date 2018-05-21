@@ -10,7 +10,7 @@ apply plugin: 'java'
 apply plugin: 'java-library'
 apply plugin: "application"
 
-//mainClassName='com.wdvglab.web.WebServer'
+mainClassName='org.allnix.oil.lab.Application'
 
 buildscript {
 	ext {
@@ -93,12 +93,13 @@ test {
     //includeTags 'fast'
   }
   maxParallelForks = 6
-  systemProperties 'logback.configurationFile' : new File(projectDir,'src/test/resources/logback-test.xml').absolutePath
+  //systemProperties 'logback.configurationFile' : new File(projectDir,'src/test/resources/logback-test.xml').absolutePath
+  systemProperties 'logging.config' : new File(projectDir,'src/test/resources/logback-test.xml').absolutePath
 //  include '**/**'
   //include '**/DisableAllTest*.*'
 
   // Use "gradlew cleanTest test" to force running test
   testLogging {
-    events "started", "passed", "skipped", "failed", "standardOut" //, "standardError"
+    events "started", "passed", "skipped", "failed"//, "standardOut" //, "standardError"
   }
 }
