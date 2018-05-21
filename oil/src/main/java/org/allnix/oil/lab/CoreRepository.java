@@ -17,6 +17,7 @@ package org.allnix.oil.lab;
 
 import java.util.List;
 
+import org.allnix.oil.lab.model.Core;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

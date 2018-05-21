@@ -27,21 +27,21 @@ import org.springframework.boot.CommandLineRunner;
 @Component
 public class Runner implements CommandLineRunner {
     private static final Logger logger = LoggerFactory.getLogger(Runner.class);
-    @Autowired
-    private CoreRepository coreDao;
-    @Autowired
-    private LabService labSrv;
+//    @Autowired
+//    private CoreRepository coreDao;
+//    @Autowired
+//    private LabService labSrv;
 
     @Override
     public void run(String... args) throws Exception {
         logger.info("Hello");
 
-        labSrv.save(new Core("Core 1", 1000., 1100.));
-        labSrv.save(new Core("Core 2", 1100., 1200.));
-        List<Core> ans = labSrv.findByName("Core 1");
-        ans.forEach((v) -> {
-            logger.info("Core Name: {}", v.getName());
-        });
+//        labSrv.save(new Core("Core 1", 1000., 1100.));
+//        labSrv.save(new Core("Core 2", 1100., 1200.));
+//        List<Core> ans = labSrv.findByName("Core 1");
+//        ans.forEach((v) -> {
+//            logger.info("Core Name: {}", v.getName());
+//        });
         // Iterable<Core> itab = coreDao.findAll();
         // itab.forEach((v)->{
         // logger.info(v.getName());

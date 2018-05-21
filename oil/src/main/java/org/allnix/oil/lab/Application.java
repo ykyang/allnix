@@ -23,6 +23,6 @@ public class Application {
     public static void main(String[] args) {
         // - Will run the Runner class - //
 //        SpringApplication.run(Application.class).close();
-        SpringApplication.run(Application.class);
+//        SpringApplication.run(Application.class);
     }
 }

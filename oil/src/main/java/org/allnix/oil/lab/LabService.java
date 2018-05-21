@@ -24,15 +24,15 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class LabService {
-    @Autowired
-    private CoreRepository coreDao;
+//    @Autowired
+//    private CoreRepository coreDao;
     
-    @Transactional
-    public void save(Core core) {
-        coreDao.save(core);
-    }
-    @Transactional
-    public List<Core> findByName(String name) {
-        return coreDao.findByName(name);
-    }
+//    @Transactional
+//    public void save(Core core) {
+//        coreDao.save(core);
+//    }
+//    @Transactional
+//    public List<Core> findByName(String name) {
+//        return coreDao.findByName(name);
+//    }
 }
