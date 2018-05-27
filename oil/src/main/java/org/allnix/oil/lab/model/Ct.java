@@ -13,29 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.allnix.oil.model;
+package org.allnix.oil.lab.model;
 
-import java.util.UUID;
+import java.nio.file.Path;
 
 import javax.persistence.Column;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.Entity;
 
-@MappedSuperclass
-public abstract class OilObject {
-    @org.springframework.data.annotation.Id
-    @javax.persistence.Id
+import org.allnix.oil.model.OilObject;
+import org.springframework.data.annotation.Transient;
+
+/**
+ * Computed tomography data
+ * 
+ *
+ * @author Yi-Kun Yang ykyang@gmail.com
+ */
+@Entity
+public class Ct extends OilObject {
+    private String name;
     @Column(length=36)
-    private String id = UUID.randomUUID().toString();
+    private String coreId;
+    @Column(length=36)
+    private String wellId;
     
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String id() {
-        return id;
-    }
+    private Double topCoreDepth;
+    private Double bottomCoreDepth;
+    /**
+     * Datastore URL of its CSV file 
+     */
+    private String csvUrl;
+    @Transient
+    @javax.persistence.Transient
+    private Path csvPath;
 }

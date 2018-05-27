@@ -13,15 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.allnix.oil.lab;
+package org.allnix.oil.project.model;
 
 import java.util.List;
 
-import org.allnix.oil.lab.model.Core;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
+import javax.persistence.Column;
+import javax.persistence.Entity;
 
-@Repository
-public interface CoreRepository extends CrudRepository<Core, Long> {
-    List<Core> findByName(String name);
+import org.allnix.oil.model.OilObject;
+
+@Entity
+public class Well extends OilObject {
+	private String name;
+//	private List<String> aliasList;
+	
+	@Column(length=36)
+	private String projectId;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
+    }
 }

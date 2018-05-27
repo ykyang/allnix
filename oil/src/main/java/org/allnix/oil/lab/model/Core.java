@@ -21,11 +21,6 @@ import javax.persistence.Entity;
 
 import org.allnix.oil.model.OilObject;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
-
-@Getter @Setter @Accessors(fluent = true)
 @Entity
 public class Core extends OilObject {
     
@@ -36,5 +31,42 @@ public class Core extends OilObject {
 	private Double topCoreDepth;
 	private Double bottomCoreDepth;
 	private Double topMd;
-	private Double bottomMd;
+    private Double bottomMd;
+    
+	public String getWellId() {
+        return wellId;
+    }
+    public void setWellId(String wellId) {
+        this.wellId = wellId;
+    }
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public Double getTopCoreDepth() {
+        return topCoreDepth;
+    }
+    public void setTopCoreDepth(Double topCoreDepth) {
+        this.topCoreDepth = topCoreDepth;
+    }
+    public Double getBottomCoreDepth() {
+        return bottomCoreDepth;
+    }
+    public void setBottomCoreDepth(Double bottomCoreDepth) {
+        this.bottomCoreDepth = bottomCoreDepth;
+    }
+    public Double getTopMd() {
+        return topMd;
+    }
+    public void setTopMd(Double topMd) {
+        this.topMd = topMd;
+    }
+    public Double getBottomMd() {
+        return bottomMd;
+    }
+    public void setBottomMd(Double bottomMd) {
+        this.bottomMd = bottomMd;
+    }
 }

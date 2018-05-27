@@ -13,16 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.allnix.oil.lab;
+package org.allnix.oil;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
+import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 
-//@SpringBootApplication
-public class Application {
-    public static void main(String[] args) {
-        // - Will run the Runner class - //
-//        SpringApplication.run(Application.class).close();
-//        SpringApplication.run(Application.class);
+/**
+ * Necessary for Spring Boot Test to work
+ *
+ * @author Yi-Kun Yang ykyang@gmail.com
+ */
+@SpringBootApplication(exclude = { MongoAutoConfiguration.class,
+    MongoDataAutoConfiguration.class })
+public class TestNGSpringApplication {
+    static public void main(String[] args) {
+        SpringApplication.run(TestNGSpringApplication.class, args) // .close()
+        ;
     }
 }

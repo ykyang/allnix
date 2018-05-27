@@ -13,8 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.allnix.oil;
+package org.allnix.oil.project.repository;
 
-public class DctCsv {
+import java.util.List;
+import java.util.Optional;
 
+import org.allnix.oil.project.model.Well;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+/**
+ * 
+ * 
+ *
+ * @author Yi-Kun Yang ykyang@gmail.com
+ */
+@Repository
+public interface WellRepository extends JpaRepository<Well, String> {
+    Optional<Well> findFirstByName(String name);
+    List<Well> findByName(String name);
+    
 }

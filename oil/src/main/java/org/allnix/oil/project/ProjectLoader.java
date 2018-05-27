@@ -13,15 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.allnix.oil;
+package org.allnix.oil.project;
 
-import java.util.List;
+import org.allnix.oil.project.model.Well;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.data.annotation.Id;
-
-public class Well {
-	@Id
-	private String id;
-	private String name;
-	private List<String> aliasList;
+public class ProjectLoader {
+    static final private Logger logger = LoggerFactory.getLogger(ProjectLoader.class);
+    static final public String ROSE_CHILDREN = "Rose Children #2v";
+    @Autowired
+    private DefaultProjectService ps;
+    
+    public void create() {
+        Well well = new Well();
+        well.setName(ROSE_CHILDREN);
+        
+        ps.save(well);
+    }
 }

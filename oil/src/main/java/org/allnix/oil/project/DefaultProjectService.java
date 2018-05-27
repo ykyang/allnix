@@ -13,31 +13,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.allnix.oil;
+package org.allnix.oil.project;
 
 import java.util.List;
+import java.util.Optional;
+
+import javax.transaction.Transactional;
 
 import org.allnix.oil.lab.model.Core;
+import org.allnix.oil.lab.model.Ct;
+import org.allnix.oil.project.model.Well;
+import org.allnix.oil.project.repository.WellRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-public class ProjectService {
+@Service
+public class DefaultProjectService {
     static final private Logger logger //
-            = LoggerFactory.getLogger(ProjectService.class);
-
+            = LoggerFactory.getLogger(DefaultProjectService.class);
+    @Autowired
+    private WellRepository wellDao;
     /**
      * 
      * @param name
      * @return
      */
-    public Well findFirstWellByName(String name) {
-        throw new UnsupportedOperationException();
+    @Transactional
+    public Optional<Well> findFirstWellByName(String name) {
+        return wellDao.findFirstByName(name);
     }
 
-    public List<Well> findAllWellByName(String name) {
-        throw new UnsupportedOperationException();
+    @Transactional
+    public List<Well> findWellByName(String name) {
+        return wellDao.findByName(name);
     }
 
+    @Transactional
+    public Well save(Well well) {
+        return wellDao.save(well);
+    }
+    
     public List<Core> findAllCore(Well well) {
         throw new UnsupportedOperationException();
     }
@@ -48,7 +65,7 @@ public class ProjectService {
      * @param well
      * @return
      */
-    public DctCsv findDctCsv(Well well) {
+    public Ct findDctCsv(Well well) {
         throw new UnsupportedOperationException();
     }
 
@@ -58,7 +75,7 @@ public class ProjectService {
      * @param core
      * @return
      */
-    public DctCsv findDctCsv(Core core) {
+    public Ct findDctCsv(Core core) {
         throw new UnsupportedOperationException();
     }
 }

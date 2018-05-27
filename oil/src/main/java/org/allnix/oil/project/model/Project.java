@@ -13,29 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.allnix.oil.model;
+package org.allnix.oil.project.model;
 
-import java.util.UUID;
+import javax.persistence.Entity;
 
-import javax.persistence.Column;
-import javax.persistence.MappedSuperclass;
+import org.allnix.oil.model.OilObject;
 
-@MappedSuperclass
-public abstract class OilObject {
-    @org.springframework.data.annotation.Id
-    @javax.persistence.Id
-    @Column(length=36)
-    private String id = UUID.randomUUID().toString();
-    
-    public String getId() {
-        return id;
-    }
+@Entity
+public class Project extends OilObject {
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String id() {
-        return id;
-    }
 }
