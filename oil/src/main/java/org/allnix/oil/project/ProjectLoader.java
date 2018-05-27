@@ -23,13 +23,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ProjectLoader {
     static final private Logger logger = LoggerFactory.getLogger(ProjectLoader.class);
     static final public String ROSE_CHILDREN = "Rose Children #2v";
+    static final public String BILLY_BOB = "Billy Bob Joe V34";
     @Autowired
     private DefaultProjectService ps;
     
     public void create() {
-        Well well = new Well();
-        well.setName(ROSE_CHILDREN);
+        Well well;
         
+        well = new Well();
+        well.setName(ROSE_CHILDREN);
+        ps.save(well);
+        
+        well = new Well();
+        well.setName(BILLY_BOB);
         ps.save(well);
     }
 }

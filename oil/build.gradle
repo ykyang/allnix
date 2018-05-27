@@ -4,6 +4,10 @@
  * This generated file contains a sample Java Library project to get you started.
  * For more details take a look at the Java Libraries chapter in the Gradle
  * user guide available at https://docs.gradle.org/4.7/userguide/java_library_plugin.html
+ *
+ * Run both TestNG and JUnit5 in one command
+ *
+ *   ./gradlew clean testng junit5 --tests "*ProjectServiceTest"
  */
 
 apply plugin: 'java'
@@ -83,10 +87,47 @@ dependencies {
 }
 
 
+task testng (type:Test) {
+	useTestNG() {
+	  	includeGroups 'all', 'seconds', 'milliseconds' //, 'manual' 
+	}
+	
+    systemProperties 'logging.config' : new File(projectDir,'src/test/resources/logback-test.xml').absolutePath
+
+    // Use "gradlew cleanTest test" to force running test
+    testLogging {
+        events "started", "passed", "skipped", "failed"//, "standardOut" //, "standardError"
+    }	
+}
+
+task junit5 (type:Test) {
+	useJUnitPlatform {
+        // see JUnitPlatformOptions
+        //excludeTags 'seconds', 'minutes', 'hours', 'days'
+   	
+     	includeTags 'minutes', 'seconds', 'milliseconds' //, 'manual'
+        //includeTags 'fast'
+  	}
+	
+    systemProperties 'logging.config' : new File(projectDir,'src/test/resources/logback-test.xml').absolutePath
+
+    // Use "gradlew cleanTest test" to force running test
+    testLogging {
+        events "started", "passed", "skipped", "failed"//, "standardOut" //, "standardError"
+    }	
+}
 
 test {
   // See https://docs.gradle.org/current/userguide/java_plugin.html
-
+	//dependsOn testng
+	useJUnitPlatform {
+        // see JUnitPlatformOptions
+        //excludeTags 'seconds', 'minutes', 'hours', 'days'
+   	
+     	includeTags 'minutes', 'seconds', 'milliseconds' //, 'manual'
+        //includeTags 'fast'
+  	}	
+	/*
   useJUnitPlatform {
     // see JUnitPlatformOptions
     //excludeTags 'seconds', 'minutes', 'hours', 'days'
@@ -94,11 +135,13 @@ test {
    	includeTags 'minutes', 'seconds', 'milliseconds' //, 'manual'
     //includeTags 'fast'
   }
-  useTestNG() {
-  	includeGroups 'seconds'
-  }
+	*/
   
-  maxParallelForks = 6
+  
+  
+  
+  
+  maxParallelForks = 1
   //systemProperties 'logback.configurationFile' : new File(projectDir,'src/test/resources/logback-test.xml').absolutePath
   systemProperties 'logging.config' : new File(projectDir,'src/test/resources/logback-test.xml').absolutePath
 //  include '**/**'
