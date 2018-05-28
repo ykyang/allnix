@@ -19,18 +19,25 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.allnix.oil.lab.model.Core;
+import org.allnix.oil.lab.repository.CoreRepository;
+import org.allnix.oil.project.model.Well;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class LabService {
-//    @Autowired
-//    private CoreRepository coreDao;
+public class DefaultLabService {
+    @Autowired
+    private CoreRepository coreDao;
     
-//    @Transactional
-//    public void save(Core core) {
-//        coreDao.save(core);
-//    }
+    @Transactional
+    public Core save(Core core) {
+        return coreDao.save(core);
+    }
+    @Transactional
+    public List<Core> findCoreByWell(Well well) {
+        return coreDao.findByWellId(well.id());
+    }
 //    @Transactional
 //    public List<Core> findByName(String name) {
 //        return coreDao.findByName(name);

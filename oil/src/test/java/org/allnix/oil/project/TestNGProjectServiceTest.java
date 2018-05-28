@@ -17,7 +17,7 @@ package org.allnix.oil.project;
 
 import java.util.Optional;
 
-import org.allnix.oil.TestNGSpringApplication;
+import org.allnix.oil.TestSpringApplication;
 import org.allnix.oil.project.model.Well;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -41,9 +41,9 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-@SpringBootApplication(exclude = { MongoAutoConfiguration.class,
-    MongoDataAutoConfiguration.class })
-@SpringBootTest(classes = TestNGSpringApplication.class,
+//@SpringBootApplication(exclude = { MongoAutoConfiguration.class,
+//    MongoDataAutoConfiguration.class })
+@SpringBootTest(classes = TestSpringApplication.class,
     webEnvironment = WebEnvironment.NONE)
 @ContextConfiguration(classes = { TestConfig.class })
 public class TestNGProjectServiceTest extends AbstractTestNGSpringContextTests {
@@ -62,9 +62,17 @@ public class TestNGProjectServiceTest extends AbstractTestNGSpringContextTests {
     @Commit
     @Test(groups = { "seconds" })
     public void test() {
-        Optional<Well> wellOpt = //
+        Well well;
+        Optional<Well> wellOpt;
+        
+        wellOpt = ps.findFirstWellByName("Well not exists!");
+        
+        wellOpt = //
             ps.findFirstWellByName(ProjectLoader.ROSE_CHILDREN);
         Assert.assertNotNull(wellOpt.orElse(null));
+        
+        well = wellOpt.get();
+        
     }
 
 }

@@ -7,7 +7,7 @@
  *
  * Run both TestNG and JUnit5 in one command
  *
- *   ./gradlew clean testng junit5 --tests "*ProjectServiceTest"
+ *  ./gradlew clean junit5 --tests "*ProjectServiceTest" testng --tests "*ProjectServiceTest"
  */
 
 apply plugin: 'java'
@@ -120,22 +120,21 @@ task junit5 (type:Test) {
 test {
   // See https://docs.gradle.org/current/userguide/java_plugin.html
 	//dependsOn testng
+	/*
+	useTestNG() {
+	  	includeGroups 'all', 'seconds', 'milliseconds' //, 'manual' 
+	}
+	*/
 	useJUnitPlatform {
         // see JUnitPlatformOptions
         //excludeTags 'seconds', 'minutes', 'hours', 'days'
    	
      	includeTags 'minutes', 'seconds', 'milliseconds' //, 'manual'
         //includeTags 'fast'
-  	}	
-	/*
-  useJUnitPlatform {
-    // see JUnitPlatformOptions
-    //excludeTags 'seconds', 'minutes', 'hours', 'days'
-   	
-   	includeTags 'minutes', 'seconds', 'milliseconds' //, 'manual'
-    //includeTags 'fast'
-  }
-	*/
+  	}
+  		
+	
+	
   
   
   

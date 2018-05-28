@@ -15,6 +15,11 @@
  */
 package org.allnix.oil.project;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.allnix.oil.lab.DefaultLabService;
+import org.allnix.oil.lab.model.Core;
 import org.allnix.oil.project.model.Well;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,16 +31,38 @@ public class ProjectLoader {
     static final public String BILLY_BOB = "Billy Bob Joe V34";
     @Autowired
     private DefaultProjectService ps;
+    @Autowired
+    private DefaultLabService ls;
     
     public void create() {
         Well well;
         
-        well = new Well();
-        well.setName(ROSE_CHILDREN);
-        ps.save(well);
+        well = createWell(ROSE_CHILDREN);
+        createCore(well, 10);
         
-        well = new Well();
-        well.setName(BILLY_BOB);
-        ps.save(well);
+        well = createWell(BILLY_BOB);
+        createCore(well, 4);
+    }
+    
+    public Well createWell(String wellName) {
+        Well well = new Well();
+        well.setName(wellName);
+        return ps.save(well);
+    }
+    
+    public List<Core> createCore(Well well, int coreCount) {
+        List<Core> coreList = new ArrayList<>();
+        
+        for (int i = 1; i <= coreCount; i++) {
+            Core core = new Core();
+            core.setName("Core " + Integer.toString(i));
+            core.setWellId(well.id());
+            
+            core = ls.save(core); 
+            
+            coreList.add(core);
+        }
+        
+        return coreList;
     }
 }

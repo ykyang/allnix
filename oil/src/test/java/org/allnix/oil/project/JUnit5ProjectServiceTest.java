@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,9 +15,13 @@
  */
 package org.allnix.oil.project;
 
+import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import org.allnix.oil.TestNGSpringApplication;
+import org.allnix.oil.TestSpringApplication;
+import org.allnix.oil.lab.DefaultLabService;
+import org.allnix.oil.lab.model.Core;
 import org.allnix.oil.project.model.Well;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -38,24 +42,26 @@ import org.springframework.test.annotation.Commit;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@SpringBootApplication(exclude = { MongoAutoConfiguration.class,
-    MongoDataAutoConfiguration.class })
-@SpringBootTest(classes = TestNGSpringApplication.class,
-        webEnvironment = WebEnvironment.NONE)
+//@SpringBootApplication(exclude = { MongoAutoConfiguration.class,
+//    MongoDataAutoConfiguration.class })
+@SpringBootTest(classes = TestSpringApplication.class,
+    webEnvironment = WebEnvironment.NONE)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = { TestConfig.class })
 @TestInstance(Lifecycle.PER_CLASS)
 public class JUnit5ProjectServiceTest {
     static final private Logger logger = //
         LoggerFactory.getLogger(JUnit5ProjectServiceTest.class);
-    
+
     @Autowired
     private DefaultProjectService ps;
+    @Autowired
+    private DefaultLabService ls;
     @Autowired
     private ProjectLoader pl;
 
     @BeforeAll
-    public void beforeClass() {
+    public void beforeAll() {
         pl.create();
     }
 
@@ -63,8 +69,26 @@ public class JUnit5ProjectServiceTest {
     @Test
     @Tag("seconds")
     public void test() {
-        Optional<Well> wellOpt = //
-            ps.findFirstWellByName(ProjectLoader.BILLY_BOB);
+        Well well;
+        Optional<Well> wellOpt;
+        List<Core> coreList;
+        
+        { //< missing well >//
+            final Optional<Well> opt = wellOpt = //
+                ps.findFirstWellByName("Well not exists!");
+            Assertions.assertThrows( //
+                NoSuchElementException.class, () -> opt.get());
+        }
+        
+        // - find well - //
+        wellOpt = //
+            ps.findFirstWellByName(ProjectLoader.ROSE_CHILDREN);
         Assertions.assertNotNull(wellOpt.orElse(null));
+        //- well name -//
+        well = wellOpt.get();
+        Assertions.assertEquals(ProjectLoader.ROSE_CHILDREN, well.getName());
+        //< core >//
+        coreList = ls.findCoreByWell(well);
+        Assertions.assertEquals(10, coreList.size());
     }
 }
