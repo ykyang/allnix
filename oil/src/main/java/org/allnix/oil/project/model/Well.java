@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,26 +16,41 @@
 package org.allnix.oil.project.model;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.Index;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.Table;
 
 import org.allnix.oil.model.OilObject;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @Entity
+@Table(indexes = { //
+    @Index(columnList = "projectId"), @Index(columnList = "name") })
 public class Well extends OilObject {
-	private String name;
-//	private List<String> aliasList;
-	
-//	@Column(length=36)
-//	private String projectId;
+    private String name;
+    // private List<String> aliasList;
+
+    /**
+     * Project which this well belong to
+     */
+    @Column(length = 36)
+    private String projectId;
+    /**
+     * Any other association
+     */
     @ElementCollection
-    @Column(length=36)
-	private List<String> projectIdList = new ArrayList<String>();
-	
+    @Column(length = 36)
+    @JoinTable(//joinColumns = @JoinColumn(referencedColumnName = "id"),
+        indexes = { @Index(columnList = "parentId") })
+    private Set<String> parentId = new HashSet<String>();
+
     public String getName() {
         return name;
     }
@@ -44,16 +59,16 @@ public class Well extends OilObject {
         this.name = name;
     }
 
-//    public String getProjectId() {
-//        return projectId;
-//    }
-//
-//    public void setProjectId(String projectId) {
-//        this.projectId = projectId;
-//    }
-    
-    public Well addProjectId(String projectId) {
-        projectIdList.add(projectId);
+    public String getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
+    }
+
+    public Well addParentId(String id) {
+        parentId.add(id);
         return this;
     }
 }

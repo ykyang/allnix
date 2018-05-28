@@ -80,7 +80,11 @@ public class DefaultProjectService {
 //    }
     @Transactional
     public List<Well> findWellByProjectId(String projectId) {
-        return wellDao.findByProjectIdList(projectId);
+        return wellDao.findByProjectId(projectId);
+    }
+    @Transactional
+    public List<Well> findWellByParentId(String parentId) {
+        return wellDao.findByParentId(parentId);
     }
 
     /**

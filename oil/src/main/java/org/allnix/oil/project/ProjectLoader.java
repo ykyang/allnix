@@ -39,10 +39,10 @@ public class ProjectLoader {
         Project proj;
         Well well;
         
-        proj = createProject("2018-05-16");
+        proj = createProject("2018-05-16-Rose");
         well = createWell(ROSE_CHILDREN);
-//        well.setProjectId(proj.id());
-        well.addProjectId(proj.id());
+        well.setProjectId(proj.id());
+        well.addParentId(proj.id());
         ps.save(well);
         createCore(well, 10);
         

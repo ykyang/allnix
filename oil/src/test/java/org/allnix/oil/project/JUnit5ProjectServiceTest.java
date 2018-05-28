@@ -84,19 +84,26 @@ public class JUnit5ProjectServiceTest {
         }
         
         //< find project >//
-        projectOpt = ps.findProjectByName("2018-05-16");
+        projectOpt = ps.findProjectByName("2018-05-16-Rose");
         Assertions.assertNotNull(projectOpt.orElse(null));
-        
         project = projectOpt.get();
+        
+        //< find well by project >//
         wellList = ps.findWellByProjectId(project.id());
         Assertions.assertEquals(1, wellList.size());
         well = wellList.get(0);
+        Assertions.assertEquals(ProjectLoader.ROSE_CHILDREN, well.getName());
+
+        //< find well by parent >//
+        wellList = ps.findWellByParentId(project.id());
+        Assertions.assertEquals(1, wellList.size());
+        well = wellList.get(0);
+        Assertions.assertEquals(ProjectLoader.ROSE_CHILDREN, well.getName());
         
-        // - find well - //
+        //< find well by name >//
         wellOpt = //
             ps.findFirstWellByName(ProjectLoader.ROSE_CHILDREN);
         Assertions.assertNotNull(wellOpt.orElse(null));
-        //- well name -//
         well = wellOpt.get();
         Assertions.assertEquals(ProjectLoader.ROSE_CHILDREN, well.getName());
         

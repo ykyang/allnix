@@ -32,6 +32,6 @@ import org.springframework.stereotype.Repository;
 public interface WellRepository extends JpaRepository<Well, String> {
     Optional<Well> findFirstByName(String name);
     List<Well> findByName(String name);
-//    List<Well> findByProjectId(String projectId);
-    List<Well> findByProjectIdList(String projectId);
+    List<Well> findByProjectId(String projectId);
+    List<Well> findByParentId(String parentId);
 }
