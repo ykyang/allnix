@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.allnix.oil.lab.DefaultLabService;
 import org.allnix.oil.lab.model.Core;
+import org.allnix.oil.project.model.Project;
 import org.allnix.oil.project.model.Well;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,13 +36,26 @@ public class ProjectLoader {
     private DefaultLabService ls;
     
     public void create() {
+        Project proj;
         Well well;
         
+        proj = createProject("2018-05-16");
         well = createWell(ROSE_CHILDREN);
+//        well.setProjectId(proj.id());
+        well.addProjectId(proj.id());
+        ps.save(well);
         createCore(well, 10);
+        
+        
         
         well = createWell(BILLY_BOB);
         createCore(well, 4);
+    }
+    
+    public Project createProject(String projName) {
+        Project proj = new Project();
+        proj.setName(projName);
+        return ps.save(proj);
     }
     
     public Well createWell(String wellName) {

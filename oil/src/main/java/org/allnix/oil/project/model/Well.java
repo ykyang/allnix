@@ -15,21 +15,27 @@
  */
 package org.allnix.oil.project.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 
 import org.allnix.oil.model.OilObject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Entity
 public class Well extends OilObject {
 	private String name;
 //	private List<String> aliasList;
 	
-	@Column(length=36)
-	private String projectId;
-
+//	@Column(length=36)
+//	private String projectId;
+    @ElementCollection
+    @Column(length=36)
+	private List<String> projectIdList = new ArrayList<String>();
+	
     public String getName() {
         return name;
     }
@@ -38,11 +44,16 @@ public class Well extends OilObject {
         this.name = name;
     }
 
-    public String getProjectId() {
-        return projectId;
-    }
-
-    public void setProjectId(String projectId) {
-        this.projectId = projectId;
+//    public String getProjectId() {
+//        return projectId;
+//    }
+//
+//    public void setProjectId(String projectId) {
+//        this.projectId = projectId;
+//    }
+    
+    public Well addProjectId(String projectId) {
+        projectIdList.add(projectId);
+        return this;
     }
 }

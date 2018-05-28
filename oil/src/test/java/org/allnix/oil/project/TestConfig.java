@@ -29,8 +29,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 
-@EnableJpaRepositories("org.allnix.oil")
-@EntityScan(basePackages = {"org.allnix.oil"})
+//@EnableJpaRepositories("org.allnix.oil")
+//@EntityScan(basePackages = {"org.allnix.oil"})
 @Configuration
 public class TestConfig {
     @Bean
@@ -38,15 +38,15 @@ public class TestConfig {
         
         // - database path - //
         Path path = Paths.get(TestConfig.class.getName()+"DB").toAbsolutePath();
-        Path db = Paths.get(TestConfig.class.getName()+"DB.mv.db").toAbsolutePath();
-        Files.deleteIfExists(db);
+        Path h2DbPath = Paths.get(TestConfig.class.getName()+"DB.mv.db").toAbsolutePath();
+        Files.deleteIfExists(h2DbPath);
         
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("org.h2.Driver");
         dataSource.setUrl("jdbc:h2:file:" //
             + path.toString() //
              );
-//        dataSource.setUrl("jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE");
+//      dataSource.setUrl("jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE");
         dataSource.setUsername("sa");
         dataSource.setPassword("");
 

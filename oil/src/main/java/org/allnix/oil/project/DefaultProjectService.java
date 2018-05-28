@@ -22,7 +22,9 @@ import javax.transaction.Transactional;
 
 import org.allnix.oil.lab.model.Core;
 import org.allnix.oil.lab.model.Ct;
+import org.allnix.oil.project.model.Project;
 import org.allnix.oil.project.model.Well;
+import org.allnix.oil.project.repository.ProjectRepository;
 import org.allnix.oil.project.repository.WellRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +37,16 @@ public class DefaultProjectService {
             = LoggerFactory.getLogger(DefaultProjectService.class);
     @Autowired
     private WellRepository wellDao;
+    @Autowired
+    private ProjectRepository projectDao;
+    @Transactional
+    public Optional<Project> findProjectById(String id) {
+        return projectDao.findById(id);
+    }
+    @Transactional
+    public Optional<Project> findProjectByName(String name) {
+        return projectDao.findByName(name);
+    }
     /**
      * 
      * @param name
@@ -54,9 +66,21 @@ public class DefaultProjectService {
     public Well save(Well well) {
         return wellDao.save(well);
     }
+    @Transactional
+    public Project save(Project project) {
+        return projectDao.save(project); 
+    }
     
     public List<Core> findAllCore(Well well) {
         throw new UnsupportedOperationException();
+    }
+    
+//    public Optional<Well> findFirstWellByProjectId(String projectId) {
+//        wellDao.find
+//    }
+    @Transactional
+    public List<Well> findWellByProjectId(String projectId) {
+        return wellDao.findByProjectIdList(projectId);
     }
 
     /**

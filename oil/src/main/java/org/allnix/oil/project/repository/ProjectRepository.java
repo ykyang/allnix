@@ -13,21 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.allnix.oil.project.model;
+package org.allnix.oil.project.repository;
 
-import javax.persistence.Entity;
+import java.util.Optional;
 
-import org.allnix.oil.model.OilObject;
+import org.allnix.oil.project.model.Project;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-@Entity
-public class Project extends OilObject {
-    private String name;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
+@Repository
+public interface ProjectRepository extends JpaRepository<Project, String> {
+    Optional<Project> findByName(String name);
 }
