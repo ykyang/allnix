@@ -20,6 +20,7 @@ import java.util.Optional;
 
 import org.allnix.oil.TestSpringApplication;
 import org.allnix.oil.lab.model.Core;
+import org.allnix.oil.lab.model.Ct;
 import org.allnix.oil.project.DefaultProjectService;
 import org.allnix.oil.project.ProjectLoader;
 import org.allnix.oil.project.model.Well;
@@ -71,5 +72,11 @@ public class JUnit5LabServiceTest {
         //< core >//
         coreList = ls.findCoreByWell(well);
         Assertions.assertEquals(10, coreList.size());
+        
+        //< CT >//
+        for (Core core : coreList) {
+            Optional<Ct> ctOpt = ls.findCtByCore(core);
+            Assertions.assertNotNull(ctOpt.get());
+        }
     }
 }

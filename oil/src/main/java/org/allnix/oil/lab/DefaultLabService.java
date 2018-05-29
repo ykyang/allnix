@@ -16,11 +16,14 @@
 package org.allnix.oil.lab;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
 import org.allnix.oil.lab.model.Core;
+import org.allnix.oil.lab.model.Ct;
 import org.allnix.oil.lab.repository.CoreRepository;
+import org.allnix.oil.lab.repository.CtRepository;
 import org.allnix.oil.project.model.Well;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,14 +32,24 @@ import org.springframework.stereotype.Service;
 public class DefaultLabService {
     @Autowired
     private CoreRepository coreDao;
+    @Autowired
+    private CtRepository ctDao;
     
     @Transactional
     public Core save(Core core) {
         return coreDao.save(core);
     }
+    public Ct save(Ct ct) {
+        return ctDao.save(ct);
+    }
+    
     @Transactional
     public List<Core> findCoreByWell(Well well) {
         return coreDao.findByWellId(well.id());
+    }
+    
+    public Optional<Ct> findCtByCore(Core core) {
+        return ctDao.findByCoreId(core.id());
     }
 //    @Transactional
 //    public List<Core> findByName(String name) {
