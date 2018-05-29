@@ -58,7 +58,7 @@ public class RepositoryTest {
         String id = obj.id();
         
         Assertions.assertNotNull(id);
-        
+
         Core per = coreDao.save(obj);
         Assertions.assertNull(per.name());
         Assertions.assertNull(per.topCoreDepth());

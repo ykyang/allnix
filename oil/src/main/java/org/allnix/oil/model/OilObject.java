@@ -23,7 +23,7 @@ import javax.persistence.MappedSuperclass;
 import lombok.AccessLevel;
 import lombok.Setter;
 
-@MappedSuperclass
+@MappedSuperclass // Use flat table (denormalized) to save this info
 public abstract class OilObject {
     @org.springframework.data.annotation.Id
     @javax.persistence.Id
