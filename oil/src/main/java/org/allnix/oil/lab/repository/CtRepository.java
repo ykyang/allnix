@@ -13,15 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.allnix.oil.lab;
+package org.allnix.oil.lab.repository;
 
 import java.util.List;
+import java.util.Optional;
 
-import org.allnix.oil.lab.model.Core;
-import org.springframework.data.repository.CrudRepository;
+import org.allnix.oil.lab.model.Ct;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CoreRepository extends CrudRepository<Core, Long> {
-    List<Core> findByName(String name);
+public interface CtRepository extends JpaRepository<Ct, String> {
+    Optional<Ct> findByCoreId(String coreId);
+    List<Ct> findByWellId(String wellId);
 }

@@ -13,15 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.allnix.oil;
+package org.allnix.oil.project.model;
 
-import java.util.List;
+import javax.persistence.Entity;
 
-import org.springframework.data.annotation.Id;
+import org.allnix.oil.model.OilObject;
 
-public class Well {
-	@Id
-	private String id;
-	private String name;
-	private List<String> aliasList;
+@Entity
+public class Project extends OilObject {
+    private String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }

@@ -20,17 +20,22 @@ import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 
-import lombok.AccessLevel;
-import lombok.Setter;
 
 @MappedSuperclass // Use flat table (denormalized) to save this info
 public abstract class OilObject {
     @org.springframework.data.annotation.Id
     @javax.persistence.Id
     @Column(length=36)
-    @Setter(AccessLevel.NONE)
     private String id = UUID.randomUUID().toString();
     
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public String id() {
         return id;
     }

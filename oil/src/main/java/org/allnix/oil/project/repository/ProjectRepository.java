@@ -13,8 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.allnix.oil;
+package org.allnix.oil.project.repository;
 
-public class DctCsv {
+import java.util.Optional;
 
+import org.allnix.oil.project.model.Project;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface ProjectRepository extends JpaRepository<Project, String> {
+    Optional<Project> findByName(String name);
 }

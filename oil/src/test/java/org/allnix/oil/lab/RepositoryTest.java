@@ -60,23 +60,23 @@ public class RepositoryTest {
         Assertions.assertNotNull(id);
 
         Core per = coreDao.save(obj);
-        Assertions.assertNull(per.name());
-        Assertions.assertNull(per.topCoreDepth());
+        Assertions.assertNull(per.getName());
+        Assertions.assertNull(per.getTopCoreDepth());
         
         obj = per;
         
-        obj.topCoreDepth(1000.);
-        obj.bottomCoreDepth(1100.);
+        obj.setTopCoreDepth(1000.);
+        obj.setBottomCoreDepth(1100.);
         per = coreDao.save(obj);
-        Assertions.assertEquals(1000., per.topCoreDepth().doubleValue());
-        Assertions.assertEquals(1100., per.bottomCoreDepth().doubleValue());
+        Assertions.assertEquals(1000., per.getTopCoreDepth().doubleValue());
+        Assertions.assertEquals(1100., per.getBottomCoreDepth().doubleValue());
       
         obj = per;
         
         String name = "What's up!";
-        obj.name(name);
+        obj.setName(name);
         per = coreDao.save(obj);
-        Assertions.assertEquals(name, per.name());
+        Assertions.assertEquals(name, per.getName());
         
     }
 }

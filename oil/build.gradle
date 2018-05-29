@@ -4,6 +4,10 @@
  * This generated file contains a sample Java Library project to get you started.
  * For more details take a look at the Java Libraries chapter in the Gradle
  * user guide available at https://docs.gradle.org/4.7/userguide/java_library_plugin.html
+ *
+ * Run both TestNG and JUnit5 in one command
+ *
+ *  ./gradlew clean junit5 --tests "*ProjectServiceTest" testng --tests "*ProjectServiceTest"
  */
 
 apply plugin: 'java'
@@ -67,7 +71,7 @@ dependencies {
     compile("com.h2database:h2")
 
 	// https://mvnrepository.com/artifact/org.projectlombok/lombok
-	compileOnly('org.projectlombok:lombok:1.16.20')
+	// compileOnly('org.projectlombok:lombok:1.16.20')
 
     // Use JUnit test framework
     //testImplementation 'junit:junit:4.12'
@@ -75,24 +79,68 @@ dependencies {
     testCompile("org.junit.platform:junit-platform-runner:1.0.2")
     testCompile 'org.apiguardian:apiguardian-api:1.0.0'
     
+    testCompile 'org.testng:testng:6.13'
+    
     testCompile('org.springframework.boot:spring-boot-starter-test')
     
     testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.2")
 }
 
 
+task testng (type:Test) {
+	useTestNG() {
+	  	includeGroups 'all', 'seconds', 'milliseconds' //, 'manual' 
+	}
+	
+    systemProperties 'logging.config' : new File(projectDir,'src/test/resources/logback-test.xml').absolutePath
+
+    // Use "gradlew cleanTest test" to force running test
+    testLogging {
+        events "started", "passed", "skipped", "failed"//, "standardOut" //, "standardError"
+    }	
+}
+
+task junit5 (type:Test) {
+	useJUnitPlatform {
+        // see JUnitPlatformOptions
+        //excludeTags 'seconds', 'minutes', 'hours', 'days'
+   	
+     	includeTags 'minutes', 'seconds', 'milliseconds' //, 'manual'
+        //includeTags 'fast'
+  	}
+	
+    systemProperties 'logging.config' : new File(projectDir,'src/test/resources/logback-test.xml').absolutePath
+
+    // Use "gradlew cleanTest test" to force running test
+    testLogging {
+        events "started", "passed", "skipped", "failed"//, "standardOut" //, "standardError"
+    }	
+}
 
 test {
   // See https://docs.gradle.org/current/userguide/java_plugin.html
-
-  useJUnitPlatform {
-    // see JUnitPlatformOptions
-    //excludeTags 'seconds', 'minutes', 'hours', 'days'
+	//dependsOn testng
+	/*
+	useTestNG() {
+	  	includeGroups 'all', 'seconds', 'milliseconds' //, 'manual' 
+	}
+	*/
+	useJUnitPlatform {
+        // see JUnitPlatformOptions
+        //excludeTags 'seconds', 'minutes', 'hours', 'days'
    	
-   	includeTags 'minutes', 'seconds', 'milliseconds' //, 'manual'
-    //includeTags 'fast'
-  }
-  maxParallelForks = 6
+     	includeTags 'minutes', 'seconds', 'milliseconds' //, 'manual'
+        //includeTags 'fast'
+  	}
+  		
+	
+	
+  
+  
+  
+  
+  
+  maxParallelForks = 1
   //systemProperties 'logback.configurationFile' : new File(projectDir,'src/test/resources/logback-test.xml').absolutePath
   systemProperties 'logging.config' : new File(projectDir,'src/test/resources/logback-test.xml').absolutePath
 //  include '**/**'

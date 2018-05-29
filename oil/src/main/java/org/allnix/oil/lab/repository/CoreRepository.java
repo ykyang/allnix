@@ -15,11 +15,13 @@
  */
 package org.allnix.oil.lab.repository;
 
+import java.util.List;
+
 import org.allnix.oil.lab.model.Core;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CoreRepository extends JpaRepository<Core, String> {
-
+    List<Core> findByWellId(String wellId);
 }

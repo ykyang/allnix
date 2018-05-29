@@ -13,26 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.allnix.oil.lab;
+package org.allnix.oil.project.repository;
 
 import java.util.List;
+import java.util.Optional;
 
-import javax.transaction.Transactional;
+import org.allnix.oil.project.model.Well;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-@Service
-public class LabService {
-//    @Autowired
-//    private CoreRepository coreDao;
-    
-//    @Transactional
-//    public void save(Core core) {
-//        coreDao.save(core);
-//    }
-//    @Transactional
-//    public List<Core> findByName(String name) {
-//        return coreDao.findByName(name);
-//    }
+/**
+ * 
+ * 
+ *
+ * @author Yi-Kun Yang ykyang@gmail.com
+ */
+@Repository
+public interface WellRepository extends JpaRepository<Well, String> {
+    Optional<Well> findFirstByName(String name);
+    List<Well> findByName(String name);
+    List<Well> findByProjectId(String projectId);
+    List<Well> findByParentId(String parentId);
 }
