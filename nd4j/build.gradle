@@ -40,6 +40,8 @@ dependencies {
 	compile 'org.bytedeco.javacpp-presets:openblas:0.2.20-1.4.1'
     compile 'org.bytedeco.javacpp-presets:openblas:0.2.20-1.4.1:linux-x86_64'
 
+	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.7'
+
     // This dependency is used internally, and not exposed to consumers on their own compile classpath.
     //implementation 'com.google.guava:guava:23.0'
 
