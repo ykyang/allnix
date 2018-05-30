@@ -70,6 +70,12 @@ public class MainTest {
         df = new DecimalFormat();
         df.setMinimumFractionDigits(16);
     }
+    /**
+     * Add 
+     * 
+     * Add Python's MKL so files to LD_LIBRARY_PATH then this is as
+     * fast as Numpy.
+     */
     @Test
     @Tag("seconds")
     public void testNd4j() {
