@@ -15,13 +15,17 @@
  */
 package org.allnix.ext;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +56,9 @@ public class TestJackson {
   private Map<String,Object> map;
   private ObjectNode objectNode;
   private String string;
+  private String strlist;
   private String uuid;
+  private String uuid2;
   private Pojo pojo;
 
   @BeforeClass(alwaysRun = true)
@@ -60,11 +66,14 @@ public class TestJackson {
     mapper = new ObjectMapper();
     
     uuid = "300a9aa6-4f9d-4286-b7be-f23a20374a7d";
+    uuid2 = "cb3b2944-d59d-4337-96c8-a19c1321c19b";
     
     map = new HashMap<>();
     map.put("id", uuid);
     
     string = String.format("{\"id\":\"%s\"}", uuid);
+    //< a String that has a list of POJOs >// 
+    strlist = String.format("[{\"id\":\"%s\"}, {\"id\":\"%s\"}]", uuid, uuid2);
     
     objectNode = new ObjectNode(JsonNodeFactory.instance);
     objectNode.put("id", uuid);
@@ -86,17 +95,30 @@ public class TestJackson {
   }
   
   @Test
-  public void testConvertValue() {
+  public void testConvertValue() throws JsonParseException, JsonMappingException, IOException {
     { 
       // > Map -> POJO
       Pojo value = mapper.convertValue(map, Pojo.class);
       Assert.assertEquals(value.getId(), uuid);
       
-      // > String -> POJO, use readValue
-
+      // > String -> POJO
+      value = mapper.readValue(string, Pojo.class);
+      Assert.assertEquals(value.getId(), uuid);
+      
       // > ObjectNode -> POJO
       value = mapper.convertValue(objectNode, Pojo.class);
       Assert.assertEquals(value.getId(), uuid);
+    }
+    
+    {  //> List stuff
+       //> String -> List<POJO>
+      TypeReference<List<Pojo>> typeRef = new TypeReference<List<Pojo>>() {};
+      List<Pojo> pojoList = mapper.readValue(strlist, typeRef);
+      Assert.assertEquals(pojoList.size(), 2);
+      Pojo value = pojoList.get(0);
+      Assert.assertEquals(value.getId(), uuid);
+      value = pojoList.get(1);
+      Assert.assertEquals(value.getId(), uuid2);
     }
     
     {
@@ -109,6 +131,8 @@ public class TestJackson {
       Assert.assertEquals(value.get("id").asText(), uuid);
       
       // > String -> ObjectNode, use readValue
+      value = mapper.readValue(string, ObjectNode.class);
+      Assert.assertEquals(value.get("id").asText(), uuid);
     }
     
     {
@@ -121,6 +145,9 @@ public class TestJackson {
       Assert.assertEquals((String)value.get("id"), uuid);
       
       // > String -> Map, use readValue
+      TypeReference<Map<String,Object>> typeRef = new TypeReference<Map<String,Object>>(){};
+      value = mapper.readValue(string, typeRef);
+      Assert.assertEquals((String)value.get("id"), uuid);
     }
   }
 
