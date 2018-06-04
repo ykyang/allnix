@@ -110,7 +110,7 @@ public class TestJackson {
       Assert.assertEquals(value.getId(), uuid);
     }
     
-    {  //> List stuff
+    {  
        //> String -> List<POJO>
       TypeReference<List<Pojo>> typeRef = new TypeReference<List<Pojo>>() {};
       List<Pojo> pojoList = mapper.readValue(strlist, typeRef);
