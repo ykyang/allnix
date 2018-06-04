@@ -18,12 +18,14 @@ package org.allnix.ext;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,6 +62,7 @@ public class TestJackson {
   private String uuid;
   private String uuid2;
   private Pojo pojo;
+  private List<Pojo> pojoList;
 
   @BeforeClass(alwaysRun = true)
   public void beforeClass() {
@@ -80,6 +83,16 @@ public class TestJackson {
     
     pojo = new Pojo();
     pojo.setId(uuid);
+    
+    pojoList = new ArrayList<Pojo>();
+    {
+        Pojo p = new Pojo();
+        p.setId(uuid);
+        pojoList.add(p);
+        p = new Pojo();
+        p.setId(uuid2);
+        pojoList.add(p);
+    }
   }
   
   
@@ -101,24 +114,17 @@ public class TestJackson {
       Pojo value = mapper.convertValue(map, Pojo.class);
       Assert.assertEquals(value.getId(), uuid);
       
-      // > String -> POJO
-      value = mapper.readValue(string, Pojo.class);
-      Assert.assertEquals(value.getId(), uuid);
+      //> use readValue for String -> POJO
+      try {
+          value = mapper.convertValue(string, Pojo.class);
+          Assert.fail();
+      } catch(IllegalArgumentException e) {
+          
+      }
       
       // > ObjectNode -> POJO
       value = mapper.convertValue(objectNode, Pojo.class);
       Assert.assertEquals(value.getId(), uuid);
-    }
-    
-    {  
-       //> String -> List<POJO>
-      TypeReference<List<Pojo>> typeRef = new TypeReference<List<Pojo>>() {};
-      List<Pojo> pojoList = mapper.readValue(strlist, typeRef);
-      Assert.assertEquals(pojoList.size(), 2);
-      Pojo value = pojoList.get(0);
-      Assert.assertEquals(value.getId(), uuid);
-      value = pojoList.get(1);
-      Assert.assertEquals(value.getId(), uuid2);
     }
     
     {
@@ -130,9 +136,13 @@ public class TestJackson {
       value = mapper.convertValue(map, ObjectNode.class);
       Assert.assertEquals(value.get("id").asText(), uuid);
       
-      // > String -> ObjectNode, use readValue
-      value = mapper.readValue(string, ObjectNode.class);
-      Assert.assertEquals(value.get("id").asText(), uuid);
+      // > use readValue for String -> ObjectNode
+      try {
+          value = mapper.convertValue(string, ObjectNode.class);
+          Assert.fail();
+      } catch(IllegalArgumentException e) {
+
+      }
     }
     
     {
@@ -151,26 +161,44 @@ public class TestJackson {
     }
   }
 
-  @Test
-  public void testReadValue() throws IOException {
-    {
-      // > String -> POJO
-      Pojo value = mapper.readValue(string, Pojo.class);
-      Assert.assertEquals(value.getId(), uuid);
+    @Test
+    public void testReadValue() throws IOException {
+        {
+            // > String -> POJO
+            Pojo value = mapper.readValue(string, Pojo.class);
+            Assert.assertEquals(value.getId(), uuid);
+        }
+
+        {
+            // > String -> Map
+            JavaType type = mapper.getTypeFactory()//
+                .constructMapType(Map.class, String.class, Object.class);
+            Map<String, Object> value = //
+                mapper.readValue(string, type);
+
+            Assert.assertEquals((String) value.get("id"), uuid);
+        }
+
+        {
+            // > String -> ObjectNode
+            ObjectNode value = mapper.readValue(string, ObjectNode.class);
+            Assert.assertEquals(value.get("id").asText(), uuid);
+        }
+        
+        {  
+            //> String -> List<POJO>
+//           TypeReference<List<Pojo>> typeRef = new TypeReference<List<Pojo>>() {};
+            JavaType type = mapper.getTypeFactory()//
+                .constructCollectionType(List.class, Pojo.class);
+//           List<Pojo> pojoList = mapper.readValue(strlist, typeRef);
+            List<Pojo> pojoList = mapper.readValue(strlist, type);
+           Assert.assertEquals(pojoList.size(), 2);
+           Pojo value = pojoList.get(0);
+           Assert.assertEquals(value.getId(), uuid);
+           value = pojoList.get(1);
+           Assert.assertEquals(value.getId(), uuid2);
+         }
     }
-    
-    {
-      // > String -> Map
-      Map<String,Object> value = mapper.readValue(string, Map.class);
-      Assert.assertEquals((String)value.get("id"), uuid);
-    }
-    
-    {
-      // > String -> ObjectNode
-      ObjectNode value = mapper.readValue(string, ObjectNode.class);
-      Assert.assertEquals(value.get("id").asText(), uuid);
-    }
-  }
   
   /**
    * Show how to use valueToTree method
@@ -209,5 +237,12 @@ public class TestJackson {
     // > POJO -> String
     value = mapper.writeValueAsString(pojo);
     Assert.assertEquals(value, string);
+    
+    //> List<Pojo> -> String
+    value = mapper.writeValueAsString(pojoList);
+    //> How am I supposed to test this?
+    //> Get it from the log
+//    logger.info("List<Pojo>: {}", value);
+    Assert.assertEquals(value, "[{\"id\":\"300a9aa6-4f9d-4286-b7be-f23a20374a7d\"},{\"id\":\"cb3b2944-d59d-4337-96c8-a19c1321c19b\"}]");
   }
 }
