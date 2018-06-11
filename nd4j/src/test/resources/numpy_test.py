@@ -4,7 +4,7 @@ import time
 np.__config__.show()
 
 length = 1000000
-iteration = 20000
+iteration = 100000
 
 a = np.random.rand(length)
 b = np.random.rand(length)

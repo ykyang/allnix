@@ -80,6 +80,7 @@ public class MainTest {
     @Test
     @Tag("seconds")
     public void testNd4j() {
+        long iteration = 10000;
         INDArray nd1 = Nd4j.create(d1, new int[] { 1, length });
         INDArray nd2 = Nd4j.create(d2, new int[] { length, 1 });
         INDArray nd3 = null;
@@ -151,7 +152,7 @@ public class MainTest {
             }
         }
         javaWatch.stop();
-        logger.info("for-loop total   time: {} sec", javaWatch.getTime(TimeUnit.SECONDS));
+//        logger.info("for-loop total   time: {} sec", javaWatch.getTime(TimeUnit.SECONDS));
         logger.info("for-loop average time: {} msec", (double)javaWatch.getTime(TimeUnit.MILLISECONDS)/iteration);
         logger.info("for-loop value: {}", df.format(d));
     }
