@@ -15,7 +15,6 @@
  */
 package org.allnix.oil.project;
 
-import org.allnix.oil.TestSpringApplication;
 import org.allnix.oil.project.model.Well;
 import org.allnix.oil.project.repository.ProjectRepository;
 import org.allnix.oil.project.repository.WellRepository;

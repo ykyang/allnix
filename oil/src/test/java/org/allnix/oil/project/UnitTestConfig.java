@@ -36,8 +36,6 @@ public class UnitTestConfig {
     @Primary
     public WellRepository wellRepository() {
         WellRepository bean = mock(WellRepository.class);
-        logger.info("WellDao: {}", bean.getClass().getName());
-        
         return bean;
     }
     
