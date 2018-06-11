@@ -64,6 +64,7 @@ public class DefaultProjectService {
 
     @Transactional
     public Well save(Well well) {
+        logger.info("WellDao: {}", wellDao.getClass().getName());
         return wellDao.save(well);
     }
     @Transactional
