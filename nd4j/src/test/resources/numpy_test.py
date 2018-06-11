@@ -1,8 +1,10 @@
 import numpy as np
 import time
 
+np.__config__.show()
+
 length = 1000000
-iteration = 10000
+iteration = 100000
 
 a = np.random.rand(length)
 b = np.random.rand(length)

@@ -30,6 +30,7 @@ import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
+import org.nd4j.linalg.ops.transforms.Transforms;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -45,7 +46,7 @@ public class MainTest {
     static final private Logger logger = LoggerFactory.getLogger(MainTest.class);
     
     private int length = 1_000_000;
-    private int iteration = 10000;
+    private int iteration = 100;
     
     private double[] d1;
     private double[] d2;
@@ -54,7 +55,7 @@ public class MainTest {
     
     @BeforeAll
     public void beforeAll() {
-        Random rand = new Random();
+        Random rand = new Random(12344321);
         
         d1 = new double[length];
         d2 = new double[length];
@@ -79,6 +80,7 @@ public class MainTest {
     @Test
     @Tag("seconds")
     public void testNd4j() {
+        long iteration = 10000;
         INDArray nd1 = Nd4j.create(d1, new int[] { 1, length });
         INDArray nd2 = Nd4j.create(d2, new int[] { length, 1 });
         INDArray nd3 = null;
@@ -92,7 +94,52 @@ public class MainTest {
         logger.info("ND4J average time: {} msec", (double)nd4jWatch.getTime(TimeUnit.MILLISECONDS)/iteration);
         logger.info("ND4J value: {}", df.format(nd3.getDouble(0)));
     }
-    
+    @Test
+    @Tag("seconds")
+    public void testPow() {
+        INDArray nd = Nd4j.create(d1);
+        StopWatch watch = null;
+        INDArray ans = null;
+        
+        watch = StopWatch.createStarted();
+        for (int i = 0; i < iteration; i++) {
+            ans = Transforms.pow(nd, 2);
+        }
+        watch.stop();
+        logger.info("POW copied: {} msec", //
+            (double) watch.getTime(TimeUnit.MILLISECONDS)/iteration);
+        
+        watch = StopWatch.createStarted();
+        watch.suspend();
+        for (int i = 0; i < iteration; i++) {
+            nd = Nd4j.create(d1);
+            watch.resume();
+            ans = Transforms.pow(nd, 2);
+            watch.suspend();
+        }
+        watch.stop();
+        logger.info("POW in-place: {} msec", //
+            (double) watch.getTime(TimeUnit.MILLISECONDS)/iteration);
+    }
+    /**
+     * x*x is faster than x^2 
+     */
+    @Test
+    @Tag("seconds")
+    public void testMul() {
+        INDArray nd1 = Nd4j.create(d1);
+//        INDArray nd2 = Nd4j.create(d2);
+        StopWatch watch = null;
+        INDArray ans = null;
+        
+        watch = StopWatch.createStarted();
+        for (int i = 0; i < iteration; i++) {
+            ans = nd1.mul(nd1);
+        }
+        watch.stop();
+        logger.info("Mul copied: {} msec", //
+            (double) watch.getTime(TimeUnit.MILLISECONDS)/iteration);
+    }
     @Test
     @Tag("seconds")
     public void testForLoop() {
@@ -105,8 +152,12 @@ public class MainTest {
             }
         }
         javaWatch.stop();
-        logger.info("for-loop total   time: {} sec", javaWatch.getTime(TimeUnit.SECONDS));
+//        logger.info("for-loop total   time: {} sec", javaWatch.getTime(TimeUnit.SECONDS));
         logger.info("for-loop average time: {} msec", (double)javaWatch.getTime(TimeUnit.MILLISECONDS)/iteration);
         logger.info("for-loop value: {}", df.format(d));
+    }
+    
+    public void testOperations() {
+        
     }
 }
