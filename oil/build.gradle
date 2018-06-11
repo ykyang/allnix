@@ -82,8 +82,11 @@ dependencies {
     testCompile 'org.testng:testng:6.13'
     
     testCompile('org.springframework.boot:spring-boot-starter-test')
+    // https://mvnrepository.com/artifact/org.mockito/mockito-junit-jupiter
+	testCompile group: 'org.mockito', name: 'mockito-junit-jupiter', version: '2.18.3'
     
     testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.2")
+    
 }
 
 
@@ -129,7 +132,7 @@ test {
         // see JUnitPlatformOptions
         //excludeTags 'seconds', 'minutes', 'hours', 'days'
    	
-     	includeTags 'minutes', 'seconds', 'milliseconds' //, 'manual'
+     	includeTags 'unit', 'minutes', 'seconds', 'milliseconds' //, 'manual'
         //includeTags 'fast'
   	}
   		
