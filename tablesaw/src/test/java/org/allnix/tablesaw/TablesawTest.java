@@ -48,6 +48,7 @@ public class TablesawTest {
         df.addColumn(new DoubleColumn("b", b));
         
         df.write().csv("CSV.csv");
+        CsvWriter.write(df, "noheader.csv", false);
     }
     
     @Test
