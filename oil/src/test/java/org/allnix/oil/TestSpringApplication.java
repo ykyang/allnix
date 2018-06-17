@@ -25,6 +25,11 @@ import org.springframework.test.context.ActiveProfiles;
 
 /**
  * Necessary for Spring Boot Test to work
+ * 
+ * Remember 
+ * @EnableAutoConfiguration: enable Spring Boot’s auto-configuration mechanism
+ * @ComponentScan: enable @Component scan on the package where the application is located (see the best practices)
+ * @Configuration:
  *
  * @author Yi-Kun Yang ykyang@gmail.com
  */

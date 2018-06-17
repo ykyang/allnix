@@ -19,6 +19,7 @@ import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Version;
 
 
 @MappedSuperclass // Use flat table (denormalized) to save this info
@@ -27,8 +28,18 @@ public abstract class OilObject {
     @javax.persistence.Id
     @Column(length=36)
     private String id = UUID.randomUUID().toString();
+    @Version
+    private long version;
     
     public String getId() {
+        return id;
+    }
+
+    public long getVersion() {
+        return version;
+    }
+
+    public String id() {
         return id;
     }
 
@@ -36,7 +47,11 @@ public abstract class OilObject {
         this.id = id;
     }
 
-    public String id() {
-        return id;
+    public void setVersion(long version) {
+        this.version = version;
+    }
+    
+    public long version() {
+        return version;
     }
 }

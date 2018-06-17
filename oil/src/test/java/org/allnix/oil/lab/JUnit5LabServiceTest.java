@@ -35,9 +35,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.annotation.Commit;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import static org.junit.jupiter.api.Assertions.*;
+
+@ActiveProfiles("int-test")
+//@SpringBootApplication(exclude = { MongoAutoConfiguration.class,
+//    MongoDataAutoConfiguration.class })
 @SpringBootTest(classes = TestSpringApplication.class,
 webEnvironment = WebEnvironment.NONE)
 @ExtendWith(SpringExtension.class)
@@ -78,5 +84,22 @@ public class JUnit5LabServiceTest {
             Optional<Ct> ctOpt = ls.findCtByCore(core);
             Assertions.assertNotNull(ctOpt.get());
         }
+    }
+    
+    @Commit
+    @Test
+    @Tag("milliseconds")
+    public void testVersion() {
+        Core core, core0;
+        
+        core = new Core();
+        assertEquals(0, core.version());
+        core.setName("Core-1");
+        
+        
+        core0 = ls.save(core);
+        
+        
+        
     }
 }
