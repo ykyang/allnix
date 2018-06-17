@@ -18,7 +18,9 @@ package org.allnix.oil.model;
 import java.util.UUID;
 
 import javax.persistence.Column;
+import javax.persistence.Index;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Table;
 import javax.persistence.Version;
 
 
@@ -31,8 +33,15 @@ public abstract class OilObject {
     @Version
     private long version;
     
+    @Column(length=36) 
+    private String parentId;
+    
     public String getId() {
         return id;
+    }
+
+    public String getParentId() {
+        return parentId;
     }
 
     public long getVersion() {
@@ -43,8 +52,16 @@ public abstract class OilObject {
         return id;
     }
 
+    public String parentId() {
+        return parentId;
+    }
+    
     public void setId(String id) {
         this.id = id;
+    }
+
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
     }
 
     public void setVersion(long version) {

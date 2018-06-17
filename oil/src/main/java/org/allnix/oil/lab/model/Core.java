@@ -18,10 +18,16 @@ package org.allnix.oil.lab.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Index;
+import javax.persistence.Table;
 
 import org.allnix.oil.model.OilObject;
 
 @Entity
+@Table(indexes = { //
+    @Index(columnList = "wellId") //
+    , @Index(columnList = "parentId")
+})
 public class Core extends OilObject {
     
     @Column(length=36)

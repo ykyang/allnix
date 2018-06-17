@@ -46,7 +46,7 @@ public class TestConfig {
             Paths.get(TestConfig.class.getName() + "DB").toAbsolutePath();
         Path h2DbPath = // Actual H2 database file name
             Paths.get(TestConfig.class.getName() + "DB.mv.db").toAbsolutePath();
-        Files.deleteIfExists(h2DbPath);
+//        Files.deleteIfExists(h2DbPath);
         
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("org.h2.Driver");

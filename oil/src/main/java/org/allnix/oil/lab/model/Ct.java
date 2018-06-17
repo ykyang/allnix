@@ -34,6 +34,7 @@ import org.springframework.data.annotation.Transient;
 @Entity
 @Table(indexes = { //
     @Index(columnList = "coreId"), @Index(columnList = "wellId") //
+    , @Index(columnList = "parentId")
 })
 public class Ct extends OilObject {
     private String name;

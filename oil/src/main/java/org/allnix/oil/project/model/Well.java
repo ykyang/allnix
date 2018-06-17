@@ -48,8 +48,8 @@ public class Well extends OilObject {
     @ElementCollection
     @Column(length = 36)
     @JoinTable(//joinColumns = @JoinColumn(referencedColumnName = "id"),
-        indexes = { @Index(columnList = "parentId") })
-    private Set<String> parentId = new HashSet<String>();
+        indexes = { @Index(columnList = "parentIdSet") })
+    private Set<String> parentIdSet = new HashSet<String>();
 
     public String getName() {
         return name;
@@ -68,7 +68,7 @@ public class Well extends OilObject {
     }
 
     public Well addParentId(String id) {
-        parentId.add(id);
+        parentIdSet.add(id);
         return this;
     }
 }
