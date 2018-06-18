@@ -18,12 +18,12 @@ package org.allnix.oil.lab.repository;
 import java.util.List;
 import java.util.Optional;
 
-import org.allnix.oil.lab.model.Ct;
+import org.allnix.oil.lab.model.CtLog;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CtRepository extends JpaRepository<Ct, String> {
-    Optional<Ct> findByCoreId(String coreId);
-    List<Ct> findByWellId(String wellId);
+public interface CtRepository extends JpaRepository<CtLog, String> {
+    Optional<CtLog> findByCoreId(String coreId);
+    List<CtLog> findByWellId(String wellId);
 }

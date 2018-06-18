@@ -21,7 +21,7 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 
 import org.allnix.oil.lab.model.Core;
-import org.allnix.oil.lab.model.Ct;
+import org.allnix.oil.lab.model.CtLog;
 import org.allnix.oil.project.model.Project;
 import org.allnix.oil.project.model.Well;
 import org.allnix.oil.project.repository.ProjectRepository;
@@ -94,7 +94,7 @@ public class DefaultProjectService {
      * @param well
      * @return
      */
-    public Ct findDctCsv(Well well) {
+    public CtLog findDctCsv(Well well) {
         throw new UnsupportedOperationException();
     }
 
@@ -104,7 +104,7 @@ public class DefaultProjectService {
      * @param core
      * @return
      */
-    public Ct findDctCsv(Core core) {
+    public CtLog findDctCsv(Core core) {
         throw new UnsupportedOperationException();
     }
 }

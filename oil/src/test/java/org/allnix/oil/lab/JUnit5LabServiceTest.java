@@ -22,7 +22,7 @@ import javax.persistence.OptimisticLockException;
 
 import org.allnix.oil.TestSpringApplication;
 import org.allnix.oil.lab.model.Core;
-import org.allnix.oil.lab.model.Ct;
+import org.allnix.oil.lab.model.CtLog;
 import org.allnix.oil.project.DefaultProjectService;
 import org.allnix.oil.project.ProjectLoader;
 import org.allnix.oil.project.model.Well;
@@ -84,7 +84,7 @@ public class JUnit5LabServiceTest {
 
         //< CT >//
         for (Core core : coreList) {
-            Optional<Ct> ctOpt = ls.findCtByCore(core);
+            Optional<CtLog> ctOpt = ls.findCtByCore(core);
             Assertions.assertNotNull(ctOpt.get());
         }
     }
