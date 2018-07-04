@@ -1,0 +1,92 @@
+buildscript {
+	ext {
+		springBootVersion = '2.0.3.RELEASE'
+	}
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+group = 'org.allnix'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 1.8
+
+repositories {
+	mavenCentral()
+}
+
+
+dependencies {
+	compile('org.springframework.boot:spring-boot-starter-web-services')
+	compile('org.springframework.boot:spring-boot-starter-webflux')
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+	testCompile('io.projectreactor:reactor-test')
+	
+	//> JUnit 5
+	testCompile("org.junit.jupiter:junit-jupiter-api:5.0.2")
+    testCompile("org.junit.platform:junit-platform-runner:1.0.2")
+    testCompile 'org.apiguardian:apiguardian-api:1.0.0'
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.2")
+    
+    
+    testCompile("org.assertj:assertj-core:3.10.0")
+}
+
+test {
+  // See https://docs.gradle.org/current/userguide/java_plugin.html
+	//dependsOn testng
+	/*
+	useTestNG() {
+	  	includeGroups 'all', 'seconds', 'milliseconds' //, 'manual' 
+	}
+	*/
+	useJUnitPlatform {
+        // see JUnitPlatformOptions
+        //excludeTags 'seconds', 'minutes', 'hours', 'days'
+   	
+     	includeTags 'unit', 'minutes', 'seconds', 'milliseconds' //, 'manual'
+        //includeTags 'fast'
+  	}
+  		
+	
+	
+  
+  
+  
+  
+  
+  maxParallelForks = 1
+  //systemProperties 'logback.configurationFile' : new File(projectDir,'src/test/resources/logback-test.xml').absolutePath
+  systemProperties 'logging.config' : new File(projectDir,'src/test/resources/logback-test.xml').absolutePath
+//  include '**/**'
+  //include '**/DisableAllTest*.*'
+
+  // Use "gradlew cleanTest test" to force running test
+  testLogging {
+    events "started", "passed", "skipped", "failed"//, "standardOut" //, "standardError"
+    
+    // set options for log level LIFECYCLE
+    showStackTraces true
+    exceptionFormat "short"
+
+        // set options for log level DEBUG
+    debug {
+        events "started", "skipped", "failed"
+        exceptionFormat "full"
+    }
+
+        // remove standard output/error logging from --info builds
+        // by assigning only 'failed' and 'skipp
+        info.events = ["failed", "skipped"]
+  }
+  
+  
+}
