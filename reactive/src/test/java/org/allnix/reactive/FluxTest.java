@@ -70,9 +70,10 @@ public class FluxTest {
             Flux<User> flux = Flux.just(//
                 new User("swhite", null, null),
                 new User("jpinkman", null, null));
-            
-            StepVerifier.create(flux).assertNext(
-                x -> assertThat(x.getUsername()).isEqualTo("swhite"))
+
+            StepVerifier.create(flux)
+                .assertNext(
+                    x -> assertThat(x.getUsername()).isEqualTo("swhite"))
                 .assertNext(
                     x -> assertThat(x.getUsername()).isEqualTo("jpinkman"))
                 .expectComplete().verify();
@@ -85,7 +86,7 @@ public class FluxTest {
         //            .expectComplete()
         //            .verify(Duration.ofSeconds(3600));
         //        }
-        
+
         //        Mono<User> capitalizeOne(Mono<User> mono) {
         //            return mono.map((t)->{ return 
         //            new User(
@@ -95,7 +96,7 @@ public class FluxTest {
         //            );
         //            });
         //        }
-        
+
         //        Flux<User> capitalizeMany(Flux<User> flux) {
         //            return flux.map(t->new User(
         //                 t.getUsername().toUpperCase(),
@@ -103,6 +104,31 @@ public class FluxTest {
         //                t.getLastname().toUpperCase()
         //                ));
         //        }
-        
+
+        //        Flux<User> asyncCapitalizeMany(Flux<User> flux) {
+        //            return flux.flatMap(
+        //                t->Mono.just(
+        //                    new User(
+        //                        t.getUsername().toUpperCase(),
+        //                        t.getFirstname().toUpperCase(),
+        //                        t.getLastname().toUpperCase()
+        //                        )
+        //                    )
+        //                );
+        //            
+        //        }
+
+        //        StepVerifier requestAllExpectFour(Flux<User> flux) {
+        //            return StepVerifier.create(flux).thenRequest(Long.MAX_VALUE)
+        //            .expectNextCount(4)
+        //            .expectComplete();
+        //        }
+
+        //        StepVerifier requestOneExpectSkylerThenRequestOneExpectJesse(Flux<User> flux) {
+        //            return StepVerifier.create(flux)
+        //                .expectNext(User.SKYLER).expectNext(User.JESSE)
+        //                .thenCancel()
+        //                ;
+        //        }
     }
 }
