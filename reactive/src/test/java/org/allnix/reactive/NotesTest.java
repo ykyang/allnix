@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.publisher.ParallelFlux;
 import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 
@@ -44,8 +45,8 @@ import reactor.core.scheduler.Schedulers;
  */
 @TestInstance(Lifecycle.PER_CLASS)
 public class NotesTest {
-    static final private Logger logger = LoggerFactory
-        .getLogger(NotesTest.class);
+    static final private Logger logger = LoggerFactory.getLogger(
+        NotesTest.class);
 
     /**
      * Run a main thread
@@ -64,8 +65,9 @@ public class NotesTest {
     @Tag("unit")
     public void test2() {
         Flux<String> flux = Flux.just("red", "white", "blue").log()
-            .map(String::toUpperCase).subscribeOn(Schedulers.parallel())
-            .doOnNext(System.out::println);
+                                .map(String::toUpperCase)
+                                .subscribeOn(Schedulers.parallel())
+                                .doOnNext(System.out::println);
 
         //        flux.subscribe();
         flux.blockLast();
@@ -80,7 +82,7 @@ public class NotesTest {
         Flux.just("red", "white", "blue").log() //
             .flatMap(
                 value -> Mono.just(value.toUpperCase())
-                    .subscribeOn(Schedulers.parallel()), //
+                             .subscribeOn(Schedulers.parallel()), //
                 2)
             .subscribe(value -> {
                 logger.info("Consumed: {}", value);
@@ -92,17 +94,17 @@ public class NotesTest {
     public void test4() {
         Flux.just("red", "white", "blue").log() //
             .flatMap((value) -> {
+                return Mono.just(value.toUpperCase())
+                           .subscribeOn(Schedulers.parallel());
+            } //
+              //             ,   2
+            ).subscribe(value -> {
                 try {
                     TimeUnit.SECONDS.sleep(1);
                 } catch (InterruptedException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
-                return Mono.just(value.toUpperCase())
-                    .subscribeOn(Schedulers.parallel());
-            } //
-             //             ,   2
-            ).subscribe(value -> {
                 logger.info("Consumed: {}", value);
             });
 
@@ -110,33 +112,72 @@ public class NotesTest {
 
     }
 
+    /**
+     * Use my own executor and non-blocking subscribe, blocked by executor to
+     * complete
+     * 
+     * @throws InterruptedException
+     */
     @Test
     @Tag("unit")
     public void test5() throws InterruptedException {
-        ExecutorService exec = Executors.newFixedThreadPool(2);
+        ExecutorService exec = Executors.newFixedThreadPool(4);
         Scheduler sche = Schedulers.fromExecutor(exec);
-        
-        Flux<String> flux = Flux.just("red", "white", "blue").log()
-            .flatMap((value) -> {
-                try {
-                    TimeUnit.SECONDS.sleep(1);
-                } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                return Mono.just(value.toUpperCase());
-//                    .subscribeOn(Schedulers.parallel());
-            }
-        //                value -> Mono.just(value.toUpperCase())
-        )
-                    .subscribeOn(sche)
-//                    .subscribeOn(Schedulers.parallel()) // non-blocking
-        ;
+
+        Flux<String> flux = Flux.just("red", "white", "blue", "yellow").log()
+                                .flatMap((value) -> {
+                                    logger.info("flatMap: {}", value);
+                                    try {
+                                        TimeUnit.SECONDS.sleep(1);
+                                    } catch (InterruptedException e) {
+                                        // TODO Auto-generated catch block
+                                        e.printStackTrace();
+                                    }
+                                    return Mono.just(value.toUpperCase());
+                                }, 1).subscribeOn(sche);
 
         flux.subscribe(System.out::println); //non blocking
         logger.info("Flux called");
         exec.shutdown();
         exec.awaitTermination(1, TimeUnit.DAYS);
-        //        flux.blockLast();
+    }
+
+    @Test
+    @Tag("unit")
+    public void test6() throws InterruptedException {
+        ExecutorService exec = Executors.newFixedThreadPool(4);
+        Scheduler sche = Schedulers.fromExecutor(exec);
+        
+        ParallelFlux<String> flux = //
+            Flux.just("red", "white", "blue", "yellow").log()
+                .flatMap((value) -> {
+                    //> Processed by the main thread
+                    logger.info("flatMap: {}", value);
+                    return Mono.just(value.toUpperCase());
+                }
+
+                ).parallel(4);
+
+        //> Notice how flux is re-assigned
+        flux = flux.runOn(sche);
+        
+        //> subscribe on main thread so it is blocking
+        logger.info("Before subscribe");
+        //> Main processing done here by threads
+        flux.subscribe((x)->{
+            logger.info("Processing: {}", x);
+            try {
+                TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            logger.info("Finished: {}", x);
+        });
+        logger.info("After subscribe");
+        
+        exec.shutdown();
+        exec.awaitTermination(1, TimeUnit.DAYS);
+        
     }
 }
