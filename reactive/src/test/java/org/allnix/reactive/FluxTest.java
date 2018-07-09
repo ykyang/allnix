@@ -16,7 +16,9 @@
 package org.allnix.reactive;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -130,5 +132,17 @@ public class FluxTest {
         //                .thenCancel()
         //                ;
         //        }
+    }
+    
+    @Test
+    @Tag("unit")
+    public void learnFlux() {
+        List<Integer> list = new ArrayList<>();
+        
+        Flux.range(1, 5)
+        .log()
+        .subscribe(list::add);
+        
+        assertThat(list).hasSize(5);
     }
 }
