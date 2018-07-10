@@ -15,6 +15,8 @@
  */
 package org.allnix.reactive;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -54,8 +56,60 @@ public class NotesTest {
     @Test
     @Tag("unit")
     public void test1() {
-        Flux.just("red", "white", "blue").log().map(String::toUpperCase)
-            .subscribe(System.out::println);
+        List<String> list = Arrays.asList("red", "white", "blue");
+        
+        //> Blocking
+//        Flux.fromIterable(list).log().map((value)->{
+//            
+//            try {
+//                TimeUnit.SECONDS.sleep(1);
+//            } catch (InterruptedException e) {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            }
+//            logger.info("Consumed-3: {}", value);
+//            return value.toUpperCase();
+//            
+//        })
+//        .subscribe();
+        
+        
+//        
+        Flux.fromIterable(list).log().map(String::toUpperCase)
+            .subscribe(value -> {
+                try {
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                logger.info("Consumed: {}", value);
+            });
+//        
+//        Flux.fromIterable(list).log()
+//            .flatMap(value -> Mono.just(value.toUpperCase()))
+//            .subscribe(value -> {
+//                try {
+//                    TimeUnit.SECONDS.sleep(1);
+//                } catch (InterruptedException e) {
+//                    // TODO Auto-generated catch block
+//                    e.printStackTrace();
+//                }
+//                logger.info("Consumed-2: {}", value);
+//            });
+//        
+//        Flux.fromIterable(list).log()
+//        .flatMap(value -> Mono.just(value.toUpperCase()))
+//        .subscribe(value -> {
+//            try {
+//                TimeUnit.SECONDS.sleep(1);
+//            } catch (InterruptedException e) {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            }
+//            logger.info("Consumed-2: {}", value);
+//        });
+        
     }
 
     /**
@@ -109,7 +163,12 @@ public class NotesTest {
             });
 
         logger.info("Flux called, do something else now");
-
+        try {
+            Thread.currentThread().join(1000);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     /**
