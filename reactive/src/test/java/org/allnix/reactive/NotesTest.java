@@ -21,6 +21,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -34,6 +35,7 @@ import reactor.core.publisher.ParallelFlux;
 import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Examples from
@@ -50,31 +52,37 @@ public class NotesTest {
     static final private Logger logger = LoggerFactory.getLogger(
         NotesTest.class);
 
+    List<String> list, list2;
+
+    @BeforeAll
+    public void beforeAll() {
+        list = Arrays.asList("red", "white", "blue");
+        list2 = Arrays.asList("black", "green", "yellow");
+    }
+
     /**
      * Run a main thread
      */
     @Test
     @Tag("unit")
     public void test1() {
-        List<String> list = Arrays.asList("red", "white", "blue");
-        
         //> Blocking
-//        Flux.fromIterable(list).log().map((value)->{
-//            
-//            try {
-//                TimeUnit.SECONDS.sleep(1);
-//            } catch (InterruptedException e) {
-//                // TODO Auto-generated catch block
-//                e.printStackTrace();
-//            }
-//            logger.info("Consumed-3: {}", value);
-//            return value.toUpperCase();
-//            
-//        })
-//        .subscribe();
-        
-        
-//        
+        //        Flux.fromIterable(list).log().map((value)->{
+        //            
+        //            try {
+        //                TimeUnit.SECONDS.sleep(1);
+        //            } catch (InterruptedException e) {
+        //                // TODO Auto-generated catch block
+        //                e.printStackTrace();
+        //            }
+        //            logger.info("Consumed-3: {}", value);
+        //            return value.toUpperCase();
+        //            
+        //        })
+        //        .subscribe();
+
+
+        //> Blocking
         Flux.fromIterable(list).log().map(String::toUpperCase)
             .subscribe(value -> {
                 try {
@@ -85,31 +93,31 @@ public class NotesTest {
                 }
                 logger.info("Consumed: {}", value);
             });
-//        
-//        Flux.fromIterable(list).log()
-//            .flatMap(value -> Mono.just(value.toUpperCase()))
-//            .subscribe(value -> {
-//                try {
-//                    TimeUnit.SECONDS.sleep(1);
-//                } catch (InterruptedException e) {
-//                    // TODO Auto-generated catch block
-//                    e.printStackTrace();
-//                }
-//                logger.info("Consumed-2: {}", value);
-//            });
-//        
-//        Flux.fromIterable(list).log()
-//        .flatMap(value -> Mono.just(value.toUpperCase()))
-//        .subscribe(value -> {
-//            try {
-//                TimeUnit.SECONDS.sleep(1);
-//            } catch (InterruptedException e) {
-//                // TODO Auto-generated catch block
-//                e.printStackTrace();
-//            }
-//            logger.info("Consumed-2: {}", value);
-//        });
-        
+        //        
+        //        Flux.fromIterable(list).log()
+        //            .flatMap(value -> Mono.just(value.toUpperCase()))
+        //            .subscribe(value -> {
+        //                try {
+        //                    TimeUnit.SECONDS.sleep(1);
+        //                } catch (InterruptedException e) {
+        //                    // TODO Auto-generated catch block
+        //                    e.printStackTrace();
+        //                }
+        //                logger.info("Consumed-2: {}", value);
+        //            });
+        //        
+        //        Flux.fromIterable(list).log()
+        //        .flatMap(value -> Mono.just(value.toUpperCase()))
+        //        .subscribe(value -> {
+        //            try {
+        //                TimeUnit.SECONDS.sleep(1);
+        //            } catch (InterruptedException e) {
+        //                // TODO Auto-generated catch block
+        //                e.printStackTrace();
+        //            }
+        //            logger.info("Consumed-2: {}", value);
+        //        });
+
     }
 
     /**
@@ -118,30 +126,126 @@ public class NotesTest {
     @Test
     @Tag("unit")
     public void test2() {
-        Flux<String> flux = Flux.just("red", "white", "blue").log()
+        //> Non-blocking
+        Flux<String> flux = Flux.fromIterable(list).log()
                                 .map(String::toUpperCase)
                                 .subscribeOn(Schedulers.parallel())
                                 .doOnNext(System.out::println);
 
-        //        flux.subscribe();
-        flux.blockLast();
+        flux.subscribe();
+        //        flux.blockLast();
+        logger.info("test2 subscribeOn non-blocking");
     }
 
     /**
-     * Process on separate thread
+     * Use blockLast() to block an asynchronous call
      */
     @Test
     @Tag("unit")
-    public void test3() {
-        Flux.just("red", "white", "blue").log() //
-            .flatMap(
-                value -> Mono.just(value.toUpperCase())
-                             .subscribeOn(Schedulers.parallel()), //
-                2)
-            .subscribe(value -> {
-                logger.info("Consumed: {}", value);
-            });
+    public void testBlocking() {
+
+        //> This is a blocking call
+        Flux.fromIterable(list2).log() //
+            .flatMap(value -> Mono.just(value.toUpperCase()))
+            .doOnNext(value -> {
+                logger.info("Test 3 subscribe: {}", value);
+                try {
+                    TimeUnit.MILLISECONDS.sleep(300);
+                } catch (InterruptedException e) {
+                }
+                logger.info("Test 3 Consumed: {}", value);
+            }).subscribe();
+
+
+        //> replace blockLast with subscribe()
+        //> make this non-blocking
+        String last = Flux.fromIterable(list2).log() //
+                          .flatMap(
+                              value -> Mono.just(value.toUpperCase())
+                                           .subscribeOn(Schedulers.parallel()))
+                          .doOnNext(value -> {
+                              logger.info("Test 3 subscribe: {}", value);
+                              try {
+                                  TimeUnit.MILLISECONDS.sleep(300);
+                              } catch (InterruptedException e) {
+                              }
+                              logger.info("Test 3 Consumed: {}", value);
+                          }).blockLast() //> Use this for blocking
+        ;
+
+        assertThat(last).isEqualTo(list2.get(list2.size() - 1).toUpperCase());
+
+        Flux<String> flux = Flux.fromIterable(list2).log() //
+                                .flatMap(
+                                    value -> Mono.just(value.toUpperCase())
+                                                 .subscribeOn(
+                                                     Schedulers.parallel()))
+                                .doOnNext(value -> {
+                                    logger.info("Test 3 subscribe: {}", value);
+                                    try {
+                                        TimeUnit.MILLISECONDS.sleep(300);
+                                    } catch (InterruptedException e) {
+                                    }
+                                    logger.info("Test 3 Consumed: {}", value);
+                                });
+
+        flux.subscribe(); // non-blocking
+        logger.info("See, I am non-blocking");
+
+        List<String> ans = flux.collectList().block(); // blocking
+        assertThat(ans).hasSize(list2.size());
     }
+
+    /**
+     * Read the log 
+     * <p>
+     * and pay attention to how onComplete() called before the last
+     * item is consumed.
+     * <pre>
+     * 2018-07-11 08:59:58.474 [Test worker] INFO  org.allnix.reactive.NotesTest - Calling block() to start subscription
+     * 2018-07-11 08:59:58.484 [Test worker] INFO  reactor.Flux.Iterable.1 - | onSubscribe([Synchronous Fuseable] FluxIterable.IterableSubscription)
+     * 2018-07-11 08:59:58.486 [Test worker] INFO  reactor.Flux.Iterable.1 - | request(256)
+     * 2018-07-11 08:59:58.487 [Test worker] INFO  reactor.Flux.Iterable.1 - | onNext(black)
+     * 2018-07-11 08:59:58.495 [Test worker] INFO  reactor.Flux.Iterable.1 - | onNext(green)
+     * 2018-07-11 08:59:58.495 [parallel-1] INFO  org.allnix.reactive.NotesTest - Test 3 subscribe: BLACK
+     * 2018-07-11 08:59:58.495 [Test worker] INFO  reactor.Flux.Iterable.1 - | onNext(yellow)
+     * 2018-07-11 08:59:58.496 [Test worker] INFO  reactor.Flux.Iterable.1 - | onComplete()
+     * 2018-07-11 08:59:58.795 [parallel-1] INFO  org.allnix.reactive.NotesTest - Test 3 Consumed: BLACK
+     * 2018-07-11 08:59:58.796 [parallel-1] INFO  org.allnix.reactive.NotesTest - Test 3 subscribe: GREEN
+     * 2018-07-11 08:59:59.096 [parallel-1] INFO  org.allnix.reactive.NotesTest - Test 3 Consumed: GREEN
+     * 2018-07-11 08:59:59.096 [parallel-1] INFO  org.allnix.reactive.NotesTest - Test 3 subscribe: YELLOW
+     * 2018-07-11 08:59:59.396 [parallel-1] INFO  org.allnix.reactive.NotesTest - Test 3 Consumed: YELLOW
+     * </pre>
+     */
+    @Test
+    @Tag("unit")
+    public void testCollectNonblocking() {
+        Flux<String> flux = //
+            Flux.fromIterable(list2).log().flatMap((value) -> {
+                return Mono.just(value.toUpperCase())
+                           //> Parallelism happens here
+                           .subscribeOn(Schedulers.parallel());
+            }).doOnNext(value -> {
+                logger.info("Test 3 subscribe: {}", value);
+                try {
+                    TimeUnit.MILLISECONDS.sleep(300);
+                } catch (InterruptedException e) {
+                }
+                logger.info("Test 3 Consumed: {}", value);
+            });
+
+        //        flux.subscribe(); // non-blocking
+        //        logger.info("See, I am non-blocking");
+
+        //> This does not start subscription
+        Mono<List<String>> mono = flux.collectList();
+//        logger.info("After collectList(), notice the subscription started");
+
+        logger.info("Calling block() to start subscription");
+        List<String> ans = mono.block(); // blocking
+        assertThat(ans).hasSize(list2.size());
+    }
+
 
     @Test
     @Tag("unit")
@@ -206,7 +310,7 @@ public class NotesTest {
     public void test6() throws InterruptedException {
         ExecutorService exec = Executors.newFixedThreadPool(4);
         Scheduler sche = Schedulers.fromExecutor(exec);
-        
+
         ParallelFlux<String> flux = //
             Flux.just("red", "white", "blue", "yellow").log()
                 .flatMap((value) -> {
@@ -219,11 +323,11 @@ public class NotesTest {
 
         //> Notice how flux is re-assigned
         flux = flux.runOn(sche);
-        
+
         //> subscribe on main thread so it is blocking
         logger.info("Before subscribe");
         //> Main processing done here by threads
-        flux.subscribe((x)->{
+        flux.subscribe((x) -> {
             logger.info("Processing: {}", x);
             try {
                 TimeUnit.SECONDS.sleep(1);
@@ -234,9 +338,55 @@ public class NotesTest {
             logger.info("Finished: {}", x);
         });
         logger.info("After subscribe");
-        
+
         exec.shutdown();
         exec.awaitTermination(1, TimeUnit.DAYS);
-        
+
+    }
+
+    /**
+     * Process on separate thread
+     */
+    @Test
+    @Tag("unit")
+    public void test3() {
+        Flux.fromIterable(list).log() //
+            .flatMap(
+                value -> Mono.just(value.toUpperCase())
+                             .subscribeOn(Schedulers.parallel()), //
+                2)
+            .doOnNext(value -> {
+                logger.info("Test 3 subscribe: {}", value);
+                try {
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                logger.info("Test 3 Consumed: {}", value);
+            }).subscribe() //> Use this for non-blocking
+        //            .blockLast() //> Use this for blocking
+        ;
+
+
+        Flux.fromIterable(list2).log() //
+            .flatMap(
+                value -> Mono.just(value.toUpperCase())
+                             .subscribeOn(Schedulers.parallel()), //
+                2)
+            .doOnNext(value -> {
+                logger.info("Test 3 subscribe: {}", value);
+                try {
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                logger.info("Test 3 Consumed: {}", value);
+            })
+            //        .subscribe() //> Use this for non-blocking
+            .blockLast() //> Use this for blocking
+        ;
+
     }
 }
