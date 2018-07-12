@@ -61,65 +61,119 @@ public class NotesTest {
     }
 
     /**
-     * Run a main thread
+     * Run on main thread so it is synchronous
+     * <p>
+     * Sleep in subscribe() has the same effect as in map().
+     * <pre>
+     * 2018-07-12 07:06:22.455 [Test worker] INFO  reactor.Flux.Iterable.1 - | onSubscribe([Synchronous Fuseable] FluxIterable.IterableSubscription)
+     * 2018-07-12 07:06:22.459 [Test worker] INFO  reactor.Flux.Iterable.1 - | request(unbounded)
+     * 2018-07-12 07:06:22.460 [Test worker] INFO  reactor.Flux.Iterable.1 - | onNext(red)
+     * 2018-07-12 07:06:22.460 [Test worker] INFO  org.allnix.reactive.NotesTest - Mapping: red
+     * 2018-07-12 07:06:22.460 [Test worker] INFO  org.allnix.reactive.NotesTest - Received: RED
+     * 2018-07-12 07:06:22.660 [Test worker] INFO  org.allnix.reactive.NotesTest - Consumed: RED
+     * 2018-07-12 07:06:22.660 [Test worker] INFO  reactor.Flux.Iterable.1 - | onNext(white)
+     * 2018-07-12 07:06:22.660 [Test worker] INFO  org.allnix.reactive.NotesTest - Mapping: white
+     * 2018-07-12 07:06:22.660 [Test worker] INFO  org.allnix.reactive.NotesTest - Received: WHITE
+     * 2018-07-12 07:06:22.860 [Test worker] INFO  org.allnix.reactive.NotesTest - Consumed: WHITE
+     * 2018-07-12 07:06:22.861 [Test worker] INFO  reactor.Flux.Iterable.1 - | onNext(blue)
+     * 2018-07-12 07:06:22.861 [Test worker] INFO  org.allnix.reactive.NotesTest - Mapping: blue
+     * 2018-07-12 07:06:22.861 [Test worker] INFO  org.allnix.reactive.NotesTest - Received: BLUE
+     * 2018-07-12 07:06:23.061 [Test worker] INFO  org.allnix.reactive.NotesTest - Consumed: BLUE
+     * 2018-07-12 07:06:23.061 [Test worker] INFO  reactor.Flux.Iterable.1 - | onComplete()
+     * 2018-07-12 07:06:23.062 [Test worker] INFO  org.allnix.reactive.NotesTest - Blocking
+     * </pre>
+     * 
      */
     @Test
     @Tag("unit")
-    public void test1() {
-        //> Blocking
-        //        Flux.fromIterable(list).log().map((value)->{
-        //            
-        //            try {
-        //                TimeUnit.SECONDS.sleep(1);
-        //            } catch (InterruptedException e) {
-        //                // TODO Auto-generated catch block
-        //                e.printStackTrace();
-        //            }
-        //            logger.info("Consumed-3: {}", value);
-        //            return value.toUpperCase();
-        //            
-        //        })
-        //        .subscribe();
-
+    public void testMainThreadSlowInSubscribe() {
 
         //> Blocking
-        Flux.fromIterable(list).log().map(String::toUpperCase)
-            .subscribe(value -> {
-                try {
-                    TimeUnit.SECONDS.sleep(1);
-                } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                logger.info("Consumed: {}", value);
-            });
-        //        
-        //        Flux.fromIterable(list).log()
-        //            .flatMap(value -> Mono.just(value.toUpperCase()))
-        //            .subscribe(value -> {
-        //                try {
-        //                    TimeUnit.SECONDS.sleep(1);
-        //                } catch (InterruptedException e) {
-        //                    // TODO Auto-generated catch block
-        //                    e.printStackTrace();
-        //                }
-        //                logger.info("Consumed-2: {}", value);
-        //            });
-        //        
-        //        Flux.fromIterable(list).log()
-        //        .flatMap(value -> Mono.just(value.toUpperCase()))
-        //        .subscribe(value -> {
-        //            try {
-        //                TimeUnit.SECONDS.sleep(1);
-        //            } catch (InterruptedException e) {
-        //                // TODO Auto-generated catch block
-        //                e.printStackTrace();
-        //            }
-        //            logger.info("Consumed-2: {}", value);
-        //        });
-
+        Flux.fromIterable(list).log().map(value -> {
+            logger.info("Mapping: {}", value);
+            return value.toUpperCase();
+        }).subscribe(value -> {
+            logger.info("Received: {}", value);
+            try {
+                TimeUnit.MILLISECONDS.sleep(200);
+            } catch (InterruptedException e) {
+            }
+            logger.info("Consumed: {}", value);
+        });
+        logger.info("Blocking");
     }
 
+    /**
+     * Run on the main thread so it is synchronous
+     * <p>
+     * Sleep in map() has the same effect as in subscribe().
+     * <pre>
+     * 2018-07-12 07:07:13.373 [Test worker] INFO  reactor.Flux.Iterable.1 - | onSubscribe([Synchronous Fuseable] FluxIterable.IterableSubscription)
+     * 2018-07-12 07:07:13.377 [Test worker] INFO  reactor.Flux.Iterable.1 - | request(unbounded)
+     * 2018-07-12 07:07:13.377 [Test worker] INFO  reactor.Flux.Iterable.1 - | onNext(red)
+     * 2018-07-12 07:07:13.377 [Test worker] INFO  org.allnix.reactive.NotesTest - Mapping: red
+     * 2018-07-12 07:07:13.578 [Test worker] INFO  org.allnix.reactive.NotesTest - Mapped: RED
+     * 2018-07-12 07:07:13.578 [Test worker] INFO  org.allnix.reactive.NotesTest - Received: RED
+     * 2018-07-12 07:07:13.578 [Test worker] INFO  org.allnix.reactive.NotesTest - Consumed: RED
+     * 2018-07-12 07:07:13.578 [Test worker] INFO  reactor.Flux.Iterable.1 - | onNext(white)
+     * 2018-07-12 07:07:13.578 [Test worker] INFO  org.allnix.reactive.NotesTest - Mapping: white
+     * 2018-07-12 07:07:13.778 [Test worker] INFO  org.allnix.reactive.NotesTest - Mapped: WHITE
+     * 2018-07-12 07:07:13.778 [Test worker] INFO  org.allnix.reactive.NotesTest - Received: WHITE
+     * 2018-07-12 07:07:13.778 [Test worker] INFO  org.allnix.reactive.NotesTest - Consumed: WHITE
+     * 2018-07-12 07:07:13.778 [Test worker] INFO  reactor.Flux.Iterable.1 - | onNext(blue)
+     * 2018-07-12 07:07:13.778 [Test worker] INFO  org.allnix.reactive.NotesTest - Mapping: blue
+     * 2018-07-12 07:07:13.978 [Test worker] INFO  org.allnix.reactive.NotesTest - Mapped: BLUE
+     * 2018-07-12 07:07:13.978 [Test worker] INFO  org.allnix.reactive.NotesTest - Received: BLUE
+     * 2018-07-12 07:07:13.979 [Test worker] INFO  org.allnix.reactive.NotesTest - Consumed: BLUE
+     * 2018-07-12 07:07:13.979 [Test worker] INFO  reactor.Flux.Iterable.1 - | onComplete()
+     * 2018-07-12 07:07:13.980 [Test worker] INFO  org.allnix.reactive.NotesTest - Blocking
+     * </pre>
+     */
+    @Test
+    @Tag("unit")
+    public void testMainThreadSlowInMap() {
+        //> Blocking
+        Flux.fromIterable(list).log().map(value -> {
+            logger.info("Mapping: {}", value);
+            try {
+                TimeUnit.MILLISECONDS.sleep(200);
+            } catch (InterruptedException e) {
+            }
+            String ans = value.toUpperCase();
+            logger.info("Mapped: {}", ans);
+            return ans;
+        }).subscribe(value -> {
+            logger.info("Received: {}", value);
+            logger.info("Consumed: {}", value);
+        });
+        logger.info("Blocking");
+    }
+
+    @Test
+    @Tag("unit")
+    public void testMainThreadFlatMap() {
+
+        //> This is a blocking call
+        Flux.fromIterable(list2).log() //
+            .flatMap(
+                (value) -> {
+                    logger.info("flatMap: {}", value);
+                    try {
+                        TimeUnit.MILLISECONDS.sleep(200);
+                    } catch (InterruptedException e) {
+                    }
+                    return Mono.just(value.toUpperCase());
+                }
+               )
+            .doOnNext(value -> {
+                logger.info("Test subscribe: {}", value);
+                try {
+                    TimeUnit.MILLISECONDS.sleep(300);
+                } catch (InterruptedException e) {
+                }
+                logger.info("Test Consumed: {}", value);
+            }).subscribe();
+    }
     /**
      * Run a worker thread
      */
@@ -197,10 +251,11 @@ public class NotesTest {
     }
 
     /**
-     * Read the log 
+     * Read the log
      * <p>
-     * and pay attention to how onComplete() called before the last
-     * item is consumed.
+     * and pay attention to how onComplete() called before the last item is
+     * consumed.
+     * 
      * <pre>
      * 2018-07-11 08:59:58.474 [Test worker] INFO  org.allnix.reactive.NotesTest - Calling block() to start subscription
      * 2018-07-11 08:59:58.484 [Test worker] INFO  reactor.Flux.Iterable.1 - | onSubscribe([Synchronous Fuseable] FluxIterable.IterableSubscription)
@@ -239,7 +294,7 @@ public class NotesTest {
 
         //> This does not start subscription
         Mono<List<String>> mono = flux.collectList();
-//        logger.info("After collectList(), notice the subscription started");
+        //        logger.info("After collectList(), notice the subscription started");
 
         logger.info("Calling block() to start subscription");
         List<String> ans = mono.block(); // blocking
