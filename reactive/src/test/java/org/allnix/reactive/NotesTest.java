@@ -149,6 +149,25 @@ public class NotesTest {
         logger.info("Blocking");
     }
 
+    /**
+     * <pre>
+     * 2018-07-13 17:49:37.456 [Test worker] INFO  reactor.Flux.Iterable.1 - | onSubscribe([Synchronous Fuseable] FluxIterable.IterableSubscription)
+     * 2018-07-13 17:49:37.466 [Test worker] INFO  reactor.Flux.Iterable.1 - | request(256)
+     * 2018-07-13 17:49:37.466 [Test worker] INFO  reactor.Flux.Iterable.1 - | onNext(black)
+     * 2018-07-13 17:49:37.466 [Test worker] INFO  org.allnix.reactive.NotesTest - flatMap: black
+     * 2018-07-13 17:49:37.717 [Test worker] INFO  org.allnix.reactive.NotesTest - Test subscribe: BLACK
+     * 2018-07-13 17:49:38.022 [Test worker] INFO  org.allnix.reactive.NotesTest - Test Consumed: BLACK
+     * 2018-07-13 17:49:38.022 [Test worker] INFO  reactor.Flux.Iterable.1 - | onNext(green)
+     * 2018-07-13 17:49:38.022 [Test worker] INFO  org.allnix.reactive.NotesTest - flatMap: green
+     * 2018-07-13 17:49:38.222 [Test worker] INFO  org.allnix.reactive.NotesTest - Test subscribe: GREEN
+     * 2018-07-13 17:49:38.524 [Test worker] INFO  org.allnix.reactive.NotesTest - Test Consumed: GREEN
+     * 2018-07-13 17:49:38.524 [Test worker] INFO  reactor.Flux.Iterable.1 - | onNext(yellow)
+     * 2018-07-13 17:49:38.524 [Test worker] INFO  org.allnix.reactive.NotesTest - flatMap: yellow
+     * 2018-07-13 17:49:38.730 [Test worker] INFO  org.allnix.reactive.NotesTest - Test subscribe: YELLOW
+     * 2018-07-13 17:49:39.038 [Test worker] INFO  org.allnix.reactive.NotesTest - Test Consumed: YELLOW
+     * 2018-07-13 17:49:39.038 [Test worker] INFO  reactor.Flux.Iterable.1 - | onComplete()*
+     * </pre> 
+     */
     @Test
     @Tag("unit")
     public void testMainThreadFlatMap() {
@@ -175,19 +194,36 @@ public class NotesTest {
             }).subscribe();
     }
     /**
-     * Run a worker thread
+     * Non-blocking call using Schedulers.parallel()
+     * <p>
+     * Notice in the log the JVM exited before the process finished and the process runs on 
+     * another thread.
+     * 
+     * <pre>
+     * 2018-07-13 17:58:23.291 [Test worker] INFO  org.allnix.reactive.NotesTest - test2 subscribeOn non-blocking
+     * 2018-07-13 17:58:23.291 [parallel-1] INFO  reactor.Flux.Iterable.1 - | onSubscribe([Synchronous Fuseable] FluxIterable.IterableSubscription)
+     * 2018-07-13 17:58:23.301 [parallel-1] INFO  reactor.Flux.Iterable.1 - | request(unbounded)
+     * 2018-07-13 17:58:23.301 [parallel-1] INFO  reactor.Flux.Iterable.1 - | onNext(red)
+     * 2018-07-13 17:58:23.301 [parallel-1] INFO  org.allnix.reactive.NotesTest - Test subscribe: RED
+     * </pre>
      */
     @Test
     @Tag("unit")
-    public void test2() {
-        //> Non-blocking
-        Flux<String> flux = Flux.fromIterable(list).log()
-                                .map(String::toUpperCase)
-                                .subscribeOn(Schedulers.parallel())
-                                .doOnNext(System.out::println);
+    public void testNonblocking() {
+        // > Non-blocking
+        Flux<String> flux = //
+                Flux.fromIterable(list).log().map(String::toUpperCase)
+                    .subscribeOn(Schedulers.parallel()).doOnNext(value -> {
+                        logger.info("Test subscribe: {}", value);
+                        try {
+                            TimeUnit.MILLISECONDS.sleep(300);
+                        } catch (InterruptedException e) {
+                        }
+                        logger.info("Test Consumed: {}", value);
+                    });
 
         flux.subscribe();
-        //        flux.blockLast();
+        // flux.blockLast();
         logger.info("test2 subscribeOn non-blocking");
     }
 
