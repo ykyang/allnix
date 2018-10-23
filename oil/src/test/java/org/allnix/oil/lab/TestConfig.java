@@ -22,14 +22,21 @@ import java.nio.file.Paths;
 
 import javax.sql.DataSource;
 
+import org.allnix.oil.project.DefaultProjectService;
 import org.allnix.oil.project.ProjectLoader;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 @Profile("int-test")
+@EnableJpaRepositories("org.allnix.oil")
+@EntityScan(basePackages = { "org.allnix.oil" })
+@ComponentScan(basePackages= {"org.allnix.oil"})
 @Configuration
 public class TestConfig {
     @Bean
@@ -39,7 +46,7 @@ public class TestConfig {
             Paths.get(TestConfig.class.getName() + "DB").toAbsolutePath();
         Path h2DbPath = // Actual H2 database file name
             Paths.get(TestConfig.class.getName() + "DB.mv.db").toAbsolutePath();
-        Files.deleteIfExists(h2DbPath);
+//        Files.deleteIfExists(h2DbPath);
         
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("org.h2.Driver");
@@ -58,4 +65,9 @@ public class TestConfig {
         ProjectLoader bean = new ProjectLoader();
         return bean;
     }
+    
+//    @Bean
+//    public DefaultProjectService projectService() {
+//        return new DefaultProjectService();
+//    }
 }

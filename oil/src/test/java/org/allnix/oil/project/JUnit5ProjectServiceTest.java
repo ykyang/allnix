@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import org.allnix.oil.TestSpringApplication;
 import org.allnix.oil.lab.DefaultLabService;
 import org.allnix.oil.lab.model.Core;
 import org.allnix.oil.project.model.Project;
@@ -45,7 +44,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 //@SpringBootApplication(exclude = { MongoAutoConfiguration.class,
 //    MongoDataAutoConfiguration.class })
-@SpringBootTest(classes = TestSpringApplication.class,
+@SpringBootTest(//classes = TestSpringApplication.class,
     webEnvironment = WebEnvironment.NONE)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = { TestConfig.class })

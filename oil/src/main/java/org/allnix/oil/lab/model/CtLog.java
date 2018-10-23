@@ -28,14 +28,16 @@ import org.springframework.data.annotation.Transient;
 /**
  * Computed tomography data
  * 
+ * Log data from Core CT
  *
  * @author Yi-Kun Yang ykyang@gmail.com
  */
 @Entity
 @Table(indexes = { //
     @Index(columnList = "coreId"), @Index(columnList = "wellId") //
+    , @Index(columnList = "parentId")
 })
-public class Ct extends OilObject {
+public class CtLog extends OilObject {
     private String name;
 
     @Column(length = 36)
@@ -47,12 +49,18 @@ public class Ct extends OilObject {
     private Double topCoreDepth;
     private Double bottomCoreDepth;
     /**
-     * Datastore URL of its CSV file
+     * URL of its the log file
+     * 
+     * The URL is typically relative, the file is typically CSV 
      */
-    private String csvUrl;
+    private String url;
+    /**
+     * A convenient placeholder for local file system
+     * path when the data is downloaded from datastore. 
+     */
     @Transient
     @javax.persistence.Transient
-    private Path csvPath;
+    private Path path;
     
     public String getCoreId() {
         return coreId;

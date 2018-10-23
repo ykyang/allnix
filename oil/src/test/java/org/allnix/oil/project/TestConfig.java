@@ -33,7 +33,7 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 //@EnableJpaRepositories("org.allnix.oil")
 //@EntityScan(basePackages = {"org.allnix.oil"})
 @Profile("int-test")
-@Configuration("ProjectTestConfig")
+@Configuration//("ProjectTestConfig")
 public class TestConfig {
     @Bean
     public DataSource dataSource() throws IOException {
