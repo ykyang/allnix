@@ -21,7 +21,7 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 
 import org.allnix.oil.lab.model.Core;
-import org.allnix.oil.lab.model.Ct;
+import org.allnix.oil.lab.model.CtLog;
 import org.allnix.oil.lab.repository.CoreRepository;
 import org.allnix.oil.lab.repository.CtRepository;
 import org.allnix.oil.project.model.Well;
@@ -39,7 +39,7 @@ public class DefaultLabService {
     public Core save(Core core) {
         return coreDao.save(core);
     }
-    public Ct save(Ct ct) {
+    public CtLog save(CtLog ct) {
         return ctDao.save(ct);
     }
     
@@ -48,7 +48,7 @@ public class DefaultLabService {
         return coreDao.findByWellId(well.id());
     }
     
-    public Optional<Ct> findCtByCore(Core core) {
+    public Optional<CtLog> findCtByCore(Core core) {
         return ctDao.findByCoreId(core.id());
     }
 //    @Transactional

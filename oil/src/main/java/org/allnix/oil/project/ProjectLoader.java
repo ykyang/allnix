@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.allnix.oil.lab.DefaultLabService;
 import org.allnix.oil.lab.model.Core;
-import org.allnix.oil.lab.model.Ct;
+import org.allnix.oil.lab.model.CtLog;
 import org.allnix.oil.project.model.Project;
 import org.allnix.oil.project.model.Well;
 import org.slf4j.Logger;
@@ -40,7 +40,7 @@ public class ProjectLoader {
         Project proj;
         Well well;
         List<Core> coreList;
-        List<Ct> ctList;
+        List<CtLog> ctList;
         
         proj = createProject("2018-05-16-Rose");
         well = createWell(ROSE_CHILDREN);
@@ -82,10 +82,10 @@ public class ProjectLoader {
         
         return coreList;
     }
-    public List<Ct> createCt(List<Core> coreList) {
-        List<Ct> ctList = new ArrayList<>();
+    public List<CtLog> createCt(List<Core> coreList) {
+        List<CtLog> ctList = new ArrayList<>();
         for (Core core : coreList) {
-            Ct ct = new Ct();
+            CtLog ct = new CtLog();
             ct.setCoreId(core.id());
             ct.setWellId(core.getWellId());
             ct = ls.save(ct);

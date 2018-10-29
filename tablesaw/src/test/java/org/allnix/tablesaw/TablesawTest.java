@@ -23,12 +23,15 @@ import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import tech.tablesaw.api.ColumnType;
 import tech.tablesaw.api.DoubleColumn;
 import tech.tablesaw.api.QueryHelper;
 import tech.tablesaw.api.Table;
 import tech.tablesaw.columns.ColumnReference;
 import tech.tablesaw.io.csv.CsvReadOptions;
 import tech.tablesaw.io.csv.CsvReader;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -70,6 +73,25 @@ public class TablesawTest {
         logger.info("value: {}", col.get(0));
         
 //        df.write().csv("CSV.csv");
+    }
+    
+    @Test
+    public void testOneHeader() throws IOException {
+        Table df = Table.read().csv("src/test/resources/headers.csv");
+        for (ColumnType type : df.columnTypes()) {
+            assertEquals(ColumnType.FLOAT, type);
+            logger.info("ColumnType: {}", type.name());
+        }
+    }
+    @Test
+    public void test2Header() throws IOException {
+        Table df = Table.read().csv("src/test/resources/headers2.csv");
+        df.write().csv("headers2.csv");
+        for (ColumnType type : df.columnTypes()) {
+            //> See why this won't work
+            assertEquals(ColumnType.CATEGORY, type);
+//            logger.info("Headers 2 ColumnType: {}", type.name());
+        }
     }
     
 //    @Test
