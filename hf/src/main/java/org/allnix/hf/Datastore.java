@@ -15,6 +15,8 @@
  */
 package org.allnix.hf;
 
+import java.util.concurrent.TimeUnit;
+
 public class Datastore {
     
     /**
@@ -22,13 +24,21 @@ public class Datastore {
      * 
      * Load data from remote WS or database to local cache.
      * Use readData() to read from local cache.
-     * 
+     *
+     * Most likely an I/O bound function
      * @param id
      * @return handle to the data, for example file name of MAT file
      * ready to be read from MATLAB
      */
     public String loadData(String id) {
-        throw new UnsupportedOperationException();
+        try {
+            TimeUnit.SECONDS.sleep(5);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return "Done";
+//        throw new UnsupportedOperationException();
     }
 
 }

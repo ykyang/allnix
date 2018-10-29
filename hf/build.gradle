@@ -9,6 +9,20 @@
 plugins {
     // Apply the java-library plugin to add support for Java Library
     id 'java-library'
+    id 'application'
+}
+
+mainClassName = 'org.allnix.hf.HfMain'
+group = 'org.allnix.hf'
+version = '0.0.1b1'
+
+jar {
+    manifest {
+        attributes("Manifest-Version": "1.0",
+                   "Main-Class": "org.allnix.hf.HfMain",
+                   "Export-Package": "org.allnix.hf"
+        )
+    }
 }
 
 dependencies {
@@ -27,4 +41,13 @@ repositories {
     // Use jcenter for resolving your dependencies.
     // You can declare any Maven/Ivy/file repository here.
     jcenter()
+}
+
+task unzip(type: Copy) {
+	// buildDir = build/
+    def zipFile = file('build/distributions/' + rootProject.name + '-' + version + '.zip')
+    def outputDir = file("${buildDir}/distributions/")
+ 
+    from zipTree(zipFile)
+    into outputDir
 }
