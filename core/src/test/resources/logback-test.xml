@@ -3,7 +3,7 @@
 
         <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
           <encoder>
-			<Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
+			<Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
           </encoder>
           
           <!--layout class="ch.qos.logback.classic.PatternLayout">
@@ -19,7 +19,7 @@
           <file>org.allnix.core.log</file>
           <append>false</append>
           <encoder>
-			<Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
+			<Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
           </encoder>
         </appender>
 

@@ -22,7 +22,7 @@ plugins {
 
 mainClassName = 'org.allnix.hf.HfMain'
 group = 'org.allnix.hf'
-version = '0.0.1b1'
+version = '0.0.1b2'
 
 jar {
     manifest {
@@ -39,6 +39,10 @@ dependencies {
 
     // This dependency is used internally, and not exposed to consumers on their own compile classpath.
     //implementation 'com.google.guava:guava:23.0'
+    
+    // LOGGING
+    implementation 'org.slf4j:slf4j-api:1.7.13'
+  	implementation 'ch.qos.logback:logback-classic:1.1.2'
     
     // JSON
   	implementation 'com.fasterxml.jackson.core:jackson-core:2.7.3'
