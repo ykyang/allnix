@@ -9,7 +9,11 @@
 plugins {
     // Apply the java-library plugin to add support for Java Library
     id 'java-library'
+    id 'application'
 }
+
+//mainClassName = "vtk.SimpleVTK"
+mainClassName = "vtk.JFrameRenderer"
 
 repositories {
     // Use jcenter for resolving your dependencies.
@@ -23,6 +27,7 @@ dependencies {
 
     // This dependency is used internally, and not exposed to consumers on their own compile classpath.
     implementation 'com.google.guava:guava:26.0-jre'
+    implementation files('/home/ykyang/local/vtk-8.1.2/lib/vtk.jar')
 
     // Use JUnit test framework
     testImplementation 'junit:junit:4.12'
