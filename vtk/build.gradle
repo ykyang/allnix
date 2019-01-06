@@ -36,7 +36,7 @@ dependencies {
     // Use JUnit test framework
     testImplementation 'junit:junit:4.12'
 }
-// gradle -PmainClass=org.allnix.vtk.JFrameRenderer runApp
+// ./gradlew -PmainClass=org.allnix.vtk.JFrameRenderer runApp
 task runApp(type:JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
 
