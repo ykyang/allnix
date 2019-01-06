@@ -13,7 +13,7 @@ plugins {
 }
 
 //mainClassName = "vtk.SimpleVTK"
-mainClassName = "vtk.JFrameRenderer"
+mainClassName = "org.allnix.vtk.JFrameRenderer"
 //mainClassName = "vtk.AwtConeRendering"
 
 repositories {
@@ -30,6 +30,15 @@ dependencies {
     implementation 'com.google.guava:guava:26.0-jre'
     implementation files('/home/ykyang/local/vtk-8.1.2/lib/vtk.jar')
 
+	// https://mvnrepository.com/artifact/com.miglayout/miglayout
+	implementation 'com.miglayout:miglayout:3.7.4'
+
     // Use JUnit test framework
     testImplementation 'junit:junit:4.12'
+}
+// gradle -PmainClass=org.allnix.vtk.JFrameRenderer runApp
+task runApp(type:JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+
+    main = project.hasProperty("mainClass") ? project.getProperty("mainClass") : "org.allnix.vtk.JFrameRenderer"
 }

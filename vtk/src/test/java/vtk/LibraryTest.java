@@ -6,6 +6,8 @@ package vtk;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+import org.allnix.vtk.Library;
+
 public class LibraryTest {
     @Test public void testSomeLibraryMethod() {
         Library classUnderTest = new Library();

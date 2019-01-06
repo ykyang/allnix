@@ -1,7 +1,8 @@
-package vtk;
+package org.allnix.vtk;
 
 import java.awt.*;
 import javax.swing.*;
+
 import vtk.*;
 
 public class JFrameRenderer extends JFrame

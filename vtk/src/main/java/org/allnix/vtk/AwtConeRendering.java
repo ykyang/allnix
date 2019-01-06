@@ -1,4 +1,4 @@
-package vtk;
+package org.allnix.vtk;
 
 import java.awt.BorderLayout;
 
