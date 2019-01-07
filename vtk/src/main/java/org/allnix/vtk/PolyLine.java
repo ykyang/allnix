@@ -1,5 +1,10 @@
 package org.allnix.vtk;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+
+import javax.swing.JFrame;
+
 import vtk.*;
 
 public class PolyLine {
@@ -56,21 +61,40 @@ public class PolyLine {
 		colors.GetColor("Tomato", color);
 		actor.GetProperty().SetColor(color);
 
-		vtkRenderer renderer = new vtkRenderer();
-		vtkRenderWindow renWin = new vtkRenderWindow();
-		renWin.SetWindowName("Poly Line");
-		renWin.AddRenderer(renderer);
-		vtkRenderWindowInteractor renWinInt = new vtkRenderWindowInteractor();
-		renWinInt.SetRenderWindow(renWin);
-		renderer.AddActor(actor);
-		
 		color = new double[4];
 		colors.GetColor("DarkOliveGreen", color);
-		renderer.SetBackground(color);
 		
-		renWin.Render();
-		renWinInt.Start();
-	    renWinInt.Initialize();
+		
+		vtkRenderWindowPanel winPanel = new vtkRenderWindowPanel();  
+		winPanel.setInteractorStyle(new vtkInteractorStyleTrackballCamera());
+		winPanel.GetRenderer().AddActor(actor);
+		winPanel.GetRenderer().SetBackground(color);
+		winPanel.setPreferredSize(new Dimension(600,600));
+		
+		JFrame frame = new JFrame();
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.getContentPane().add(winPanel, BorderLayout.CENTER);
+		
+		frame.pack();
+		frame.setVisible(true);
+		winPanel.Render();
+		
+		
+//		vtkRenderer renderer = new vtkRenderer();
+//		vtkRenderWindow renWin = new vtkRenderWindow();
+//		renWin.SetWindowName("Poly Line");
+//		renWin.AddRenderer(renderer);
+//		vtkRenderWindowInteractor renWinInt = new vtkRenderWindowInteractor();
+//		renWinInt.SetRenderWindow(renWin);
+//		renderer.AddActor(actor);
+//		
+//		color = new double[4];
+//		colors.GetColor("DarkOliveGreen", color);
+//		renderer.SetBackground(color);
+//		
+//		renWin.Render();
+//		renWinInt.Start();
+//	    renWinInt.Initialize();
 		
 	}
 }
