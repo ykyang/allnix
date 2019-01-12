@@ -9,7 +9,7 @@ subprojects {
 //  version: '1.0'
 }
 
-project(':core') {
+project(':org.allnix.core') {
   dependencies {
     testCompile project(':test')
   }
@@ -17,25 +17,25 @@ project(':core') {
 
 project(':sql') {
   dependencies {
-    compile project(':core')
+    compile project(':org.allnix.core')
     testCompile project(':test')
   }
 }
 
 project(':restjson') {
   dependencies {
-    compile project(':core')
+    compile project(':org.allnix.core')
   }
 }
 
 project(':test') {
   dependencies {
-    compile project(':core')
+    compile project(':org.allnix.core')
   }
 }
 
 project(':boot') {
   dependencies {
-    compile project(':core')
+    compile project(':org.allnix.core')
   }
 }
