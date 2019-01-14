@@ -11,7 +11,7 @@ import vtk.*;
  * @author Yi-Kun Yang ykyang@gmail.com
  *
  */
-public class VtkGeomodel3DView {
+public class VtkGeomodel3DView extends UnstructuredGrid {
 	
 	static {
 		if (!vtkNativeLibrary.LoadAllNativeLibraries()) {
@@ -26,98 +26,98 @@ public class VtkGeomodel3DView {
 	
 	static final private Logger logger = LoggerFactory.getLogger(VtkGeomodel3DView.class); 
 
-	private vtkPoints points; // no need
-	private vtkUnstructuredGrid ugrid;
-	private vtkDataSetMapper mapper;
-	private vtkActor actor;
-	
-	public VtkGeomodel3DView() {
-		ugrid = new vtkUnstructuredGrid();
-		mapper = new vtkDataSetMapper();
-		actor = new vtkActor();
-		
-		// > Not sure if this is ok
-		mapper.SetInputData(ugrid);
-		actor.SetMapper(mapper);
-	}
-	
-	public void setPoints(double[] x, double[] y, double[] z) {
-		
-		// TODO: check length are the same
-		
-		int length = x.length;
-		points = new vtkPoints();
-		
-		for (int i = 0; i < length; i++) {
-			points.InsertNextPoint(x[i], y[i], z[i]);
-		}
-		
-		ugrid.SetPoints(points);
-	}
-	
-	public void setHexahedronCells(int[] ids) {
-		// TODO: check ids.length() % 8 == 0
-		int cellCount = ids.length / 8;
-		logger.info("cellCount: {}", cellCount);
-		
-		
-		vtkCellArray cellz = new vtkCellArray();
-		vtkHexahedron hex;
-		vtkIdList l;
-		
-		for (int i = 0; i < cellCount; i++) {
-			hex = new vtkHexahedron();
-			l = hex.GetPointIds();
- 			for (int localId = 0; localId < 8; localId++) {
- 				l.SetId(localId, ids[8*i + localId]);
- 			}
- 			cellz.InsertNextCell(hex);
-		}
-		
-		ugrid.SetCells(CellType.HEXAHEDRON.GetId(), cellz);
-	}
-	
-	public void addDoubleCellData(String name, double[] data) {
-		vtkCellData cellData = ugrid.GetCellData();
-		vtkDoubleArray v;
-		
-		v = new vtkDoubleArray();
-		v.SetName(name);
-		for (int i = 0; i < data.length; i++) {
-			v.InsertNextValue(data[i]);
-		}
-	
-//		cellData.SetScalars(v);
-		cellData.AddArray(v);
-	}
-	public void addIntCellData(String name, int[] data) {
-		
-	}
-	
-	// >>> Not sure about exposing internal vtk stuff
-	
-	public vtkUnstructuredGrid getUnstructuredGrid() {
-		return ugrid;
-	}
-	/**
-	 * SetArrayName(String)
-	 * 
-	 * @return
-	 */
-	public vtkDataSetMapper getMapper() {
-		return mapper;
-	}
-	
-	public vtkActor getActor() {
-		
-		return actor;
-	}
+//	private vtkPoints points; // no need
+//	private vtkUnstructuredGrid ugrid;
+//	private vtkDataSetMapper mapper;
+//	private vtkActor actor;
+//	
+//	public VtkGeomodel3DView() {
+//		ugrid = new vtkUnstructuredGrid();
+//		mapper = new vtkDataSetMapper();
+//		actor = new vtkActor();
+//		
+//		// > Not sure if this is ok
+//		mapper.SetInputData(ugrid);
+//		actor.SetMapper(mapper);
+//	}
+//	
+//	public void setPoints(double[] x, double[] y, double[] z) {
+//		
+//		// TODO: check length are the same
+//		
+//		int length = x.length;
+//		points = new vtkPoints();
+//		
+//		for (int i = 0; i < length; i++) {
+//			points.InsertNextPoint(x[i], y[i], z[i]);
+//		}
+//		
+//		ugrid.SetPoints(points);
+//	}
+//	
+//	public void setHexahedronCells(int[] ids) {
+//		// TODO: check ids.length() % 8 == 0
+//		int cellCount = ids.length / 8;
+//		logger.info("cellCount: {}", cellCount);
+//		
+//		
+//		vtkCellArray cellz = new vtkCellArray();
+//		vtkHexahedron hex;
+//		vtkIdList l;
+//		
+//		for (int i = 0; i < cellCount; i++) {
+//			hex = new vtkHexahedron();
+//			l = hex.GetPointIds();
+// 			for (int localId = 0; localId < 8; localId++) {
+// 				l.SetId(localId, ids[8*i + localId]);
+// 			}
+// 			cellz.InsertNextCell(hex);
+//		}
+//		
+//		ugrid.SetCells(CellType.HEXAHEDRON.GetId(), cellz);
+//	}
+//	
+//	public void addDoubleCellData(String name, double[] data) {
+//		vtkCellData cellData = ugrid.GetCellData();
+//		vtkDoubleArray v;
+//		
+//		v = new vtkDoubleArray();
+//		v.SetName(name);
+//		for (int i = 0; i < data.length; i++) {
+//			v.InsertNextValue(data[i]);
+//		}
+//	
+////		cellData.SetScalars(v);
+//		cellData.AddArray(v);
+//	}
+//	public void addIntCellData(String name, int[] data) {
+//		
+//	}
+//	
+//	// >>> Not sure about exposing internal vtk stuff
+//	
+//	public vtkUnstructuredGrid getUnstructuredGrid() {
+//		return ugrid;
+//	}
+//	/**
+//	 * SetArrayName(String)
+//	 * 
+//	 * @return
+//	 */
+//	public vtkDataSetMapper getMapper() {
+//		return mapper;
+//	}
+//	
+//	public vtkActor getActor() {
+//		
+//		return actor;
+//	}
 	
 	public void writeXML(String filepath) {
 		vtkXMLUnstructuredGridWriter writer = new vtkXMLUnstructuredGridWriter();
 		writer.SetFileName(filepath);
 		writer.SetDataMode(0); // ascii
-		writer.SetInputData(ugrid);
+		writer.SetInputData(this.getUnstructuredGrid());
 		writer.Write();
 	}
 	/**
@@ -126,44 +126,44 @@ public class VtkGeomodel3DView {
 	 */
 	static public void main(String[] args) {
 		VtkGeomodel3DView view = new VtkGeomodel3DView();
-		
+		Builder.buildUnstructuredGrid2Cell(view);
 //		vtkDataSetMapper mapper = new vtkDataSetMapper();
 //		mapper.SetInputData(view.getUnstructuredGrid());
 //		
 //		vtkActor actor = new vtkActor();
 //		actor.SetMapper(mapper);
 		
-		double dx = 10.;
-		double dy = 13;
-		double dz = 2;
-		double[] x = new double[] {
-				0, dx, 2*dx, 0, dx, 2*dx,
-				0, dx, 2*dx, 0, dx, 2*dx
-		};
-		double[] y = new double[] {
-			0, 0, 0, dy, dy, dy,
-			0, 0, 0, dy, dy, dy
-		};
-		double[] z = new double[] {
-			0, 0, 0, 0, 0, 0,
-			dz, dz, dz, dz, dz, dz
-		};
-	
-	
-		view.setPoints(x, y, z);
-		
-		int[] ids = new int[] {
-				0, 1, 4, 3, 6, 7, 10, 9,
-				1, 2, 5, 4, 7, 8, 11, 10
-		}; 
-		view.setHexahedronCells(ids);
-		
-		
-		double[] pressure = new double[] {1000,1000};
-		view.addDoubleCellData("Pressure", pressure);
-		
-		double[] temperatures = new double[] {13, 17};
-		view.addDoubleCellData("Temperature", temperatures);
+//		double dx = 10.;
+//		double dy = 13;
+//		double dz = 2;
+//		double[] x = new double[] {
+//				0, dx, 2*dx, 0, dx, 2*dx,
+//				0, dx, 2*dx, 0, dx, 2*dx
+//		};
+//		double[] y = new double[] {
+//			0, 0, 0, dy, dy, dy,
+//			0, 0, 0, dy, dy, dy
+//		};
+//		double[] z = new double[] {
+//			0, 0, 0, 0, 0, 0,
+//			dz, dz, dz, dz, dz, dz
+//		};
+//	
+//	
+//		view.setPoints(x, y, z);
+//		
+//		int[] ids = new int[] {
+//				0, 1, 4, 3, 6, 7, 10, 9,
+//				1, 2, 5, 4, 7, 8, 11, 10
+//		}; 
+//		view.setHexahedronCells(ids);
+//		
+//		
+//		double[] pressure = new double[] {1000,1000};
+//		view.addDoubleCellData("Pressure", pressure);
+//		
+//		double[] temperatures = new double[] {13, 17};
+//		view.addDoubleCellData("Temperature", temperatures);
 		
 		
 		
@@ -185,8 +185,16 @@ public class VtkGeomodel3DView {
 //		mapper.SetScalarRange(10, 20);
 		
 		//vtkAbstractArray a = cellData.GetAbstractArray(1);
-		cellData.SetScalars((vtkDataArray) cellData.GetAbstractArray(1));
-		mapper.SetScalarRange(10, 20);
+//		cellData.SetScalars((vtkDataArray) cellData.GetAbstractArray(1));
+		
+		view.setScalars("Pressure");
+		mapper.SetScalarRange(1000, 2000);
+//		mapper.SetArrayName("Pressure");
+		VtkGeomodel3DView.logger.info("ArrayName: {}", mapper.GetArrayName());
+		//VtkGeomodel3DView.logger.info("Scalar mode: {}", mapper.GetScalarMaterialModeAsString());
+		
+		//view.setScalars("Temperature");
+		//mapper.SetScalarRange(10, 20);
 		
 		
 		//int ret = cellData.SetActiveScalars("Temperature");
