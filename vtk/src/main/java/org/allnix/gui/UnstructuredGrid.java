@@ -82,14 +82,17 @@ public class UnstructuredGrid {
 		vtkHexahedron hex;
 		vtkIdList l;
 		
+		
+		hex = new vtkHexahedron();
+		logger.info("Start: cellCount loop");
 		for (int i = 0; i < cellCount; i++) {
-			hex = new vtkHexahedron();
 			l = hex.GetPointIds();
  			for (int localId = 0; localId < 8; localId++) {
  				l.SetId(localId, ids[8*i + localId]);
  			}
  			cellz.InsertNextCell(hex);
 		}
+		logger.info("Done: cellCount loop");
 		
 		ugrid.SetCells(CellType.HEXAHEDRON.GetId(), cellz);
 	}

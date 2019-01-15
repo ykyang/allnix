@@ -13,16 +13,16 @@ import vtk.*;
  */
 public class VtkGeomodel3DView extends UnstructuredGrid {
 	
-	static {
-		if (!vtkNativeLibrary.LoadAllNativeLibraries()) {
-			for (vtkNativeLibrary lib : vtkNativeLibrary.values()) {
-				if (!lib.IsLoaded()) {
-					System.out.println(lib.GetLibraryName() + " not loaded");
-				}
-			}
-		}
-		vtkNativeLibrary.DisableOutputWindow(null);
-	}
+//	static {
+//		if (!vtkNativeLibrary.LoadAllNativeLibraries()) {
+//			for (vtkNativeLibrary lib : vtkNativeLibrary.values()) {
+//				if (!lib.IsLoaded()) {
+//					System.out.println(lib.GetLibraryName() + " not loaded");
+//				}
+//			}
+//		}
+//		vtkNativeLibrary.DisableOutputWindow(null);
+//	}
 	
 	static final private Logger logger = LoggerFactory.getLogger(VtkGeomodel3DView.class); 
 
@@ -125,6 +125,7 @@ public class VtkGeomodel3DView extends UnstructuredGrid {
 	 * @param args
 	 */
 	static public void main(String[] args) {
+		VtkLoader.loadAllNativeLibraries();
 		VtkGeomodel3DView view = new VtkGeomodel3DView();
 		Builder.buildUnstructuredGrid2Cell(view);
 //		vtkDataSetMapper mapper = new vtkDataSetMapper();
