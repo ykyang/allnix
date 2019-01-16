@@ -104,9 +104,10 @@ public class UnstructuredGrid {
 //		cellz.Allocate(cellCount*8*2, 1000000); // does not help
 		logger.info("Start: cellCount loop");
 		int globalId = 0;
-		vtkIdList idList = new vtkIdList();
-		idList.SetNumberOfIds(8);
-
+		
+		
+//		vtkIdList idList = new vtkIdList();
+//		idList.SetNumberOfIds(8);
 //		int cellType = CellType.HEXAHEDRON.GetId();
 //		for (int i = 0; i < cellCount; i++) {
 //			for (int localId = 0; localId < 8; localId++) {
@@ -129,7 +130,7 @@ public class UnstructuredGrid {
 		logger.info("Done: cellCount loop");
 		
 		ugrid.SetCells(CellType.HEXAHEDRON.GetId(), cellz);
-
+		
 		
 	}
 	
