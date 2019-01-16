@@ -48,14 +48,16 @@ public class UnstructuredGrid {
 		
 		v = new vtkDoubleArray();
 		v.SetName(name);
-		for (int i = 0; i < data.length; i++) {
-			v.InsertNextValue(data[i]);
-		}
-	
+//		for (int i = 0; i < data.length; i++) {
+//			v.InsertNextValue(data[i]);
+//		}
+		v.SetJavaArray(data); // TaDa
 //		cellData.SetScalars(v);
 		cellData.AddArray(v);
 		
 		doubleArrayDb.put(name, v);
+		
+		
 	}
 	
 	public vtkActor getActor() {
