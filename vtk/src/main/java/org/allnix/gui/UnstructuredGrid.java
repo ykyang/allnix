@@ -14,6 +14,8 @@ import vtk.vtkDataSetMapper;
 import vtk.vtkDoubleArray;
 import vtk.vtkHexahedron;
 import vtk.vtkIdList;
+import vtk.vtkIdTypeArray;
+import vtk.vtkIntArray;
 import vtk.vtkPoints;
 import vtk.vtkUnstructuredGrid;
 import vtk.vtkXMLUnstructuredGridWriter;
@@ -80,23 +82,55 @@ public class UnstructuredGrid {
 		logger.info("cellCount: {}", cellCount);
 		
 		
+//		vtkIntArray idArray = new vtkIntArray();
+//		idArray.SetJavaArray(ids);
+		
+		
 		vtkCellArray cellz = new vtkCellArray();
-		vtkHexahedron hex;
-		vtkIdList l;
+		vtkHexahedron hex = new vtkHexahedron();
+		vtkIdList l = hex.GetPointIds();
+		vtkIdTypeArray idz = new vtkIdTypeArray();
+		idz.SetNumberOfValues(ids.length);
+//		idz.InsertTuples(0, ids.length, 0, idArray); // type mismatch exception
 		
 		
-		hex = new vtkHexahedron();
+//		// memory error at 2,000,000 cells
+//		for (int i = 0; i < ids.length; i++) {
+//			idz.SetValue(i, ids[i]);
+//		}
+//		cellz.SetCells(cellCount, idz);
+		
+		
+//		cellz.Allocate(cellCount*8*2, 1000000); // does not help
 		logger.info("Start: cellCount loop");
+		int globalId = 0;
+		vtkIdList idList = new vtkIdList();
+		idList.SetNumberOfIds(8);
+
+//		int cellType = CellType.HEXAHEDRON.GetId();
+//		for (int i = 0; i < cellCount; i++) {
+//			for (int localId = 0; localId < 8; localId++) {
+// 				idList.SetId(localId, ids[globalId++]);
+// 			}
+//			ugrid.InsertNextCell(cellType, idList);
+//		}
+		
+		
+		
+		
+		
 		for (int i = 0; i < cellCount; i++) {
-			l = hex.GetPointIds();
- 			for (int localId = 0; localId < 8; localId++) {
- 				l.SetId(localId, ids[8*i + localId]);
+			// > this for-loop is the bottleneck
+			for (int localId = 0; localId < 8; localId++) {
+ 				l.SetId(localId, ids[globalId++]);
  			}
  			cellz.InsertNextCell(hex);
 		}
 		logger.info("Done: cellCount loop");
 		
 		ugrid.SetCells(CellType.HEXAHEDRON.GetId(), cellz);
+
+		
 	}
 	
 	public void setPoints(double[] x, double[] y, double[] z) {

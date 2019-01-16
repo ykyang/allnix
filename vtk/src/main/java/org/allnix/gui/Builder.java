@@ -85,5 +85,6 @@ public class Builder {
 		VtkLoader.loadAllNativeLibraries();
 		UnstructuredGrid ugrid = new UnstructuredGrid();
 		Builder.buildUnstructuredGridMillionCell(ugrid);
+//		ugrid.writeXML("2million.vtu");
 	}
 }
