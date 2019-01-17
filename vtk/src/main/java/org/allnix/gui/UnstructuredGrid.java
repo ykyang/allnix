@@ -52,7 +52,7 @@ public class UnstructuredGrid {
 
 		
 		cellData.AddArray(v);
-
+		
 		// > do not keep extra copy of data
 		// doubleArrayDb.put(name, v);
 	}

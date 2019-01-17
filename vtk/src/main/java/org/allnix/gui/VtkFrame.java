@@ -25,7 +25,7 @@ public class VtkFrame {
 		//winPanel.GetRenderer().AddActor(actor);
 		//winPanel.GetRenderer().SetBackground(color);
 		winPanel.setPreferredSize(new Dimension(600,600));
-		
+	
 		frame = new JFrame();
 		
 //		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -38,7 +38,7 @@ public class VtkFrame {
 	public vtkRenderWindowPanel getVtkRenderWindowPanel() {
 		return winPanel;
 	}
-	
+	 
 	public JFrame getJFrame() {
 		return frame;
 	}

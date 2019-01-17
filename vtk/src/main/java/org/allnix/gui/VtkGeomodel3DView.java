@@ -61,7 +61,6 @@ public class VtkGeomodel3DView extends UnstructuredGrid {
 	 * @param args
 	 */
 	static public void main(String[] args) {
-
 		VtkLoader.loadAllNativeLibraries();
 
 		VtkGeomodel3DView view = new VtkGeomodel3DView();
