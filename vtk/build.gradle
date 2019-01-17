@@ -30,7 +30,8 @@ dependencies {
     //implementation 'com.google.guava:guava:26.0-jre'
     implementation 'org.slf4j:slf4j-api:1.7.13'
   	implementation 'ch.qos.logback:logback-classic:1.1.2'
-    implementation files('/home/ykyang/local/vtk-8.1.2/lib/vtk.jar')
+  	implementation 'org.apache.commons:commons-lang3:3.8.1'
+    //implementation files('/home/ykyang/local/vtk-8.1.2/lib/vtk.jar')
 
 	// https://mvnrepository.com/artifact/com.miglayout/miglayout
 	implementation 'com.miglayout:miglayout:3.7.4'

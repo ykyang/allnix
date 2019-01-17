@@ -19,7 +19,7 @@ public class CutGeomodel {
 		
 		
 		
-		view.setScalars("Pressure");
+		view.setActiveScalars("Pressure");
 		view.getMapper().SetScalarRange(1000, 2000);
 		
 		
