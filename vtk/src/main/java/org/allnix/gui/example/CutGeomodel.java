@@ -54,7 +54,6 @@ public class CutGeomodel {
 		lut.SetHueRange(0.66667, 0); //  blue -> low, red -> high
 		lut.Build();
 		logger.info("LookupTable: {}", lut.Print());
-		
 		view.getMapper().SetLookupTable(lut);
 		cutterMapper.SetLookupTable(lut);
 

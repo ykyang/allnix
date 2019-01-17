@@ -34,6 +34,21 @@ dependencies {
 
 	// https://mvnrepository.com/artifact/com.miglayout/miglayout
 	implementation 'com.miglayout:miglayout:3.7.4'
+	
+	
+	// Copied from https://stackoverflow.com/questions/11235614/how-to-detect-the-current-os-from-gradle
+	if (org.gradle.internal.os.OperatingSystem.current().isLinux()) {
+		implementation files('/home/ykyang/local/vtk-8.1.2/lib/vtk.jar')
+	} else if (org.gradle.internal.os.OperatingSystem.current().isUnix()) {
+    // consider UNIX.
+	} else if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
+		implementation files('C:/Program Files/VTK-8.1.2/lib/vtk.jar')
+    // consider Windows.
+	} else if (org.gradle.internal.os.OperatingSystem.current().isMacOsX()) {
+    // consider OSX.
+	} else {
+    // unknown OS.
+	}
 
     // Use JUnit test framework
     testImplementation 'junit:junit:4.12'

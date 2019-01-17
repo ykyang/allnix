@@ -1,5 +1,7 @@
 package org.allnix.gui;
 
+import javax.swing.SwingUtilities;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -125,9 +127,12 @@ public class VtkGeomodel3DView extends UnstructuredGrid {
 	 * @param args
 	 */
 	static public void main(String[] args) {
+		
+		
+		Runnable runnable = () ->{
 		VtkLoader.loadAllNativeLibraries();
 		VtkGeomodel3DView view = new VtkGeomodel3DView();
-		Builder.buildUnstructuredGrid2Cell(view);
+		Builder.buildUnstructuredGrid7Cell(view);
 //		vtkDataSetMapper mapper = new vtkDataSetMapper();
 //		mapper.SetInputData(view.getUnstructuredGrid());
 //		
@@ -189,7 +194,7 @@ public class VtkGeomodel3DView extends UnstructuredGrid {
 //		cellData.SetScalars((vtkDataArray) cellData.GetAbstractArray(1));
 		
 		view.setScalars("Pressure");
-		mapper.SetScalarRange(1000, 2000);
+		mapper.SetScalarRange(1000, 7000);
 //		mapper.SetArrayName("Pressure");
 		VtkGeomodel3DView.logger.info("ArrayName: {}", mapper.GetArrayName());
 		//VtkGeomodel3DView.logger.info("Scalar mode: {}", mapper.GetScalarMaterialModeAsString());
@@ -213,7 +218,10 @@ public class VtkGeomodel3DView extends UnstructuredGrid {
 		vtkRenderer renderer = vframe.getVtkRenderWindowPanel().GetRenderer(); 
 		renderer.AddActor(view.getActor());
 		renderer.ResetCamera();
-		vframe.getVtkRenderWindowPanel().Render();		
+		vframe.getVtkRenderWindowPanel().Render();
+		};
+		
+		SwingUtilities.invokeLater(runnable);
 		//mapper.Update();
 	}
 }
