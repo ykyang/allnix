@@ -32,7 +32,9 @@ public class UnstructuredGrid {
 	}
 
 	public void init() {
-		ugrid = new vtkUnstructuredGrid();
+		if (ugrid == null) {
+			ugrid = new vtkUnstructuredGrid();
+		}
 	}
 
 	public double[] getRange(String name) {
@@ -62,9 +64,27 @@ public class UnstructuredGrid {
 		// > do not keep extra copy of data
 		// doubleArrayDb.put(name, v);
 	}
+	/**
+	 * Data type needs to specified in method name considering MATLAB
+	 * 
+	 * @param name
+	 * @param data
+	 */
+	public void addIntCellData(String name, int[] data) {
+		vtkCellData cellData = ugrid.GetCellData();
+		vtkIntArray v = new vtkIntArray();
+		v.SetName(name);
+		
+		v.SetJavaArray(data);
+		
+		cellData.AddArray(v);
+	}
 
 	public vtkUnstructuredGrid getUnstructuredGrid() {
 		return ugrid;
+	}
+	public void setUnstructuredGrid(vtkUnstructuredGrid v) {
+		this.ugrid = v;
 	}
 
 	public void setHexahedronCells(int[] ids) {

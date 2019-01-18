@@ -92,6 +92,9 @@ public class Builder {
 		
 		double[] temperatures = new double[] {13, 14, 15, 16, 17, 18, 19};
 		grid.addDoubleCellData("Temperature", temperatures);
+		
+		int[] iIndex = new int[] {1,2,3,4,5,6,7};
+		grid.addIntCellData("i_index", iIndex);
 	}
 	
 	
