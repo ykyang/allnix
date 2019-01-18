@@ -82,7 +82,6 @@ public class LookupTable {
 			vframe.setVisible(true);
 //			vframe.pack();
 			vframe.render();
-			scalarWidget.GetScalarBarActor().SetPosition(0.1, 0.1);
 			scalarWidget.On();
 			
 	}

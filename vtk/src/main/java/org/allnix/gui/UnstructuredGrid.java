@@ -10,6 +10,7 @@ import vtk.CellType;
 import vtk.vtkActor;
 import vtk.vtkCellArray;
 import vtk.vtkCellData;
+import vtk.vtkDataArray;
 import vtk.vtkDataSetMapper;
 import vtk.vtkDoubleArray;
 import vtk.vtkHexahedron;
@@ -34,6 +35,11 @@ public class UnstructuredGrid {
 		ugrid = new vtkUnstructuredGrid();
 	}
 
+	public double[] getRange(String name) {
+		vtkDataArray d = (vtkDataArray) ugrid.GetCellData().GetAbstractArray(name);
+		double[] minmax = d.GetRange();
+		return minmax;
+	}
 	public void addDoubleCellData(String name, double[] data) {
 		vtkCellData cellData = ugrid.GetCellData();
 		vtkDoubleArray v;

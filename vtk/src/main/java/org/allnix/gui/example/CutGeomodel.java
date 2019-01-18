@@ -15,18 +15,34 @@ public class CutGeomodel {
 		VtkLoader.loadAllNativeLibraries();
 		
 		VtkGeomodel3DView view = new VtkGeomodel3DView();
-		Builder.buildUnstructuredGrid2Cell(view);
+		view.init();
 		
-		
-		
+		Builder.buildUnstructuredGrid7Cell(view);
+				
 		view.setActiveScalars("Pressure");
-		view.getMapper().SetScalarRange(1000, 2000);
+		view.getMapper().SetUseLookupTableScalarRange(1);;
+		
+		//view.getMapper().SetScalarRange(1000, 2000);
+		vtkLookupTable lut = new vtkLookupTable();
+		//lut.SetHueRange(0, 0.6667); // red, low -> blue, high
+		lut.SetHueRange(0.6667, 0.); // blue, low -> red, high
+		
+		view.getMapper().SetLookupTable(lut);
+		lut.SetRange(view.getRange("Pressure"));
 		
 		
+		vtkScalarBarActor scalarBar = new vtkScalarBarActor();
+		scalarBar.SetLookupTable(lut);
+		scalarBar.GetLabelTextProperty().SetFontSize(2); // no effect???
 		
+		// > VTK/Examples/Python/Widgets/ScalarBarWidget
+		vtkScalarBarWidget scalarWidget = new vtkScalarBarWidget();
+		scalarWidget.SetScalarBarActor(scalarBar);
 		
-		
-		
+		vtkScalarBarRepresentation rep = scalarWidget.GetScalarBarRepresentation();
+		rep.SetOrientation(0); // 0 = Horizontal, 1 = Vertical
+		rep.SetPosition(0.1, 0.1);
+		rep.SetPosition2(0.4,0.2);
 		
 		
 		vtkPlane plane = new vtkPlane();
@@ -40,32 +56,51 @@ public class CutGeomodel {
 		
 		vtkPolyDataMapper cutterMapper = new vtkPolyDataMapper();
 		cutterMapper.SetInputConnection(cutter.GetOutputPort());
-		cutterMapper.SetScalarRange(1000,2000);
+		cutterMapper.SetLookupTable(lut);
+		cutterMapper.UseLookupTableScalarRangeOn();
+		
+//		cutterMapper.SetScalarRange(1000,2000);
 		
 		vtkActor planeActor = new vtkActor();
 		planeActor.SetMapper(cutterMapper);
 		
 		
-		
-		
-		vtkLookupTable lut = new vtkLookupTable();
-		lut.SetRange(1000, 2000);
-		//lut.SetValueRange(1000, 2000); // no good???
-		lut.SetHueRange(0.66667, 0); //  blue -> low, red -> high
-		lut.Build();
-		logger.info("LookupTable: {}", lut.Print());
-		view.getMapper().SetLookupTable(lut);
-		cutterMapper.SetLookupTable(lut);
-
-		
-		
-		
 		VtkFrame vframe = new VtkFrame();
+		scalarWidget.SetInteractor(vframe.getVtkRenderWindowPanel().getRenderWindowInteractor());
 		
-		vtkRenderer renderer = vframe.getVtkRenderWindowPanel().GetRenderer(); 
-//		renderer.AddActor(view.getActor());
-		renderer.AddActor(planeActor);
-		renderer.ResetCamera();
-		vframe.getVtkRenderWindowPanel().Render();
+		
+		vframe.pack();
+		
+
+		vframe.addActor(planeActor);
+//		vframe.addActor(scalarBar);
+		vframe.resetCamera();
+		vframe.render();
+		vframe.setVisible(true);
+//		vframe.pack();
+		vframe.render();
+		scalarWidget.On();
+		
+		
+		
+//		vtkLookupTable lut = new vtkLookupTable();
+//		lut.SetRange(1000, 2000);
+//		//lut.SetValueRange(1000, 2000); // no good???
+//		lut.SetHueRange(0.66667, 0); //  blue -> low, red -> high
+//		lut.Build();
+//		logger.info("LookupTable: {}", lut.Print());
+//		view.getMapper().SetLookupTable(lut);
+//		cutterMapper.SetLookupTable(lut);
+//
+//		
+//		
+//		
+//		VtkFrame vframe = new VtkFrame();
+//		
+//		vtkRenderer renderer = vframe.getVtkRenderWindowPanel().GetRenderer(); 
+////		renderer.AddActor(view.getActor());
+//		renderer.AddActor(planeActor);
+//		renderer.ResetCamera();
+//		vframe.getVtkRenderWindowPanel().Render();
 	}
 }
