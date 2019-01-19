@@ -219,6 +219,5 @@ public class VtkUnstructuredGrid {
 		vframe.render();
 		vframe.setVisible(true);
 		vframe.render();
-		
 	}
 }
