@@ -12,6 +12,9 @@ plugins {
     id 'application'
 }
 
+targetCompatibility = '1.8'
+sourceCompatibility = '1.8'
+
 //mainClassName = "vtk.SimpleVTK"
 mainClassName = "org.allnix.vtk.JFrameRenderer"
 //mainClassName = "vtk.AwtConeRendering"
@@ -31,7 +34,7 @@ dependencies {
     implementation 'org.slf4j:slf4j-api:1.7.13'
   	implementation 'ch.qos.logback:logback-classic:1.1.2'
   	implementation 'org.apache.commons:commons-lang3:3.8.1'
-    //implementation files('/home/ykyang/local/vtk-8.1.2/lib/vtk.jar')
+  	implementation 'org.apache.commons:commons-collections4:4.2'
 
 	// https://mvnrepository.com/artifact/com.miglayout/miglayout
 	implementation 'com.miglayout:miglayout:3.7.4'
@@ -52,11 +55,48 @@ dependencies {
 	}
 
     // Use JUnit test framework
-    testImplementation 'junit:junit:4.12'
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.0.2' // 5.0.2, 5.3.2
+    testImplementation 'org.junit.platform:junit-platform-runner:1.0.2' // 1.0.2, 1.3.2
+    testImplementation 'org.apiguardian:apiguardian-api:1.0.0'    
+    
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.0.2") // 5.0.2, 5.3.2
 }
 // ./gradlew -PmainClass=org.allnix.vtk.JFrameRenderer runApp
 task runApp(type:JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
 
     main = project.hasProperty("mainClass") ? project.getProperty("mainClass") : "org.allnix.vtk.JFrameRenderer"
+}
+
+
+
+/*
+  https://docs.gradle.org/current/userguide/java_testing.html
+  # Executes all tests in SomeTestClass
+  gradle test --tests SomeTestClass
+
+  # Executes a single specified test in SomeTestClass
+  gradle test --tests SomeTestClass.someSpecificMethod
+
+  gradle test --tests SomeTestClass.*someMethod*
+*/
+
+test {
+  // See https://docs.gradle.org/current/userguide/java_plugin.html
+  useJUnitPlatform {
+    // see JUnitPlatformOptions
+    //excludeTags 'seconds', 'minutes', 'hours', 'days'
+   	
+   	includeTags 'minute', 'second'//, 'manual'
+    //includeTags 'fast'
+  }
+  maxParallelForks = 6
+  //systemProperties 'logback.configurationFile' : new File(projectDir,'src/test/resources/logback-test.xml').absolutePath
+//  include '**/**'
+  //include '**/DisableAllTest*.*'
+
+  // Use "gradlew cleanTest test" to force running test
+  testLogging {
+    events "started", "passed", "skipped", "failed", "standardOut" //, "standardError"
+  }
 }
