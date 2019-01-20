@@ -49,6 +49,12 @@ public class VtkFrame {
 		});
 	}
 	
+	public void removeActor(vtkProp v) {
+		invokeAndWait(() -> {
+			winPanel.GetRenderer().RemoveActor(v);
+		});
+	}
+	
 	public void resetCamera() {
 		this.invokeAndWait(()->{
 			winPanel.GetRenderer().ResetCamera();

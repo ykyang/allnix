@@ -1,5 +1,7 @@
 package org.allnix.gui.example;
 
+import java.util.concurrent.TimeUnit;
+
 import org.allnix.gui.Builder;
 import org.allnix.gui.VtkFrame;
 import org.allnix.gui.VtkGeomodel3DView;
@@ -18,7 +20,7 @@ import vtk.vtkUnstructuredGrid;
  */
 public class Threshold {
 	static final private Logger logger = LoggerFactory.getLogger(Threshold.class); 
-	static public void main(String[] args) {
+	static public void main(String[] args) throws InterruptedException {
 		VtkLoader.loadAllNativeLibraries();
 		
 		VtkGeomodel3DView view = new VtkGeomodel3DView();
@@ -68,6 +70,15 @@ public class Threshold {
 		vframe.setVisible(true);
 //		vframe.pack();
 		vframe.render();
+		
+		TimeUnit.MILLISECONDS.sleep(1500);
+		
+		threshold.ThresholdBetween(1, 5);
+		threshold.Update();
+		vtkUnstructuredGrid newGrid = threshold.GetOutput();
+		
+		logger.info("Old Grid: {}", thresholdUGrid);
+		logger.info("New Grid: {}", newGrid);
 	}
 
 }

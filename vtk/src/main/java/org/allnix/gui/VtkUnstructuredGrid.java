@@ -42,6 +42,8 @@ public class VtkUnstructuredGrid {
 	private vtkActor actor;
 	private vtkLookupTable lut;
 	
+	private String activeScalarName;
+	
 	public void addDoubleCellData(String name, double[] data) {
 		vtkCellData cellData = ugrid.GetCellData();
 		vtkDoubleArray v;
@@ -141,13 +143,16 @@ public class VtkUnstructuredGrid {
 	}
 	/**
 	 * Do I need to worry about different data type
-	 * 
+	 * TODO: check setting null
 	 * @param name
 	 */
 	public void setActiveScalars(String name) {
-		// TODO: error checking
 		vtkCellData cellData = ugrid.GetCellData();
-		cellData.SetActiveScalars(name);
+		int ans = cellData.SetActiveScalars(name);
+//		if (ans != -1) { // success with array index
+		this.activeScalarName = name;
+//		}
+		
 		// cellData.SetScalars(doubleArrayDb.get(name));
 	}
 	public void setHexahedronCells(int[] ids) {
@@ -231,4 +236,12 @@ public class VtkUnstructuredGrid {
 		vframe.setVisible(true);
 		vframe.render();
 	}
+
+	public String getActiveScalarName() {
+		return activeScalarName;
+	}
+
+//	public void setActiveScalarName(String activeScalarName) {
+//		this.activeScalarName = activeScalarName;
+//	}
 }
