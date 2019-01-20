@@ -85,6 +85,10 @@ public class VtkUnstructuredGrid {
 		return actor;
 	}
 	
+	public vtkLookupTable getLookupTable() {
+		return lut;
+	}
+	
 	public vtkDataSetMapper getMapper() {
 		return mapper;
 	}
@@ -116,14 +120,21 @@ public class VtkUnstructuredGrid {
 		
 		actor.SetMapper(mapper);
 		
-		lut = new vtkLookupTable();
-		// > blue, low -> red, high
-		// > flip the number to inverse the color
-		lut.SetHueRange(0.6667, 0.);
-		lut.Build();
+		if (lut == null) {
+			lut = new vtkLookupTable();
+			// > blue, low -> red, high
+			// > flip the number to inverse the color
+			lut.SetHueRange(0.6667, 0.);
+			lut.Build();
+		}
+
 		mapper.SetLookupTable(lut);
 	}
 
+	public void setLookupTable(vtkLookupTable lut) {
+		this.lut = lut;
+	}
+	
 	public void setLookupTableRange(double[] minmax) {
 		lut.SetRange(minmax);
 		lut.Build();
