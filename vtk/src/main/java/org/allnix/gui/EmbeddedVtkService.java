@@ -3,14 +3,14 @@ package org.allnix.gui;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DefaultVtkService {
+public class EmbeddedVtkService {
 	private Map<String, VtkUnstructuredGrid> ugridDb;
 	/**
 	 * ID -> VtkTrheshold mapping
 	 */
 	private Map<String, VtkThreshold> thresholdDb;
 	
-	public DefaultVtkService() {
+	public EmbeddedVtkService() {
 		ugridDb = new HashMap<>();
 		thresholdDb = new HashMap<>();
 	}

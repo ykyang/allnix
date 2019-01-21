@@ -26,13 +26,13 @@ public class VtkGeomodel {
 	
 	private VtkUnstructuredGrid mainGrid;
 	
-	private Map<String, VtkUnstructuredGrid> ijkGridDb;
+//	private Map<String, VtkUnstructuredGrid> ijkGridDb;
 	/**
 	 * Object[0]: VtkUnstructuredGrid
 	 * Object[1]: vtkThreshold
 	 */
 //	private Map<String, Object[]> ijkDb;
-	private DefaultVtkService vsvc;
+	private EmbeddedVtkService vsvc;
 	/**
 	 * Map ijk slice name to ID in VtkService
 	 */
@@ -51,8 +51,9 @@ public class VtkGeomodel {
 	public void init() {
 		mainGrid = new VtkUnstructuredGrid();
 		mainGrid.init();
-		
-		vsvc = new DefaultVtkService();
+		if (vsvc == null) {
+			vsvc = new EmbeddedVtkService();
+		}
 //		ijkDb = LazyMap.lazyMap(new HashMap<String, Object[]>(), new Factory<Object[]>() {
 //			@Override
 //			public Object[] create() {
