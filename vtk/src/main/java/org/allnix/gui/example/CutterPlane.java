@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 
 import vtk.vtkActor;
 import vtk.vtkCutter;
-import vtk.vtkDataObject;
 import vtk.vtkLookupTable;
 import vtk.vtkPolyDataMapper;
 import vtk.vtkPlane;
@@ -33,16 +32,11 @@ public class CutterPlane {
 		
 		// > Value range to color from blue - red
 		double[] range = grid.getRange(name);
-		// shows white plane without this line
-//		grid.setActiveScalars(name);
-		grid.setLookupTableRange(range);
 
 		// > lookup table
 		vtkLookupTable lut = new vtkLookupTable();
 		lut.SetHueRange(0.6667, 0.); // blue, low -> red, high
 		lut.SetRange(range);
-		
-		
 		
 		vtkPlane plane = new vtkPlane();
 		plane.SetOrigin(5,7.5,1);
@@ -50,29 +44,27 @@ public class CutterPlane {
 		
 		vtkCutter cutter = new vtkCutter();
 		cutter.SetCutFunction(plane);
+		vtkPolyData polyData;
+		polyData = cutter.GetOutput();
+		//logger.info(polyData.Print());
+		
+		// > purposely put setinput after getPolyData
 		cutter.SetInputData(grid.getUnstructuredGrid());
-		// does not work
-//		cutter.SetInputArrayToProcess(0, 0, 0, 1, name);
-		// modifiy underlying ugrid
-//		vtkDataObject vdo = cutter.GetInput();
-//		vdo.GetAttributes(1).SetActiveScalars(name); // cell data
-//		cutter.GenerateCutScalarsOn();
-		cutter.Update();
-		vtkPolyData polyData = cutter.GetOutput();
-		logger.info(polyData.Print());
-		polyData.GetCellData().SetActiveScalars(name);
-//		cutter.Update(); // put update here does not work
+		// > the polydata before and after Update() is the same
+		// > object
+		// > polyData = cutter.GetOutput(); 
 		
 		vtkPolyDataMapper cutterMapper = new vtkPolyDataMapper();
 		cutterMapper.SetInputData(polyData); // decouple from underlying grid
-//		cutterMapper.SetInputConnection(cutter.GetOutputPort()); // coupled with underlying grid
 		cutterMapper.SetLookupTable(lut);
 		cutterMapper.UseLookupTableScalarRangeOn();
 		cutterMapper.SetScalarModeToUseCellData();
-		//cutterMapper.SetArrayName(name);
 		
 		vtkActor planeActor = new vtkActor();
 		planeActor.SetMapper(cutterMapper);
+		
+		cutter.Update();
+		polyData.GetCellData().SetActiveScalars(name);
 		
 		// > render
 		vframe.pack();
@@ -84,13 +76,14 @@ public class CutterPlane {
 		vframe.render();
 		
 		TimeUnit.MILLISECONDS.sleep(1500);
-		grid.setActiveScalars("Pressure"); // still interfere with the slice
+		// this should not interfere with the display color
+		grid.setActiveScalars("Pressure"); 
 		vframe.render();
 		
 		TimeUnit.MILLISECONDS.sleep(1500);
 		plane.SetNormal(0,1,0);
 		cutter.Update();
-		polyData.GetCellData().SetActiveScalars(name);
+		polyData.GetCellData().SetActiveScalars(name); // STAR
 		vframe.render();
 	}
 	
