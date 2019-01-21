@@ -14,7 +14,7 @@ public interface VtkRenderer {
 	vtkRenderer getRenderer();
 	void addActor(vtkProp v);
 	void removeActor(vtkProp v);
-
+	void resetCamera();
 	
 	default void invokeAndWait(Runnable v) {
 		try {

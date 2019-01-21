@@ -3,7 +3,12 @@ package org.allnix.gui;
 import vtk.vtkProp;
 import vtk.vtkRenderWindowPanel;
 import vtk.vtkRenderer;
-
+/**
+ * Use vtkRenderWindowPanel as renderer
+ * 
+ * @author Yi-Kun Yang ykyang@gmail.com
+ *
+ */
 public class VtkRenderWindowPanelRenderer implements VtkRenderer {
 	private vtkRenderWindowPanel vtk;
 	
@@ -12,7 +17,7 @@ public class VtkRenderWindowPanelRenderer implements VtkRenderer {
 	 * 
 	 * @param vtk
 	 */
-	public void setVtk(vtkRenderWindowPanel vtk) {
+	public void setImplementation(vtkRenderWindowPanel vtk) {
 		this.vtk = vtk;
 	}
 	
@@ -42,5 +47,10 @@ public class VtkRenderWindowPanelRenderer implements VtkRenderer {
 		invokeAndWait(x);
 	}
 
+	public void resetCamera() {
+		this.invokeAndWait(()->{
+			getRenderer().ResetCamera();
+		});
+	}
 	
 }

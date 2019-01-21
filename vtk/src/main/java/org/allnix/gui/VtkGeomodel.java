@@ -31,6 +31,10 @@ public class VtkGeomodel {
 		renderer = v;
 	}
 	
+	public VtkRenderer getVtkRenderer() {
+		return renderer;
+	}
+	
 	public void init() {
 		mainGrid = new VtkUnstructuredGrid();
 		mainGrid.init();
@@ -46,6 +50,27 @@ public class VtkGeomodel {
 	 */
 	public VtkUnstructuredGrid getGrid() {
 		return mainGrid;
+	}
+	
+	/**
+	 * Convenient method
+	 * 
+	 * @param name
+	 */
+	public void setGridActiveScalar(String name) {
+		mainGrid.setActiveScalars(name);
+	}
+	
+	public void setGridLookupTableRange(double[] range) {
+		mainGrid.setLookupTableRange(range);
+	}
+	
+	public void showGrid() {
+		renderer.addActor(mainGrid.getActor());
+	}
+	
+	public void hideGrid() {
+		renderer.removeActor(mainGrid.getActor());
 	}
 	
 	/**
@@ -106,9 +131,9 @@ public class VtkGeomodel {
 		VtkLoader.loadAllNativeLibraries();
 		VtkFrame vframe = new VtkFrame();
 		
-		// > expose renderer
+		// > Create renderer
 		VtkRenderWindowPanelRenderer renderer = new VtkRenderWindowPanelRenderer();
-		renderer.setVtk(vframe.getVtkRenderWindowPanel());
+		renderer.setImplementation(vframe.getVtkRenderWindowPanel());
 		
 		String name = "Temperature";
 		
@@ -128,17 +153,26 @@ public class VtkGeomodel {
 		me.setIJKSliceThresholdBetween(sliceName, 1, 5);
 		me.setIJKSliceThresholdColorRange(sliceName, range);
 		me.setIJKSliceActiveScalar(sliceName, name);
-		me.showIJKSlice(sliceName);
-		
+		//me.showIJKSlice(sliceName);
+			
 		vframe.pack();
 		vframe.setVisible(true);
+		
+		renderer.render();
 
+		// > show whole grid
 		TimeUnit.MILLISECONDS.sleep(500);
+		me.setGridActiveScalar(name);
+		me.setGridLookupTableRange(range);
+		me.showGrid();
+		renderer.resetCamera();
 		renderer.render();
 
 		TimeUnit.MILLISECONDS.sleep(1500);
-		me.setIJKSliceThresholdBetween(sliceName, 4, 5);
+		me.hideGrid();
+		me.setIJKSliceThresholdBetween(sliceName, 3, 5);
 		me.setIJKSliceActiveScalar(sliceName, name);
+		me.showIJKSlice(sliceName);
 		renderer.render();
 
 		TimeUnit.MILLISECONDS.sleep(1500);
