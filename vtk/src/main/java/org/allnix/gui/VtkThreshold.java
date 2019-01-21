@@ -60,7 +60,7 @@ public class VtkThreshold {
 	}
 	
 	static public void main(String[] args) throws InterruptedException {
-		// > Basic setup
+		// > See VtkUnstructuredGrid.main() for doc
 		VtkLoader.loadAllNativeLibraries();
 		VtkFrame vframe = new VtkFrame();
 				
@@ -84,10 +84,12 @@ public class VtkThreshold {
 		me.setThresholdBetween(3, 5);
 		me.update();
 		
+		// > de-couple controls by design
 		VtkUnstructuredGrid out = me.getOutput();
 		out.setActiveScalars(name);
 		out.setLookupTableRange(range);
 		
+		// > render
 		vframe.pack();
 		vframe.addActor(out.getActor());
 		vframe.setVisible(true);
