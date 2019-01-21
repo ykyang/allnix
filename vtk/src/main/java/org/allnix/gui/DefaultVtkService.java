@@ -2,7 +2,7 @@ package org.allnix.gui;
 
 import java.util.Map;
 
-public class EmbeddedVtkService {
+public class DefaultVtkService {
 	private Map<String, VtkUnstructuredGrid> vugridDb;
-	private Map<String, >
+	private Map<String, VtkThreshold> ijkThresholdDb;
 }
