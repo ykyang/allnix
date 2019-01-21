@@ -1,18 +1,30 @@
 package org.allnix.gui;
 
+import java.lang.reflect.InvocationTargetException;
+
+import javax.swing.SwingUtilities;
+
+import org.apache.commons.lang3.exception.ExceptionUtils;
+
+import vtk.vtkProp;
 import vtk.vtkRenderer;
 
-public class VtkRenderer {
-	private vtkRenderer renderer;
+public interface VtkRenderer {
+	void render();
+	vtkRenderer getRenderer();
+	void addActor(vtkProp v);
+	void removeActor(vtkProp v);
 
-	public vtkRenderer getRenderer() {
-		return renderer;
+	
+	default void invokeAndWait(Runnable v) {
+		try {
+			SwingUtilities.invokeAndWait(v);
+		} catch (InvocationTargetException | InterruptedException e) {
+			throw new RuntimeException(e);
+		}
 	}
-
-	public void setRenderer(vtkRenderer renderer) {
-		this.renderer = renderer;
-	}
-	public void render() {
-		renderer.Render();
+	
+	default void invokeLater(Runnable v) {
+		SwingUtilities.invokeLater(v);
 	}
 }

@@ -33,11 +33,14 @@ public class VtkGeomodel {
 	 * Object[1]: vtkThreshold
 	 */
 	private Map<String, Object[]> ijkDb;
-//	private VtkRenderer renderer;
-	private VtkFrame frame;
+	private VtkRenderer renderer;
+//	private VtkFrame frame;
 	
-	public void setVtkFrame(VtkFrame frame) {
-		this.frame = frame;
+//	public void setVtkFrame(VtkFrame frame) {
+//		this.frame = frame;
+//	}
+	public void setVtkRenderer(VtkRenderer v) {
+		renderer = v;
 	}
 	
 	public void init() {
@@ -99,12 +102,12 @@ public class VtkGeomodel {
 	public void showIJKSlice(String name) {
 		Object[] objz = this.ijkDb.get(name);
 		VtkUnstructuredGrid vugrid = (VtkUnstructuredGrid) objz[0];
-		frame.addActor(vugrid.getActor());
+		renderer.addActor(vugrid.getActor());
 	}
 	public void hideIJKSlice(String name) {
 		Object[] objz = this.ijkDb.get(name);
 		VtkUnstructuredGrid vugrid = (VtkUnstructuredGrid) objz[0];
-		frame.removeActor(vugrid.getActor());
+		renderer.removeActor(vugrid.getActor());
 	}
 	public void setIJKSliceThresholdColorRange(String name, double[] minmax) {
 		Object[] objz = this.ijkDb.get(name);
@@ -185,12 +188,17 @@ public class VtkGeomodel {
 	static public void main(String[] args) throws InterruptedException {
 		VtkLoader.loadAllNativeLibraries();
 		VtkFrame vframe = new VtkFrame();
-	
+		
+		// > expose renderer
+		VtkRenderWindowPanelRenderer renderer = new VtkRenderWindowPanelRenderer();
+		renderer.setVtk(vframe.getVtkRenderWindowPanel());
+		
 		String name = "Temperature";
 		
 		VtkGeomodel me = new VtkGeomodel();
 		
-		me.setVtkFrame(vframe);
+//		me.setVtkFrame(vframe);
+		me.setVtkRenderer(renderer);
 		me.init();
 		
 		
@@ -212,21 +220,21 @@ public class VtkGeomodel {
 //		vframe.render();
 		vframe.setVisible(true);
 		TimeUnit.MILLISECONDS.sleep(500);
-		vframe.render();
+		renderer.render();
 		TimeUnit.MILLISECONDS.sleep(1500);
 		me.setIJKSliceThresholdBetween(sliceName, 4, 5);
 //		me.setIJKSliceThresholdColorRange(sliceName, range);
 		me.setIJKSliceActiveScalar(sliceName, name);
-		vframe.render();
+		renderer.render();
 		TimeUnit.MILLISECONDS.sleep(1500);
 		me.hideIJKSlice(sliceName);
-		vframe.render();
+		renderer.render();
 		TimeUnit.MILLISECONDS.sleep(1500);
 		me.setIJKSliceThresholdBetween(sliceName, 1, 7);
 //		me.setIJKSliceThresholdColorRange(sliceName, range);
 		me.setIJKSliceActiveScalar(sliceName, name);
 		me.showIJKSlice(sliceName);
-		vframe.render();
+		renderer.render();
 		
 	}
 	

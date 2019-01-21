@@ -21,6 +21,7 @@ public class VtkFrame {
 	
 	public VtkFrame() {
 		winPanel = new vtkRenderWindowPanel();  
+//		winPanel.GetRenderer().
 		winPanel.setInteractorStyle(new vtkInteractorStyleTrackballCamera());
 		//winPanel.GetRenderer().AddActor(actor);
 		//winPanel.GetRenderer().SetBackground(color);
