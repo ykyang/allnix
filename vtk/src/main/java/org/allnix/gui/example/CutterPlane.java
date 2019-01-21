@@ -56,16 +56,16 @@ public class CutterPlane {
 		// modifiy underlying ugrid
 //		vtkDataObject vdo = cutter.GetInput();
 //		vdo.GetAttributes(1).SetActiveScalars(name); // cell data
-		cutter.GenerateCutScalarsOn();
+//		cutter.GenerateCutScalarsOn();
 		cutter.Update();
 		vtkPolyData polyData = cutter.GetOutput();
 		logger.info(polyData.Print());
 		polyData.GetCellData().SetActiveScalars(name);
-		
+//		cutter.Update(); // put update here does not work
 		
 		vtkPolyDataMapper cutterMapper = new vtkPolyDataMapper();
-//		cutterMapper.SetInputData(polyData);
-		cutterMapper.SetInputConnection(cutter.GetOutputPort());
+		cutterMapper.SetInputData(polyData); // decouple from underlying grid
+//		cutterMapper.SetInputConnection(cutter.GetOutputPort()); // coupled with underlying grid
 		cutterMapper.SetLookupTable(lut);
 		cutterMapper.UseLookupTableScalarRangeOn();
 		cutterMapper.SetScalarModeToUseCellData();
@@ -84,12 +84,13 @@ public class CutterPlane {
 		vframe.render();
 		
 		TimeUnit.MILLISECONDS.sleep(1500);
-		grid.setActiveScalars("Pressure");
+		grid.setActiveScalars("Pressure"); // still interfere with the slice
 		vframe.render();
 		
 		TimeUnit.MILLISECONDS.sleep(1500);
 		plane.SetNormal(0,1,0);
 		cutter.Update();
+		polyData.GetCellData().SetActiveScalars(name);
 		vframe.render();
 	}
 	
