@@ -7,7 +7,6 @@ import vtk.vtkCutter;
 import vtk.vtkDataObject;
 import vtk.vtkLookupTable;
 import vtk.vtkPlane;
-import vtk.vtkPolyData;
 import vtk.vtkPolyDataMapper;
 
 public class VtkPlaneCutter {

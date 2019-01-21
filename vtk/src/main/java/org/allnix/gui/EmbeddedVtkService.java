@@ -9,10 +9,12 @@ public class EmbeddedVtkService {
 	 * ID -> VtkTrheshold mapping
 	 */
 	private Map<String, VtkThreshold> thresholdDb;
+	private Map<String, VtkPlaneCutter> planeCutterDb;
 	
 	public EmbeddedVtkService() {
 		ugridDb = new HashMap<>();
 		thresholdDb = new HashMap<>();
+		planeCutterDb = new HashMap<>();
 	}
 	
 	
@@ -21,5 +23,13 @@ public class EmbeddedVtkService {
 	}
 	public VtkThreshold getVtkThreshold(String id) {
 		return thresholdDb.get(id);
+	}
+	
+	public void putVtkPlaneCutter(String id, VtkPlaneCutter v) {
+		planeCutterDb.put(id, v);
+	}
+	
+	public VtkPlaneCutter getVtkPlaneCutter(String id) {
+		return planeCutterDb.get(id);
 	}
 }

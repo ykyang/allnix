@@ -78,19 +78,40 @@ public class VtkGeomodel {
 	 * @param name
 	 * @param dir Slice direction: "i", "j", "k"
 	 */
-	public void createIJKSlice(String name, String dir) {
+	public VtkThreshold createIJKSlice(String name, String dir) {
 		// TODO: Check existing name
 		
 		// TODO: Check i,j,k
-		VtkThreshold vtk = new VtkThreshold();
-		vtk.init();
-		vtk.setInputData(mainGrid.getUnstructuredGrid());
-		vtk.setThresholdBetween(1, 1);
+		VtkThreshold threshold = new VtkThreshold();
+		threshold.init();
+		threshold.setInputData(mainGrid.getUnstructuredGrid());
+		threshold.setThresholdBetween(1, 1);
 		// TODO: how do i know the naming convention
-		vtk.setCellInputArrayToProcess(dir + "_index");
-		vtk.update();
+		threshold.setCellInputArrayToProcess(dir + "_index");
+		threshold.update();
 		
-		this.vsvc.putVtkThreshold(name, vtk);
+		this.vsvc.putVtkThreshold(name, threshold);
+		
+		return threshold;
+	}
+	
+	public VtkPlaneCutter createSlice(String name) {
+		VtkPlaneCutter slice = new VtkPlaneCutter();
+		slice.init();
+		slice.setInputData(mainGrid.getUnstructuredGrid());
+		
+		vsvc.putVtkPlaneCutter(name, slice);
+		
+		return slice;
+	}
+	
+	public VtkPlaneCutter getSlice(String name) {
+		return vsvc.getVtkPlaneCutter(name);
+	}
+	
+	public VtkThreshold getIJKSlice(String sliceName) {
+		VtkThreshold threshold = vsvc.getVtkThreshold(sliceName);
+		return threshold;
 	}
 	
 	public void setIJKSliceActiveScalar(String sliceName, String name) {
@@ -98,6 +119,17 @@ public class VtkGeomodel {
 		VtkUnstructuredGrid vugrid = threshold.getOutput();
 		vugrid.setActiveScalars(name);
 	}
+	
+	public void showSlice(String name) {
+		VtkPlaneCutter slice = vsvc.getVtkPlaneCutter(name);
+		renderer.addActor(slice.getActor());
+	}
+	
+	public void hideSlice(String name) {
+		VtkPlaneCutter slice = vsvc.getVtkPlaneCutter(name);
+		renderer.removeActor(slice.getActor());
+	}
+	
 	public void showIJKSlice(String name) {
 		VtkThreshold threshold = vsvc.getVtkThreshold(name);
 		VtkUnstructuredGrid vugrid = threshold.getOutput();
@@ -149,6 +181,8 @@ public class VtkGeomodel {
 		
 		String sliceName = "x-slice 1";
 		me.createIJKSlice(sliceName, "i");
+		me.createSlice(sliceName);
+		
 		
 		me.setIJKSliceThresholdBetween(sliceName, 1, 5);
 		me.setIJKSliceThresholdColorRange(sliceName, range);
@@ -160,6 +194,9 @@ public class VtkGeomodel {
 		
 		renderer.render();
 
+		VtkPlaneCutter slice;
+		
+		
 		// > show whole grid
 		TimeUnit.MILLISECONDS.sleep(500);
 		me.setGridActiveScalar(name);
@@ -184,6 +221,19 @@ public class VtkGeomodel {
 		me.setIJKSliceActiveScalar(sliceName, name);
 		me.showIJKSlice(sliceName);
 		renderer.render();
+		
+		TimeUnit.MILLISECONDS.sleep(1500);
+		me.hideIJKSlice(sliceName);
+		slice = me.getSlice(sliceName);
+		slice.setOrigin(35, 7.5, 1);
+		slice.setNormal(0, 0, 1);
+		slice.setLookupTableRange(range);
+		slice.update();
+		slice.setActiveScalars(name);
+		me.showSlice(sliceName);
+	
+		renderer.render();
+		
 		
 	}
 	
