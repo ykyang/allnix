@@ -39,6 +39,8 @@ dependencies {
 	// https://mvnrepository.com/artifact/com.miglayout/miglayout
 	implementation 'com.miglayout:miglayout-swing:5.0'
 	implementation 'org.swinglabs:swingx:1.6.1'
+	// https://mvnrepository.com/artifact/org.jdesktop/appframework
+	//implementation 'org.jdesktop:appframework:1.0.3'
 	
 	
 	// Copied from https://stackoverflow.com/questions/11235614/how-to-detect-the-current-os-from-gradle
