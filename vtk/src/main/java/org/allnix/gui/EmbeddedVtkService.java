@@ -4,5 +4,5 @@ import java.util.Map;
 
 public class EmbeddedVtkService {
 	private Map<String, VtkUnstructuredGrid> vugridDb;
-	private Map<String, >
+//	private Map<String, >
 }
