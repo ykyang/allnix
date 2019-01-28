@@ -1,5 +1,7 @@
 package org.allnix.gui;
 
+import java.util.concurrent.TimeUnit;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -214,26 +216,31 @@ public class VtkUnstructuredGrid {
 	}
 	
 	
-	static public void main(String[] args) {
+	static public void main(String[] args) throws InterruptedException {
+		// > Load vtk native libraries
 		VtkLoader.loadAllNativeLibraries();
 		VtkFrame vframe = new VtkFrame();
 				
+		// > Value to show
 		String name = "Temperature";
 		
+		// > The grid
 		VtkUnstructuredGrid me = new VtkUnstructuredGrid();
 		me.init();
 		
 		Builder.buildVtkUnstructuredGrid7Cell(me);
 		
+		// > Value range to color from blue - red
 		double[] range = me.getRange(name);
-		
 		me.setActiveScalars("Temperature");
 		me.setLookupTableRange(range);
-	
+		
+		// > render
 		vframe.pack();
 		vframe.addActor(me.getActor());
-		vframe.render();
 		vframe.setVisible(true);
+		vframe.render();
+		TimeUnit.MILLISECONDS.sleep(500); // it is a windows thing
 		vframe.render();
 	}
 
