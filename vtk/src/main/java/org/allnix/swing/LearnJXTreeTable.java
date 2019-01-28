@@ -1,15 +1,24 @@
 package org.allnix.swing;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 
 import org.jdesktop.swingx.JXTreeTable;
+import org.jdesktop.swingx.decorator.ColorHighlighter;
+import org.jdesktop.swingx.decorator.HighlightPredicate;
+import org.jdesktop.swingx.decorator.Highlighter;
+import org.jdesktop.swingx.decorator.HighlighterFactory;
+import org.jdesktop.swingx.decorator.PatternPredicate;
+import org.jdesktop.swingx.decorator.ShadingColorHighlighter;
 import org.jdesktop.swingx.treetable.AbstractTreeTableModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -146,12 +155,24 @@ public class LearnJXTreeTable {
 
 	static public void main(String[] args) {
 		SwingUtilities.invokeLater(()->{
-			JFrame f = new JFrame();
-			f.setSize(300,300);
+			
+			
 			
 			MyTreeTableModel treeTableModel = new MyTreeTableModel();
 			JXTreeTable treeTable = new JXTreeTable( treeTableModel );
-			
+//			treeTable.getTableHeader().setVisible(true);
+//			treeTable.setShowGrid(true);
+			// > Copied from JXTable JavaDoc
+			Highlighter simpleStriping = HighlighterFactory.createSimpleStriping();
+			 PatternPredicate patternPredicate = new PatternPredicate("ˆM", 1);
+			 ColorHighlighter magenta = new ColorHighlighter(patternPredicate, null,
+			       Color.MAGENTA, null, Color.MAGENTA);
+			 Highlighter shading = new ShadingColorHighlighter(
+			       new HighlightPredicate.ColumnHighlightPredicate(1));
+			 
+			 treeTable.setHighlighters(simpleStriping,
+			        magenta,
+			        shading);
 			
 			treeTable.addTreeSelectionListener(new TreeSelectionListener() {
 
@@ -203,9 +224,17 @@ public class LearnJXTreeTable {
 //					
 //				}
 //			});
-			
-			f.getContentPane().add(treeTable);
-			f.pack();
+			JFrame f = new JFrame();
+			f.setSize(300,300);
+			JScrollPane p = new JScrollPane(treeTable);
+			p.setSize(300, 300);
+//			p.setVisible(true);
+//			p.add(treeTable);
+
+//			f.setContentPane(p);
+			f.add(p, BorderLayout.CENTER);
+			//f.getContentPane().add(treeTable);
+//			f.pack();
 			f.setVisible(true);
 		});
 	}
