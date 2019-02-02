@@ -46,6 +46,9 @@ dependencies {
 	// Copied from https://stackoverflow.com/questions/11235614/how-to-detect-the-current-os-from-gradle
 	if (org.gradle.internal.os.OperatingSystem.current().isLinux()) {
 		implementation files('/home/ykyang/local/vtk-8.1.2/lib/vtk.jar')
+		// may requre hamcrest
+		implementation files('/home/ykyang/local/DockingFrames-1.1.2-P20c/dock/bin/docking-frames-core.jar')
+		implementation files('/home/ykyang/local/DockingFrames-1.1.2-P20c/dock/bin/docking-frames-common.jar')
 	} else if (org.gradle.internal.os.OperatingSystem.current().isUnix()) {
     // consider UNIX.
 	} else if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
