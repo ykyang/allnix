@@ -13,13 +13,18 @@ import javax.swing.JTextField;
 
 import net.miginfocom.swing.MigLayout;
 
-import org.allnix.swing.HintTextField;
+import org.allnix.swing.ColorChooserButton;
+import org.allnix.swing.ColorChooserButton.ColorChangedListener;
+import org.slf4j.Logger;
 /**
  * ./gradlew -PmainClass=org.allnix.miglayout.example.ControlPanel runApp
  * @author ykyang
  *
  */
+import org.slf4j.LoggerFactory;
 public class ControlPanel {
+	static final private Logger logger = LoggerFactory.getLogger(ControlPanel.class);
+	
 	static public void main(String[] args) {
 		JFrame frame = new JFrame();
 		JPanel rootPanel = new JPanel();
@@ -96,6 +101,12 @@ public class ControlPanel {
 		panel.add(label);
 		panel.add(text, "growx, pushx");
 		
+		label = new JLabel("Proppant:");
+		text = new JTextField("1:end");
+		panel.add(label);
+		panel.add(text, "growx, pushx");
+		
+		
 		
 		
 		label = new JLabel("Opacity:");
@@ -108,6 +119,18 @@ public class ControlPanel {
 		panel.add(label);
 		panel.add(text, "growx, pushx");
 		
+		
+		label = new JLabel("Color:");
+		ColorChooserButton colorChooser = new ColorChooserButton(Color.WHITE);
+		panel.add(label);
+		panel.add(colorChooser);
+		colorChooser.addColorChangedListener(new ColorChangedListener() {
+		    @Override
+		    public void colorChanged(Color newColor) {
+		    	logger.info("Color: {}", newColor.toString());
+		            // do something with newColor ...
+		    }
+		});
 		
 		
 		
