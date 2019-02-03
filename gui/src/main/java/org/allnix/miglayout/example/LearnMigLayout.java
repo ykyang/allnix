@@ -1,4 +1,4 @@
-package org.allnix.swing;
+package org.allnix.miglayout.example;
 
 import java.awt.BorderLayout;
 
