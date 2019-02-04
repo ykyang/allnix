@@ -10,6 +10,11 @@ import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * 
+ * @author Yi-Kun Yang ykyang@gmail.com
+ *
+ */
 @TestInstance(Lifecycle.PER_CLASS)
 public class ExampleTest {
 	static final private Logger logger = LoggerFactory.getLogger(ExampleTest.class);

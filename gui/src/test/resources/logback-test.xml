@@ -46,6 +46,7 @@
         </logger>
 		
 		<logger name="org.allnix" level="debug" additivity="false">
+			<appender-ref ref="STDOUT" />
             <appender-ref ref="FILE"/>
         </logger>
 		

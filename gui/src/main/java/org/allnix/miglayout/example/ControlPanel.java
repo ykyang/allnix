@@ -59,6 +59,13 @@ public class ControlPanel {
 		panel.add(text, "growx, pushx");
 		
 		
+		panel = new JPanel();
+		rootPanel.add(panel, "growx, pushx");
+		layout = new MigLayout("wrap 3");
+		panel.setLayout(layout);
+		panel.setBorder(BorderFactory.createTitledBorder("3D View Filter"));
+		
+		
 //		label = new JLabel("Lateral:");
 		checkBox = new JCheckBox("Well Path:");
 		button = new JButton("Draw");
@@ -89,7 +96,7 @@ public class ControlPanel {
 		rootPanel.add(panel, "growx, pushx");
 		layout = new MigLayout("wrap 2");
 		panel.setLayout(layout);
-		panel.setBorder(BorderFactory.createTitledBorder("Settings"));
+		panel.setBorder(BorderFactory.createTitledBorder("3D View Settings"));
 		
 		label = new JLabel("Well Path:");
 		text = new JTextField("1:end");
@@ -104,7 +111,7 @@ public class ControlPanel {
 		label = new JLabel("Proppant:");
 		text = new JTextField("1:end");
 		panel.add(label);
-		panel.add(text, "growx, pushx");
+		panel.add(text, "growx, pushx, wrap 20");
 		
 		
 		
