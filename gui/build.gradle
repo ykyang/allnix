@@ -55,6 +55,8 @@ dependencies {
     // consider UNIX.
 	} else if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
 		implementation files('C:/Program Files/VTK-8.1.2/lib/vtk.jar')
+		implementation files('C:/Users/Yi-Kun.Yang/local/DockingFrames-1.1.2-P20c/dock/bin/docking-frames-core.jar')
+		implementation files('C:/Users/Yi-Kun.Yang/local/DockingFrames-1.1.2-P20c/dock/bin/docking-frames-common.jar')
     // consider Windows.
 	} else if (org.gradle.internal.os.OperatingSystem.current().isMacOsX()) {
     // consider OSX.

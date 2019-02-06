@@ -3,6 +3,7 @@ package org.allnix.gui;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 import java.util.Arrays;
+import java.util.Set;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -43,10 +44,25 @@ public class RangeTest {
 	
 	@Test
 	@Tag("second")
+	public void testExpandToSet1() {
+		int end = 15;
+		String text = "1  ,  2, 13   17";
+		Integer[] expected = new Integer[] {1,2,13,17};
+		
+		Range range = new Range(end);
+		
+		Set<Integer> items = range.expandToSet(text);
+		logger.info(Arrays.toString(items.toArray()));
+		assertArrayEquals(expected, items.toArray(new Integer[0]));
+	}
+	
+	@Test
+	@Tag("second")
 	public void testExpand2() {
 		int end = 15;
 		String text = "1 : 3 , 8:10 end";
 		int[] expected = new int[] {1,2,3,8,9,10,15};
+		
 		Range range = new Range(end);
 		
 		int[] items = range.expand(text);
@@ -56,15 +72,44 @@ public class RangeTest {
 	
 	@Test
 	@Tag("second")
+	public void testExpandToSet2() {
+		int end = 15;
+		String text = "1 : 3 , 8:10 end";
+		Integer[] expected = new Integer[] {1,2,3,8,9,10,15};
+
+		Range range = new Range(end);
+		
+		Set<Integer> items = range.expandToSet(text);
+		logger.info(Arrays.toString(items.toArray()));
+		assertArrayEquals(expected, items.toArray(new Integer[0]));
+	}
+	
+	@Test
+	@Tag("second")
 	public void testExpand3() {
 		int end = 15;
 		String text = "1 : 3 , 8:10 :end";
 		int[] expected = new int[] {1,2,3,8,9,10,11,12,13,14,15};
+		
 		Range range = new Range(end);
 		
 		int[] items = range.expand(text);
 		logger.info(Arrays.toString(items));
 		assertArrayEquals(expected, items);
+	}
+	
+	@Test
+	@Tag("second")
+	public void testExpandToSet3() {
+		int end = 15;
+		String text = "1 : 3 , 8:10 :end";
+		Integer[] expected = new Integer[] {1,2,3,8,9,10,11,12,13,14,15};
+
+		Range range = new Range(end);
+		
+		Set<Integer> items = range.expandToSet(text);
+		logger.info(Arrays.toString(items.toArray()));
+		assertArrayEquals(expected, items.toArray(new Integer[0]));
 	}
 	
 	@Test

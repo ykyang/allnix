@@ -10,6 +10,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -25,7 +27,19 @@ import org.slf4j.LoggerFactory;
 public class ControlPanel {
 	static final private Logger logger = LoggerFactory.getLogger(ControlPanel.class);
 	
-	static public void main(String[] args) {
+	/**
+	 * ./gradlew -PmainClass=org.allnix.miglayout.example.ControlPanel runApp
+	 * @param args
+	 * @throws UnsupportedLookAndFeelException 
+	 * @throws IllegalAccessException 
+	 * @throws InstantiationException 
+	 * @throws ClassNotFoundException 
+	 */
+	static public void main(String[] args) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
+	    // Set System L&F
+        UIManager.setLookAndFeel(
+            UIManager.getSystemLookAndFeelClassName());
+		
 		JFrame frame = new JFrame();
 		JPanel rootPanel = new JPanel();
 		rootPanel.setBorder(BorderFactory.createLineBorder(Color.ORANGE));
