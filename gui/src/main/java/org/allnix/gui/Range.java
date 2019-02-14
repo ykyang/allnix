@@ -88,7 +88,14 @@ public class Range {
 			
 			if ( size == 1) {
 				// > one number
-				Integer value = Integer.parseInt(group.get(0));
+				String token = group.get(0);
+				Integer value = null;
+				if ("end".equals(token)) {
+					value = this.end;
+				} else {
+					value = Integer.parseInt(token);
+				}
+				
 				indices.add(value);
 			} else if (size == 3) {
 				// > a:b
@@ -138,6 +145,10 @@ public class Range {
 			
 			if (NumberUtils.isCreatable(token)) {
 				// > create a new group 
+				group = new ArrayList<>();
+				group.add(token);
+				groupList.add(group);
+			} else if ("end".equals(token)) {
 				group = new ArrayList<>();
 				group.add(token);
 				groupList.add(group);

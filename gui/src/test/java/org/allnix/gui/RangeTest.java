@@ -141,6 +141,20 @@ public class RangeTest {
 		assertArrayEquals(expected, items.toArray(new Integer[0]));
 	}
 	
+	@Test
+	@Tag("second")
+	public void testExpandToSpacedSet5() {
+		int end = 15;
+		String text = "end";
+		Integer[] expected = new Integer[] {15};
+		
+		Range range = new Range(end);
+		
+		Set<Integer> items = range.expandToSpacedSet(text);
+		logger.info(Arrays.toString(items.toArray()));
+		assertArrayEquals(expected, items.toArray(new Integer[0]));
+	}
+	
 	
 	@Test
 	@Tag("second")
