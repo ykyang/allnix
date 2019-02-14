@@ -97,6 +97,35 @@ public class RangeTest {
 		logger.info(Arrays.toString(items));
 		assertArrayEquals(expected, items);
 	}
+
+	
+	@Test
+	@Tag("second")
+	public void testExpandToSpacedSet3() {
+		int end = 15;
+		String text = "1:3 5:2:10";
+		Integer[] expected = new Integer[] {1, 2, 3, 5, 7, 9};
+		
+		Range range = new Range(end);
+		
+		Set<Integer> items = range.expandToSpacedSet(text);
+		logger.info(Arrays.toString(items.toArray()));
+		assertArrayEquals(expected, items.toArray(new Integer[0]));
+	}
+	
+	@Test
+	@Tag("second")
+	public void testExpandToSpacedSet2() {
+		int end = 15;
+		String text = "1:2:8";
+		Integer[] expected = new Integer[] {1, 3, 5, 7};
+		
+		Range range = new Range(end);
+		
+		Set<Integer> items = range.expandToSpacedSet(text);
+		logger.info(Arrays.toString(items.toArray()));
+		assertArrayEquals(expected, items.toArray(new Integer[0]));
+	}
 	
 	@Test
 	@Tag("second")
@@ -112,6 +141,12 @@ public class RangeTest {
 		assertArrayEquals(expected, items.toArray(new Integer[0]));
 	}
 	
+	
+	
+	/**
+	 * Behavior changes
+	 */
+	@Deprecated
 	@Test
 	@Tag("second")
 	public void testExpand4() {
@@ -137,5 +172,7 @@ public class RangeTest {
 		logger.info(Arrays.toString(items));
 		assertArrayEquals(expected, items);
 	}
+	
+	
 	
 }

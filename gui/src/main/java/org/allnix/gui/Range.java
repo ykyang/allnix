@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,6 +66,79 @@ public class Range {
 		return items;
 	}
 	
+	
+	/**
+	 * Expand text to Matlab regularly-spaced vector
+	 * 
+	 * 1:2:6 -> 1, 3, 5
+	 * 1:4 -> 1, 2, 3, 4
+	 *  
+	 * @param text
+	 * @return
+	 */
+	public Set<Integer> expandToSpacedSet(String text) {
+		text = text.replace(":", " : ");
+		text = text.replace(";", " : "); // avoid typo
+		List<List<String>> groupList = groupTokens(text);
+		
+		Set<Integer> indices = new TreeSet<>();
+		
+		for (List<String> group : groupList) {
+			int size = group.size();
+			
+			if ( size == 1) {
+				// > one number
+				Integer value = Integer.parseInt(group.get(0));
+				indices.add(value);
+			} else if (size == 3) {
+				// > a:b
+				Integer start = Integer.parseInt(group.get(0));
+				Integer close = Integer.parseInt(group.get(2));
+				for (int i = start; i <= close; i++) {
+					indices.add(i);
+				}
+			} else if (size == 5) {
+				// > a:n:b
+				Integer start = Integer.parseInt(group.get(0));
+				Integer increase = Integer.parseInt(group.get(2));
+				Integer close = Integer.parseInt(group.get(4));
+				for (int i = start; i <= close; i += increase) {
+					indices.add(i);
+				}
+			}
+		}
+		
+		return indices;
+	}
+	
+	public List<List<String>> groupTokens(String text) {
+		String[] tokens = StringUtils.split(text, ", ");
+		
+		List<List<String>> groupList = new ArrayList<>();
+		
+		for (int ind = 0; ind < tokens.length; ind++) {
+			String token = tokens[ind];
+			
+			List<String> group = null; 
+			
+			if (NumberUtils.isCreatable(token)) {
+				// > create a new group 
+				group = new ArrayList<>();
+				group.add(token);
+				groupList.add(group);
+			} else { // must be ":"
+				// > add the next two tokens to last group
+				// > the next two tokens must be ":" and a number
+				group = groupList.get(groupList.size()-1);
+				group.add(token);
+				++ind;
+				token = tokens[ind];
+				group.add(token);
+			}
+		}
+		
+		return groupList;
+	}
 	
 	/**
 	 * 1, 3, 7: end -> 1 3 7 8 9 10
