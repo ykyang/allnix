@@ -92,8 +92,16 @@ public class Range {
 				indices.add(value);
 			} else if (size == 3) {
 				// > a:b
-				Integer start = Integer.parseInt(group.get(0));
-				Integer close = Integer.parseInt(group.get(2));
+				String token = group.get(0);
+				Integer start = Integer.parseInt(token);
+				
+				Integer close = null;
+				token = group.get(2);
+				if ("end".equals(token)) {
+					close = this.end;
+				} else {
+					close = Integer.parseInt(token);
+				}
 				for (int i = start; i <= close; i++) {
 					indices.add(i);
 				}
@@ -101,7 +109,14 @@ public class Range {
 				// > a:n:b
 				Integer start = Integer.parseInt(group.get(0));
 				Integer increase = Integer.parseInt(group.get(2));
-				Integer close = Integer.parseInt(group.get(4));
+				
+				Integer close = null;
+				String token = group.get(4);
+				if ("end".equals(token)) {
+					close = this.end;
+				} else {
+					close = Integer.parseInt(token);
+				}
 				for (int i = start; i <= close; i += increase) {
 					indices.add(i);
 				}

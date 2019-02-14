@@ -129,6 +129,21 @@ public class RangeTest {
 	
 	@Test
 	@Tag("second")
+	public void testExpandToSpacedSet4() {
+		int end = 15;
+		String text = "1:2:end";
+		Integer[] expected = new Integer[] {1, 3, 5, 7, 9, 11, 13, 15};
+		
+		Range range = new Range(end);
+		
+		Set<Integer> items = range.expandToSpacedSet(text);
+		logger.info(Arrays.toString(items.toArray()));
+		assertArrayEquals(expected, items.toArray(new Integer[0]));
+	}
+	
+	
+	@Test
+	@Tag("second")
 	public void testExpandToSet3() {
 		int end = 15;
 		String text = "1 : 3 , 8:10 :end";
