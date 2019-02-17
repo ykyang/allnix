@@ -22,7 +22,10 @@ public class VtkFrame {
 	public VtkFrame() {
 		winPanel = new vtkRenderWindowPanel();  
 //		winPanel.GetRenderer().
+		
 		winPanel.setInteractorStyle(new vtkInteractorStyleTrackballCamera());
+//		winPanel.setInteractorStyle(new vtkInteractorStyleJoystickCamera());
+		
 		//winPanel.GetRenderer().AddActor(actor);
 		//winPanel.GetRenderer().SetBackground(color);
 		winPanel.setPreferredSize(new Dimension(600,600));

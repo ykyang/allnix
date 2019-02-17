@@ -18,6 +18,12 @@ import vtk.vtkPolyData;
 
 public class CutterPlane {
 	static final private Logger logger = LoggerFactory.getLogger(CutterPlane.class);
+	/**
+	 * ./gradlew -PmainClass=org.allnix.gui.example.CutterPlane runApp
+	 * 
+	 * @param args
+	 * @throws InterruptedException
+	 */
 	static public void main(String[] args) throws InterruptedException {
 		VtkLoader.loadAllNativeLibraries();
 		VtkFrame vframe = new VtkFrame();

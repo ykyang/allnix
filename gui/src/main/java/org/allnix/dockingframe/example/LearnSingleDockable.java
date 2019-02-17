@@ -2,6 +2,7 @@ package org.allnix.dockingframe.example;
 
 import java.awt.Color;
 
+import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -27,19 +28,31 @@ public class LearnSingleDockable {
 		Color color;
 		
 		// Yellow
-		id = "yellow";
-		title = "Yellow";
+		id = "orange";
+		title = "Orange";
 		color = Color.ORANGE;
 		panel = new JPanel();
 		panel.setOpaque(true);
-		panel.setBackground(color);
+		panel.setBorder(BorderFactory.createLineBorder(color));
+//		panel.setBackground(color);
 		
 		dock = new DefaultSingleCDockable(id, title);
 		cctrl.addDockable(dock);
 		dock.add(panel);
-		dock.setLocation(CLocation.base().normalWest(1));
+		dock.setLocation(CLocation.base().normalWest(0.3));
 		dock.setVisible(true);
 		
+		// Pink
+		id = "pink";
+		title = "Pink";
+		color = Color.PINK;
+		panel = new JPanel();
+		panel.setBorder(BorderFactory.createLineBorder(color));
+		dock = new DefaultSingleCDockable(id, title);
+		cctrl.addDockable(dock);
+		dock.add(panel);
+		dock.setLocation(CLocation.base().normalEast(0.7));
+		dock.setVisible(true);
 		
 		frame.setVisible(true);
 	}
