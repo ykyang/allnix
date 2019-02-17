@@ -33,7 +33,7 @@ public class DockFrame {
 		
 		DefaultSingleCDockable dock = null;
 		
-		dock = new DefaultSingleCDockable("vtk", "3D");
+		dock = new DefaultSingleCDockable("vtk", "3D View");
 		cctrl.addDockable(dock);
 		dock.add(renPanel);
 		dock.setLocation(CLocation.base().normalWest(1.0));
