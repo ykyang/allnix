@@ -9,6 +9,11 @@ import org.slf4j.LoggerFactory;
 
 import vtk.*;
 
+/**
+ * ./gradlew -PmainClass=org.allnix.gui.example.CutGeomodel runApp
+ * 
+ * @param args
+ */
 public class CutGeomodel {
 	static private Logger logger = LoggerFactory.getLogger(CutGeomodel.class);
 	static public void main(String[] args) {
