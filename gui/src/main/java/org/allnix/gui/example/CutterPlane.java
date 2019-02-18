@@ -3,9 +3,9 @@ package org.allnix.gui.example;
 import java.util.concurrent.TimeUnit;
 
 import org.allnix.gui.Builder;
-import org.allnix.gui.VtkFrame;
-import org.allnix.gui.VtkLoader;
-import org.allnix.gui.VtkUnstructuredGrid;
+import org.allnix.vtk.VtkFrame;
+import org.allnix.vtk.VtkLoader;
+import org.allnix.vtk.VtkUnstructuredGrid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

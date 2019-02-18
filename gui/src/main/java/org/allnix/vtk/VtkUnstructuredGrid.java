@@ -1,7 +1,8 @@
-package org.allnix.gui;
+package org.allnix.vtk;
 
 import java.util.concurrent.TimeUnit;
 
+import org.allnix.gui.Builder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

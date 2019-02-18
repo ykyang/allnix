@@ -1,6 +1,8 @@
-package org.allnix.gui;
+package org.allnix.vtk;
 
 import java.util.concurrent.TimeUnit;
+
+import org.allnix.gui.Builder;
 
 import vtk.vtkActor;
 import vtk.vtkCutter;

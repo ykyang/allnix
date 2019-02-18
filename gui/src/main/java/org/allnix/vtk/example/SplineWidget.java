@@ -1,19 +1,19 @@
-package org.allnix.vtk;
+package org.allnix.vtk.example;
 
 import vtk.vtkNativeLibrary;
 import vtk.vtkRenderWindowInteractor;
-import vtk.vtkPlaneWidget;
+import vtk.vtkSplineWidget2;
 import vtk.vtkNamedColors;
 import vtk.vtkRenderWindow;
 import vtk.vtkRenderer;
 
 
-public class PlaneWidget 
+public class SplineWidget  
 {
+
   // -----------------------------------------------------------------
   // Load VTK library and print which library was not properly loaded
-  static 
-  {
+  static {
     if (!vtkNativeLibrary.LoadAllNativeLibraries()) 
     {
       for (vtkNativeLibrary lib : vtkNativeLibrary.values()) 
@@ -28,6 +28,7 @@ public class PlaneWidget
   }
   // -----------------------------------------------------------------
 
+
   public static void main(String s[]) 
   {
 
@@ -35,9 +36,8 @@ public class PlaneWidget
 
     //For Renderer Background Color
     double BgColor[] = new double[4];
-
     //Change Color Name to Use your own Color for Renderer Background
-    Color.GetColor("SlateGray",BgColor);
+    Color.GetColor("DarkSalmon",BgColor);
 
     // An interactor
     vtkRenderWindowInteractor iren = new vtkRenderWindowInteractor();
@@ -51,16 +51,14 @@ public class PlaneWidget
     ren.ResetCamera();
     ren.SetBackground(BgColor);
 
-    // Angle Widget  
-    vtkPlaneWidget PlaneWidget = new vtkPlaneWidget();
-    PlaneWidget.SetInteractor(iren);
+    vtkSplineWidget2 splineWidget = new vtkSplineWidget2();
+    splineWidget.SetInteractor(iren);
 
-    PlaneWidget.On();
-    renWin.SetSize(300, 300);
-    renWin.Render();
 
-    iren.Start();
     iren.Initialize();
+    splineWidget.On();
+    iren.Start();
 
   }
+
 }

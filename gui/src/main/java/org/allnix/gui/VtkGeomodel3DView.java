@@ -2,6 +2,8 @@ package org.allnix.gui;
 
 import javax.swing.SwingUtilities;
 
+import org.allnix.vtk.VtkFrame;
+import org.allnix.vtk.VtkLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

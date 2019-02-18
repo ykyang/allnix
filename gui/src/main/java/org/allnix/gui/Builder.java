@@ -1,5 +1,7 @@
 package org.allnix.gui;
 
+import org.allnix.vtk.VtkLoader;
+import org.allnix.vtk.VtkUnstructuredGrid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

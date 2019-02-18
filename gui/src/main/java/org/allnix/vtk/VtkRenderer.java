@@ -1,4 +1,4 @@
-package org.allnix.gui;
+package org.allnix.vtk;
 
 import java.lang.reflect.InvocationTargetException;
 

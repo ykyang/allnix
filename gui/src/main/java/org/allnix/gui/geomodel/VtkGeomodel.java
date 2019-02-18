@@ -1,7 +1,16 @@
-package org.allnix.gui;
+package org.allnix.gui.geomodel;
 
 import java.util.concurrent.TimeUnit;
 
+import org.allnix.gui.Builder;
+import org.allnix.gui.EmbeddedVtkService;
+import org.allnix.vtk.VtkFrame;
+import org.allnix.vtk.VtkLoader;
+import org.allnix.vtk.VtkPlaneCutter;
+import org.allnix.vtk.VtkRenderWindowPanelRenderer;
+import org.allnix.vtk.VtkRenderer;
+import org.allnix.vtk.VtkThreshold;
+import org.allnix.vtk.VtkUnstructuredGrid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -159,6 +168,12 @@ public class VtkGeomodel {
 		vugrid.setActiveScalars(vugrid.getActiveScalarName());
 	}
 	
+	/**
+	 * ./gradlew -PmainClass=org.allnix.gui.geomodel.VtkGeomodel
+	 * 
+	 * @param args
+	 * @throws InterruptedException
+	 */
 	static public void main(String[] args) throws InterruptedException {
 		VtkLoader.loadAllNativeLibraries();
 		VtkFrame vframe = new VtkFrame();

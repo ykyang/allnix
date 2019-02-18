@@ -2,6 +2,8 @@ package org.allnix.gui;
 
 import javax.swing.JFrame;
 
+import org.allnix.vtk.VtkLoader;
+
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.DefaultSingleCDockable;

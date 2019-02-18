@@ -1,4 +1,4 @@
-package org.allnix.vtk;
+package org.allnix.vtk.example;
 
 import vtk.vtkActor;
 import vtk.vtkNativeLibrary;

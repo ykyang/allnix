@@ -3,6 +3,10 @@ package org.allnix.gui;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.allnix.vtk.VtkPlaneCutter;
+import org.allnix.vtk.VtkThreshold;
+import org.allnix.vtk.VtkUnstructuredGrid;
+
 public class EmbeddedVtkService {
 	private Map<String, VtkUnstructuredGrid> ugridDb;
 	/**
