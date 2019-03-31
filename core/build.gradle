@@ -11,6 +11,9 @@
 apply plugin: 'java'
 apply plugin: "application"
 
+targetCompatibility = '1.8'
+sourceCompatibility = '1.8'
+
 mainClassName = "org.allnix.core.MainDisplay"
 
 def os = System.properties['os.name'].toLowerCase();
@@ -27,7 +30,7 @@ jar {
 applicationDefaultJvmArgs = ["-splash:splash.gif"]
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '3.5'
+    gradleVersion = '4.7'
 }
 
 // In this section you declare where to find the dependencies of your project

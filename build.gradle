@@ -5,37 +5,37 @@
 
 subprojects {
   apply plugin:'java'
-//  group: 'org.allnix'
+  //group: 'org.allnix'
 //  version: '1.0'
 }
 
-project(':org.allnix.core') {
+project(':core') {
   dependencies {
     testCompile project(':test')
   }
 }
 
-project(':sql') {
-  dependencies {
-    compile project(':org.allnix.core')
-    testCompile project(':test')
-  }
-}
+//project(':sql') {
+//  dependencies {
+//    compile project(':org.allnix.core')
+//    testCompile project(':test')
+//  }
+//}
 
-project(':restjson') {
-  dependencies {
-    compile project(':org.allnix.core')
-  }
-}
+//project(':restjson') {
+//  dependencies {
+//    compile project(':org.allnix.core')
+//  }
+//}
 
 project(':test') {
   dependencies {
-    compile project(':org.allnix.core')
+    compile project(':core')
   }
 }
 
-project(':boot') {
-  dependencies {
-    compile project(':org.allnix.core')
-  }
-}
+//project(':boot') {
+//  dependencies {
+//    compile project(':org.allnix.core')
+//  }
+//}
