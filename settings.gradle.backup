@@ -17,5 +17,5 @@ include 'services:webservice'
 */
 
 rootProject.name = 'org.allnix'
-include 'core', 'sql', 'restjson', 'test', 'boot'
+//include 'core'//, 'sql', 'restjson', 'test', 'boot'
 //project(":core").name = "org.allnix.core"

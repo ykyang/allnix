@@ -9,11 +9,11 @@ subprojects {
 //  version: '1.0'
 }
 
-project(':core') {
-  dependencies {
-    testCompile project(':test')
-  }
-}
+//project(':core') {
+//  dependencies {
+//    //testCompile project(':test')
+//  }
+//}
 
 //project(':sql') {
 //  dependencies {
@@ -28,11 +28,11 @@ project(':core') {
 //  }
 //}
 
-project(':test') {
-  dependencies {
-    compile project(':core')
-  }
-}
+//project(':test') {
+//  dependencies {
+//    compile project(':core')
+//  }
+//}
 
 //project(':boot') {
 //  dependencies {
