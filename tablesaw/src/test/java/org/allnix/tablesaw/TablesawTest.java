@@ -86,6 +86,11 @@ public class TablesawTest {
         	logger.info("ColumnType: {}", type.name());
             assertEquals(ColumnType.DOUBLE, type);
         }
+        
+        // > another way to get column type
+        for(Column<?> col: df.columns()) {
+        	assertEquals(ColumnType.DOUBLE, col.type());
+        }
     }
     @Test
     public void test2Header() throws IOException {
