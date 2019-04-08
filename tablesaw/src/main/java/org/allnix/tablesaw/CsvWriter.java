@@ -20,7 +20,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 
-import com.opencsv.CSVWriter;
+//import com.opencsv.CSVWriter;
 
 import tech.tablesaw.api.Table;
 
@@ -32,19 +32,19 @@ import tech.tablesaw.api.Table;
 public class CsvWriter {
     static public void write(Table table, Writer writer, boolean header) throws IOException {
         if (header) {
-            tech.tablesaw.io.csv.CsvWriter.write(table, writer);
+//            tech.tablesaw.io.csv.CsvWriter.write(table, writer);
             return;
         }
         
-        try (CSVWriter csvWriter = new CSVWriter(writer)) {
-            for (int r = 0; r < table.rowCount(); r++) {
-                String[] entries = new String[table.columnCount()];
-                for (int c = 0; c < table.columnCount(); c++) {
-                    entries[c] = table.get(r, c);
-                }
-                csvWriter.writeNext(entries, false);
-            }
-        }
+//        try (CSVWriter csvWriter = new CSVWriter(writer)) {
+//            for (int r = 0; r < table.rowCount(); r++) {
+//                String[] entries = new String[table.columnCount()];
+//                for (int c = 0; c < table.columnCount(); c++) {
+//                    entries[c] = table.get(r, c);
+//                }
+//                csvWriter.writeNext(entries, false);
+//            }
+//        }
     }
     
     static public void write(Table table, File file, boolean header) throws IOException {

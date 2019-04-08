@@ -25,6 +25,9 @@ plugins {
 //    id 'org.junit.platform.gradle.plugin'
 }
 
+targetCompatibility = '1.8'
+sourceCompatibility = '1.8'
+
 apply plugin: 'org.junit.platform.gradle.plugin'
 
 dependencies {
@@ -35,7 +38,8 @@ dependencies {
     // This dependency is used internally, and not exposed to consumers on their own compile classpath.
     implementation 'com.google.guava:guava:23.0'
     // https://mvnrepository.com/artifact/tech.tablesaw/tablesaw-core
-    compile group: 'tech.tablesaw', name: 'tablesaw-core', version: '0.12.0'
+    //compile group: 'tech.tablesaw', name: 'tablesaw-core', version: '0.12.0'
+    compile group: 'tech.tablesaw', name: 'tablesaw-core', version: '0.32.7'
 
 
     // Use JUnit test framework

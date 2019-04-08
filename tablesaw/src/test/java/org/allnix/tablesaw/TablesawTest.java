@@ -23,11 +23,12 @@ import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+//import it.unimi.dsi.fastutil.doubles.DoubleArrayList;
 import tech.tablesaw.api.ColumnType;
 import tech.tablesaw.api.DoubleColumn;
-import tech.tablesaw.api.QueryHelper;
+//import tech.tablesaw.api.QueryHelper;
 import tech.tablesaw.api.Table;
-import tech.tablesaw.columns.ColumnReference;
+import tech.tablesaw.columns.Column;
 import tech.tablesaw.io.csv.CsvReadOptions;
 import tech.tablesaw.io.csv.CsvReader;
 
@@ -47,8 +48,8 @@ public class TablesawTest {
         double[] a = {1., 2., 3.};
         double[] b = {10., 20., 30.};
         
-        df.addColumn(new DoubleColumn("a", a));
-        df.addColumn(new DoubleColumn("b", b));
+        df.addColumns(DoubleColumn.create("a", a));
+        df.addColumns(DoubleColumn.create("b", b));
         
         df.write().csv("CSV.csv");
         CsvWriter.write(df, "noheader.csv", false);
@@ -60,11 +61,13 @@ public class TablesawTest {
         double[] a = {1., 2., 3.};
         double[] b = {10., 20., 30.};
         
-        df.addColumn(new DoubleColumn("a", a));
-        df.addColumn(new DoubleColumn("b", b));
+        df.addColumns(DoubleColumn.create("a", a));
+        df.addColumns(DoubleColumn.create("b", b));
         
-        ColumnReference aref = QueryHelper.column("a");
-        Table filtered = df.selectWhere(aref.isEqualTo(2.));
+        DoubleColumn column = (DoubleColumn) df.column("a");
+        Table filtered = df.where(column.isEqualTo(2));
+//        ColumnReference aref = QueryHelper.column("a");
+//        Table filtered = df.selectWhere(aref.isEqualTo(2.));
         int rowCount = filtered.rowCount();
         logger.info("row count: {}", rowCount);
         
@@ -89,8 +92,8 @@ public class TablesawTest {
         df.write().csv("headers2.csv");
         for (ColumnType type : df.columnTypes()) {
             //> See why this won't work
-            assertEquals(ColumnType.CATEGORY, type);
-//            logger.info("Headers 2 ColumnType: {}", type.name());
+//            assertEquals(ColumnType.CATEGORY, type);
+            logger.info("Headers 2 ColumnType: {}", type.name());
         }
     }
     
@@ -123,8 +126,8 @@ public class TablesawTest {
         System.out.println(df.structure().print());
         
         
-        String type = CsvReader.printColumnTypes("tornadoes_1950-2014.csv", true, ',');
-        System.out.println(type);
+//        String type = CsvReader.printColumnTypes("tornadoes_1950-2014.csv", true, ',');
+//        System.out.println(type);
         
         
         
