@@ -80,10 +80,11 @@ public class TablesawTest {
     
     @Test
     public void testOneHeader() throws IOException {
+    	logger.info("testOneHeader");
         Table df = Table.read().csv("src/test/resources/headers.csv");
         for (ColumnType type : df.columnTypes()) {
-            assertEquals(ColumnType.FLOAT, type);
-            logger.info("ColumnType: {}", type.name());
+        	logger.info("ColumnType: {}", type.name());
+            assertEquals(ColumnType.DOUBLE, type);
         }
     }
     @Test
