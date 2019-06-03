@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
  */
 @TestInstance(Lifecycle.PER_CLASS)
 public class RangeTest {
-	static private Logger logger = LoggerFactory.getLogger(RangeTest.class);
+	static final private Logger logger = LoggerFactory.getLogger(RangeTest.class);
 	@BeforeAll
 	public void beforeClass() {
 		
