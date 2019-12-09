@@ -4,13 +4,22 @@
  * This generated file contains a sample Java Library project to get you started.
  * For more details take a look at the Java Libraries chapter in the Gradle
  * user guide available at https://docs.gradle.org/5.0/userguide/java_library_plugin.html
+ *
+ * ./gradlew distZip
+ * ./gradlew distTar
+ *
+ * ./gradlew unzip
  */
 
 plugins {
     // Apply the java-library plugin to add support for Java Library
-    id 'java-library'
     id 'application'
+    id 'java'
+    id 'java-library'
+    id 'java-library-distribution'
 }
+
+version = '0.0.1'
 
 targetCompatibility = '1.8'
 sourceCompatibility = '1.8'
@@ -79,7 +88,14 @@ task runApp(type:JavaExec) {
     main = project.hasProperty("mainClass") ? project.getProperty("mainClass") : "org.allnix.vtk.JFrameRenderer"
 }
 
-
+task unzip(type: Copy) {
+	// buildDir = build/
+    def zipFile = file('build/distributions/' + rootProject.name + '-' + version + '.zip')
+    def outputDir = file("${buildDir}/distributions/")
+ 
+    from zipTree(zipFile)
+    into outputDir
+}
 
 /*
   https://docs.gradle.org/current/userguide/java_testing.html

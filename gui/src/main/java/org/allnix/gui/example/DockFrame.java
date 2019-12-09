@@ -1,4 +1,4 @@
-package org.allnix.gui;
+package org.allnix.gui.example;
 
 import javax.swing.JFrame;
 

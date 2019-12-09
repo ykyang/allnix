@@ -15,15 +15,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Geomodel
+ * Geomodel props
+ * 
+ * where Prop: Theatrical Property.
+ * 
+ * Contribute geomodel related props to a renderer.
  * 
  * Include the base grid and the capabilities to slice
  * 
  * @author Yi-Kun Yang ykyang@gmail.com
  *
  */
-public class VtkGeomodel {
-	static final private Logger logger = LoggerFactory.getLogger(VtkGeomodel.class);
+public class VtkGeomodelProp {
+	static final private Logger logger = LoggerFactory.getLogger(VtkGeomodelProp.class);
 	
 	// > should I put this in VtkService?
 	private VtkUnstructuredGrid mainGrid;
@@ -184,7 +188,7 @@ public class VtkGeomodel {
 		
 		String name = "Temperature";
 		
-		VtkGeomodel me = new VtkGeomodel();
+		VtkGeomodelProp me = new VtkGeomodelProp();
 		
 		me.setVtkRenderer(renderer);
 		me.init();
