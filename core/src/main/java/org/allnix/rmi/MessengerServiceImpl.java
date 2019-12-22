@@ -1,6 +1,7 @@
 package org.allnix.rmi;
 
 import java.rmi.AlreadyBoundException;
+import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -24,7 +25,9 @@ public class MessengerServiceImpl implements MessengerService {
 
 	static public void main(String[] args) throws RemoteException, AlreadyBoundException {
 		MessengerService server = new MessengerServiceImpl();
-		MessengerService stub = (MessengerService) UnicastRemoteObject.exportObject((MessengerService) server, 0);
+		// KEEP: for doc purpose
+		// MessengerService stub = (MessengerService) UnicastRemoteObject.exportObject((MessengerService) server, 0);
+		Remote stub = UnicastRemoteObject.exportObject((MessengerService) server, 0);
 		Registry registry = LocateRegistry.createRegistry(1099);
 		registry.bind("MessengerService", stub);
 		
