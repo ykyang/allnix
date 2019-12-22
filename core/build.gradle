@@ -15,7 +15,8 @@ apply plugin: "application"
 targetCompatibility = '1.8'
 sourceCompatibility = '1.8'
 
-mainClassName = "org.allnix.core.MainDisplay"
+//mainClassName = "org.allnix.core.MainDisplay"
+mainClassName = "org.allnix.rmi.MessengerServiceImpl"
 
 def os = System.properties['os.name'].toLowerCase();
 
@@ -143,5 +144,14 @@ test {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.allnix.core.MainDisplay'
   }
+ 
+ // ./gradlew -PmainClass=com.wdvglab.vtk.JFrameRenderer runApp
+task runApp(type:JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+
+    main = project.hasProperty("mainClass") ? project.getProperty("mainClass") :
+ "org.allnix.vtk.JFrameRenderer"
+}
+ 
   
 }
