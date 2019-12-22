@@ -30,10 +30,5 @@ public class MessengerServiceImpl implements MessengerService {
 		Remote stub = UnicastRemoteObject.exportObject((MessengerService) server, 0);
 		Registry registry = LocateRegistry.createRegistry(1099);
 		registry.bind("MessengerService", stub);
-		
-		
-		
-        
-
 	}
 }
