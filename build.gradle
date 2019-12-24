@@ -1,0 +1,47 @@
+// Test Project "core"
+// ./gradlew cleanTest :core:test
+// ./gradlew cleanTest :core:test --tests "*TestFileJsonDao.test*"
+// ./gradlew :boot:run
+allprojects {
+    task hello << {task -> println "I am $task.project.name"}
+}
+subprojects {
+  apply plugin:'java'
+  //group: 'org.allnix'
+//  version: '1.0'
+}
+
+//project(':core') {
+//  dependencies {
+//    //testCompile project(':test')
+//  }
+//}
+project(':org.allnix.gui') {
+    dependencies {
+        compile project(':org.allnix.core')
+    }
+}
+//project(':sql') {
+//  dependencies {
+//    compile project(':org.allnix.core')
+//    testCompile project(':test')
+//  }
+//}
+
+//project(':restjson') {
+//  dependencies {
+//    compile project(':org.allnix.core')
+//  }
+//}
+
+//project(':test') {
+//  dependencies {
+//    compile project(':core')
+//  }
+//}
+
+//project(':boot') {
+//  dependencies {
+//    compile project(':org.allnix.core')
+//  }
+//}
