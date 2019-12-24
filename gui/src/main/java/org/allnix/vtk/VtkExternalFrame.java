@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
-import javax.swing.JInternalFrame;
+import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import org.apache.commons.io.FileUtils;
@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory;
 
 import org.allnix.gui.ImageSelection;
 
-
 import vtk.vtkGenericRenderWindowInteractor;
 import vtk.vtkInteractorStyleTrackballCamera;
 import vtk.vtkLightKit;
@@ -30,19 +29,18 @@ import vtk.vtkRenderWindow;
 import vtk.vtkRenderWindowPanel;
 import vtk.vtkWindowToImageFilter;
 
-public class VtkInternalFrame {
-    static final private Logger logger = LoggerFactory.getLogger(VtkInternalFrame.class);
+public class VtkExternalFrame {
+    static final private Logger logger = LoggerFactory.getLogger(VtkExternalFrame.class);
     
     private VtkRenderWindowPanelRenderer renderer;
     private vtkRenderWindowPanel renPanel;
 
-    private JInternalFrame frame;
+    private JFrame frame;
 //    private KeyListener keyListener;
     private vtkLightKit lightKit;
  
     
-    
-    public VtkInternalFrame() {
+    public VtkExternalFrame() {
         renPanel = new vtkRenderWindowPanel();
         vtkInteractorStyleTrackballCamera interactorStyle = new vtkInteractorStyleTrackballCamera(); 
         renPanel.setInteractorStyle(interactorStyle);
@@ -59,17 +57,16 @@ public class VtkInternalFrame {
         lightKit = new vtkLightKit();
         lightKit.AddLightsToRenderer(renderer.getRenderer());
    
-        frame = new JInternalFrame("VTK 3D", true, false, true, true);
+        frame = new JFrame();
         // TODO: review the following 2 lines
         frame.getContentPane().add(renPanel, BorderLayout.CENTER);
         frame.setSize(800, 600);
-        frame.add(renPanel);
-        //frame.setLocationRelativeTo(null);
-        
+        //frame.add(renPanel);
+        frame.setLocationRelativeTo(null);
     }
     
-    public VtkInternalFrame(vtkRenderWindowPanel renPanel) {
-        //renPanel = new vtkRenderWindowPanel();
+    public VtkExternalFrame(vtkRenderWindowPanel renPanel) {
+      //renPanel = new vtkRenderWindowPanel();
         vtkInteractorStyleTrackballCamera interactorStyle = new vtkInteractorStyleTrackballCamera(); 
         renPanel.setInteractorStyle(interactorStyle);
         renderer = new VtkRenderWindowPanelRenderer(renPanel);
@@ -85,15 +82,13 @@ public class VtkInternalFrame {
         lightKit = new vtkLightKit();
         lightKit.AddLightsToRenderer(renderer.getRenderer());
    
-        frame = new JInternalFrame("VTK 3D", true, false, true, true);
+        frame = new JFrame();
         // TODO: review the following 2 lines
         frame.getContentPane().add(renPanel, BorderLayout.CENTER);
         frame.setSize(800, 600);
-        frame.add(renPanel); // bug???
-        //frame.setLocationRelativeTo(null);
-        
+        //frame.add(renPanel);
+        frame.setLocationRelativeTo(null);
     }
-    
     
     
     public void init() {
@@ -117,9 +112,16 @@ public class VtkInternalFrame {
         SwingUtilities.invokeLater(x);
     }
     
-   
-   
-    public JInternalFrame getJInternalFrame() {
+    /**
+     * 
+     * @return
+     * @deprecated backward compatibility only
+     */
+    public VtkExternalFrame getFrame() {
+        return this;
+    }
+    
+    public JFrame getJFrame() {
         return frame;
     }
     
@@ -127,7 +129,13 @@ public class VtkInternalFrame {
         return this.lightKit;
     }
     
-    
+    /**
+     * @deprecated use getVtkRenderer()
+     * @return
+     */
+    public VtkRenderer getRenderer() {
+        return renderer;
+    }
     
     public VtkRenderWindowPanelRenderer getVtkRenderer() {
         return renderer;
@@ -252,5 +260,32 @@ public class VtkInternalFrame {
             frame.setVisible(value);
         };
         renderer.invokeLater(x);      
+    }
+    
+    public void setSize(int width, int height) {
+        Runnable r = ()->{
+            frame.setSize(width, height);
+        };
+        renderer.invokeLater(r);
+    }
+    
+    public void setLocation(int x, int y) {
+        Runnable r = ()->{
+            frame.setLocation(x, y);
+        };
+        renderer.invokeLater(r);
+    }
+    
+    /**
+     * Show the VTK frame
+     */
+    public void showFrame() {
+        setVisible(true);
+    }
+    /**
+     * Hide the VTK frame
+     */
+    public void hideFrame() {
+        setVisible(false);
     }
 }

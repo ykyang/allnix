@@ -1,8 +1,12 @@
 package org.allnix.vtk;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.IntStream;
 
 import org.allnix.gui.Builder;
+import org.allnix.gui.ColorList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,9 +19,14 @@ import vtk.vtkDataSetMapper;
 import vtk.vtkDoubleArray;
 import vtk.vtkHexahedron;
 import vtk.vtkIdList;
+import vtk.vtkIdTypeArray;
 import vtk.vtkIntArray;
 import vtk.vtkLookupTable;
+import vtk.vtkPointData;
 import vtk.vtkPoints;
+import vtk.vtkPolyVertex;
+import vtk.vtkRenderWindowPanel;
+import vtk.vtkScalarBarActor;
 import vtk.vtkUnstructuredGrid;
 
 /**
@@ -46,6 +55,112 @@ public class VtkUnstructuredGrid {
 	private vtkLookupTable lut;
 	
 	private String activeScalarName;
+	private String activePointScalarName;
+	
+	private vtkScalarBarActor scalarBarActor;
+	
+	private List<String> cellDataNameList = new ArrayList<String>();
+	private List<String> pointDataNameList = new ArrayList<String>(); 
+	
+	public void setScalarBarActor(vtkScalarBarActor v) {
+        scalarBarActor = v;
+    }
+    
+	public List<String> getCellDataNameList() {
+	    return cellDataNameList;
+	}
+	
+	public List<String> getPointDataNameList() {
+	    return pointDataNameList;
+	}
+	
+    public vtkScalarBarActor getScalarBarActor() {
+        return scalarBarActor;
+    }
+	
+	public void addDoublePointData(String name, double[] data) {
+		vtkPointData pointData = ugrid.GetPointData();
+		vtkDoubleArray v;
+
+		v = new vtkDoubleArray();
+		v.SetName(name);
+		
+		// > New way: 30% faster
+		v.SetJavaArray(data);
+
+		
+		pointData.AddArray(v);
+		
+		if (!this.pointDataNameList.contains(name)) {
+            this.pointDataNameList.add(name);
+        }
+	}
+	
+	public void addTuple3DoublePointData(String name, double[] data) {
+	    vtkPointData pointData = ugrid.GetPointData();
+        vtkDoubleArray v;
+        
+        v = new vtkDoubleArray();
+        v.SetName(name);
+        
+        v.SetNumberOfComponents(3);
+        v.SetNumberOfTuples(data.length/3);
+        
+        // > New way: 30% faster
+        v.SetJavaArray(data);
+        
+        pointData.AddArray(v);
+	}
+	
+	public void addTuple6DoublePointData(String name, double[] data) {
+        vtkPointData pointData = ugrid.GetPointData();
+        vtkDoubleArray v;
+        
+        v = new vtkDoubleArray();
+        v.SetName(name);
+        
+        v.SetNumberOfComponents(6);
+        v.SetNumberOfTuples(data.length/6);
+        
+        // > New way: 30% faster
+        v.SetJavaArray(data);
+        
+        pointData.AddArray(v);
+    }
+	public void removeDoubleCellData(String name) {
+	    vtkCellData cellData = ugrid.GetCellData();
+	    cellData.RemoveArray(name);
+	    this.cellDataNameList.remove(name);
+	}
+	public boolean hasData(String name) {
+	    boolean hasit = false;
+	    
+	    hasit = this.cellDataNameList.contains(name);
+	    if (hasit) { // shot circuit
+	        return hasit;
+	    }
+	    
+	    hasit = this.pointDataNameList.contains(name);
+	    return hasit;
+	    
+	}
+	public void removeAllCellData() {
+	    vtkCellData cellData = ugrid.GetCellData();
+	    int count = cellData.GetNumberOfArrays();
+	    for (int i = 0; i < count; i++) {
+	        cellData.RemoveArray(i);
+	    }
+	    this.cellDataNameList.clear();
+	}
+	
+	public void removeAllPointData() {
+        vtkPointData pointData = ugrid.GetPointData();
+        int count = pointData.GetNumberOfArrays();
+        for (int i = 0; i < count; i++) {
+            pointData.RemoveArray(i);
+        }
+        this.pointDataNameList.clear();
+    }
 	
 	public void addDoubleCellData(String name, double[] data) {
 		vtkCellData cellData = ugrid.GetCellData();
@@ -66,6 +181,9 @@ public class VtkUnstructuredGrid {
 		
 		cellData.AddArray(v);
 		
+		if (!this.cellDataNameList.contains(name)) {
+		    this.cellDataNameList.add(name);
+		}
 		// > do not keep extra copy of data
 		// doubleArrayDb.put(name, v);
 	}
@@ -84,6 +202,10 @@ public class VtkUnstructuredGrid {
 		v.SetJavaArray(data);
 		
 		cellData.AddArray(v);
+		
+		if (!this.cellDataNameList.contains(name)) {
+            this.cellDataNameList.add(name);
+        }
 	}
 	
 	public vtkActor getActor() {
@@ -100,10 +222,24 @@ public class VtkUnstructuredGrid {
 
 	
 	public double[] getRange(String name) {
+		// TODO: what about point data
 		vtkDataArray d = (vtkDataArray) ugrid.GetCellData().GetAbstractArray(name);
+//		logger.info("vtkDataArray: {}", d);
+		if (d == null) {
+		    return null;
+		}
 		double[] minmax = d.GetRange();
 		return minmax;
 	}
+	public double[] getPointRange(String name) {
+		vtkDataArray d = (vtkDataArray) ugrid.GetPointData().GetAbstractArray(name);
+		if (d == null) {
+            return null;
+        }
+		double[] minmax = d.GetRange();
+		return minmax;
+	}
+	
 	
 	public vtkUnstructuredGrid getUnstructuredGrid() {
 		return ugrid;
@@ -121,23 +257,47 @@ public class VtkUnstructuredGrid {
 		// > Not sure if this is OK
 		mapper.SetInputData(ugrid);
 		mapper.SetScalarModeToUseCellData();
+//		mapper.SetScalarModeToUsePointData();
 		mapper.UseLookupTableScalarRangeOn();
 		
 		actor.SetMapper(mapper);
 		
+		//: Default color map to Jet
 		if (lut == null) {
 			lut = new vtkLookupTable();
-			// > blue, low -> red, high
-			// > flip the number to inverse the color
-			lut.SetHueRange(0.6667, 0.);
-			lut.Build();
+			ColorList.buildJetColorTable(lut);
+//			// > blue, low -> red, high
+//			// > flip the number to inverse the color
+//			lut.SetHueRange(0.6667, 0.);
+//			
+////			int count = 402;
+////			double denominator = 401.; 
+//			lut.SetNumberOfTableValues(402);
+////			for (int i = 0; i < count; i++) {
+////			    double value = i/denominator;
+////			    lut.SetTableValue(i, value, value, value, 1);
+////			}
+//			
+//			
+//			
+//			lut.Build();
 		}
 
 		mapper.SetLookupTable(lut);
+		
+		scalarBarActor = new vtkScalarBarActor();
 	}
 
+	public void setScalarModeToUsePointData() {
+		mapper.SetScalarModeToUsePointData();
+	}
+	public void setScalarModeToUseCellData() {
+		mapper.SetScalarModeToUseCellData();
+	}
+	
 	public void setLookupTable(vtkLookupTable lut) {
 		this.lut = lut;
+		mapper.SetLookupTable(lut);
 	}
 	
 	public void setLookupTableRange(double[] minmax) {
@@ -158,6 +318,79 @@ public class VtkUnstructuredGrid {
 		
 		// cellData.SetScalars(doubleArrayDb.get(name));
 	}
+	
+	public void setActivePointScalar(String name) {
+		vtkPointData pointData = ugrid.GetPointData();
+		pointData.SetActiveScalars(name);
+		this.activePointScalarName = name;
+	}
+	
+	public void setActivePointVector(String name) {
+	    vtkPointData pointData = ugrid.GetPointData();
+        pointData.SetActiveVectors(name);
+        // TODO: save active name
+	}
+	/**
+	 * Use the range of the named scalar
+	 * @param name
+	 */
+	public void setAutoRange(String name) {
+		double[] range = this.getRange(name);
+		this.setLookupTableRange(range);
+	}
+	
+	public void setPointAutoRange(String name) {
+	    double[] range = this.getPointRange(name);
+	    this.setLookupTableRange(range);
+	}
+	
+	public void setAmbient(double value) {
+		this.actor.GetProperty().SetAmbient(value);
+	}
+	
+	public void setOpacity(double value) {
+	    this.actor.GetProperty().SetOpacity(value);
+	}
+	public void setPolyVertex(int[] ids) {
+	    int cellCount = 1;
+	    
+	    vtkPolyVertex polyVertex = new vtkPolyVertex();
+	    vtkIdList idList = polyVertex.GetPointIds();
+	    idList.SetNumberOfIds(ids.length);
+	    for (int pointInd = 0; pointInd < ids.length; pointInd++) {
+	        idList.SetId(pointInd, pointInd);
+	    }
+	    
+	    ugrid.Allocate(1, 1);
+	    ugrid.InsertNextCell(CellType.POLY_VERTEX.GetId(), polyVertex.GetPointIds());
+	}
+	/**
+	 * Use stream
+	 * 
+	 * @param ids
+	 */
+	public void setHexahedronCellsFast(int[] ids) {
+	    if ((ids.length % 9) != 0) {
+            logger.warn("Number of IDs is not multiple of 9");
+            throw new IllegalArgumentException("Number of IDs is not multiple of 9");
+        }
+        
+        int cellCount = ids.length / 9;
+//      logger.info("cellCount: {}", cellCount);
+
+        vtkCellArray cellz = new vtkCellArray();
+        vtkIdTypeArray conn = new vtkIdTypeArray();// cell connectivity
+        conn.SetNumberOfValues(ids.length);
+        IntStream.range(0, ids.length).parallel().forEach((ind) ->{
+            conn.SetValue(ind, ids[ind]);
+        });;
+        cellz.SetCells(cellCount, conn);
+                
+//      logger.info("START: vtkUnstructuredGrid.SetCells()");
+        ugrid.SetCells(CellType.HEXAHEDRON.GetId(), cellz);
+//      logger.info("CLOSE: vtkUnstructuredGrid.SetCells()");
+	}
+	
 	public void setHexahedronCells(int[] ids) {
 		if ((ids.length % 8) != 0) {
 			logger.warn("Number of IDs is not multiple of 8");
@@ -165,33 +398,33 @@ public class VtkUnstructuredGrid {
 		}
 		
 		int cellCount = ids.length / 8;
-		logger.info("cellCount: {}", cellCount);
+//		logger.info("cellCount: {}", cellCount);
 
 		vtkCellArray cellz = new vtkCellArray();
-
-
 		vtkHexahedron hex = new vtkHexahedron();
 		vtkIdList l;
-
+		
 		// TODO: Performance improvement
 		// Seems pre-allocate is not the problem
 		// the problem is copying one-by-one.
 		// Unfortunately, vtk Java wrapper does not
 		// provide direct memory access.
-		logger.info("START: Link hexahedron");
+//		logger.info("START: Link hexahedron");
 		for (int i = 0; i < cellCount; i++) {
 			l = hex.GetPointIds();
 			for (int localId = 0; localId < 8; localId++) {
 				l.SetId(localId, ids[8 * i + localId]);
 			}
 			cellz.InsertNextCell(hex);
+//			cellz.SetCells(id0, id1);
+//			vtkIdTypeArray ita = new vtkIdTypeArray(
 		}
-		logger.info("CLOSE: Link hexahedron");
+//		logger.info("CLOSE: Link hexahedron");
 
 		
-		logger.info("START: vtkUnstructuredGrid.SetCells()");
+//		logger.info("START: vtkUnstructuredGrid.SetCells()");
 		ugrid.SetCells(CellType.HEXAHEDRON.GetId(), cellz);
-		logger.info("CLOSE: vtkUnstructuredGrid.SetCells()");
+//		logger.info("CLOSE: vtkUnstructuredGrid.SetCells()");
 	}
 	
 	public void setPoints(double[] x, double[] y, double[] z) {
@@ -200,9 +433,10 @@ public class VtkUnstructuredGrid {
 
 		int length = x.length;
 		vtkPoints points = new vtkPoints();
-
+		points.SetNumberOfPoints(length);
 		for (int i = 0; i < length; i++) {
-			points.InsertNextPoint(x[i], y[i], z[i]);
+		    points.SetPoint(i, x[i], y[i], z[i]);
+//			points.InsertNextPoint(x[i], y[i], z[i]);
 		}
 
 		ugrid.SetPoints(points);
@@ -216,40 +450,7 @@ public class VtkUnstructuredGrid {
 		this.ugrid = v;
 	}
 	
-	
-	static public void main(String[] args) throws InterruptedException {
-		// > Load vtk native libraries
-		VtkLoader.loadAllNativeLibraries();
-		VtkFrame vframe = new VtkFrame();
-				
-		// > Value to show
-		String name = "Temperature";
-		
-		// > The grid
-		VtkUnstructuredGrid me = new VtkUnstructuredGrid();
-		me.init();
-		
-		Builder.buildVtkUnstructuredGrid7Cell(me);
-		
-		// > Value range to color from blue - red
-		double[] range = me.getRange(name);
-		me.setActiveScalars("Temperature");
-		me.setLookupTableRange(range);
-		
-		// > render
-		vframe.pack();
-		vframe.addActor(me.getActor());
-		vframe.setVisible(true);
-		vframe.render();
-		TimeUnit.MILLISECONDS.sleep(500); // it is a windows thing
-		vframe.render();
-	}
-
 	public String getActiveScalarName() {
 		return activeScalarName;
 	}
-
-//	public void setActiveScalarName(String activeScalarName) {
-//		this.activeScalarName = activeScalarName;
-//	}
 }
