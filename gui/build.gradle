@@ -34,34 +34,46 @@ repositories {
     jcenter()
 }
 
+String osName = org.gradle.internal.os.OperatingSystem.current().getName();
+String osVersion = org.gradle.internal.os.OperatingSystem.current().getVersion();
+
 dependencies {
     // This dependency is exported to consumers, that is to say found on their compile classpath.
     //api 'org.apache.commons:commons-math3:3.6.1'
-   	implementation 'org.apache.commons:commons-math3:3.6.1' 
-    implementation 'org.apache.commons:commons-lang3:3.8.1'
+
 
     // This dependency is used internally, and not exposed to consumers on their own compile classpath.
     //implementation 'com.google.guava:guava:26.0-jre'
     implementation 'org.slf4j:slf4j-api:1.7.13'
-  	implementation 'ch.qos.logback:logback-classic:1.1.2'
-  	implementation 'org.apache.commons:commons-lang3:3.8.1'
-  	implementation 'org.apache.commons:commons-collections4:4.2'
+    implementation 'ch.qos.logback:logback-classic:1.1.2'
+    implementation 'org.apache.commons:commons-math3:3.6.1' 
+    implementation 'org.apache.commons:commons-lang3:3.8.1'
+    implementation 'org.apache.commons:commons-collections4:4.2'
+    implementation 'commons-io:commons-io:2.6'
 
-	// https://mvnrepository.com/artifact/com.miglayout/miglayout
-	implementation 'com.miglayout:miglayout-swing:5.0'
-	implementation 'org.swinglabs:swingx:1.6.1'
-	// https://mvnrepository.com/artifact/org.jdesktop/appframework
-	//implementation 'org.jdesktop:appframework:1.0.3'
-	implementation 'org.jfree:jfreechart:1.5.0'
+    // JSON
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.7.3'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.7.3'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.7.3'
+    
+    // https://mvnrepository.com/artifact/com.miglayout/miglayout
+    implementation 'com.miglayout:miglayout-swing:5.0'
+    implementation 'org.swinglabs:swingx:1.6.1'
+    // https://mvnrepository.com/artifact/org.jdesktop/appframework
+    //implementation 'org.jdesktop:appframework:1.0.3'
+    implementation 'org.jfree:jfreechart:1.5.0'
 	
+    implementation 'org.kordamp.ikonli:ikonli-swing:2.4.0'
+    implementation 'org.kordamp.ikonli:ikonli-material-pack:2.4.0'
+    implementation 'org.kordamp.ikonli:ikonli-themify-pack:2.4.0'
 	
-	// Copied from https://stackoverflow.com/questions/11235614/how-to-detect-the-current-os-from-gradle
-	if (org.gradle.internal.os.OperatingSystem.current().isLinux()) {
-		implementation files('/home/ykyang/local/vtk-8.1.2/lib/vtk.jar')
-		// may requre hamcrest
-		implementation files('/home/ykyang/local/DockingFrames-1.1.2-P20c/dock/bin/docking-frames-core.jar')
-		implementation files('/home/ykyang/local/DockingFrames-1.1.2-P20c/dock/bin/docking-frames-common.jar')
-	} else if (org.gradle.internal.os.OperatingSystem.current().isUnix()) {
+    // Copied from https://stackoverflow.com/questions/11235614/how-to-detect-the-current-os-from-gradle
+    if (org.gradle.internal.os.OperatingSystem.current().isLinux()) {
+	implementation files('/home/ykyang/local/vtk-8.1.2/lib/vtk.jar')
+        // may requre hamcrest
+	implementation files('/home/ykyang/local/DockingFrames-1.1.2-P20c/dock/bin/docking-frames-core.jar')
+	implementation files('/home/ykyang/local/DockingFrames-1.1.2-P20c/dock/bin/docking-frames-common.jar')
+    } else if (org.gradle.internal.os.OperatingSystem.current().isUnix()) {
     // consider UNIX.
 	} else if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
 		implementation files('C:/Program Files/VTK-8.1.2/lib/vtk.jar')
@@ -75,7 +87,7 @@ dependencies {
 	}
 
     // Use JUnit test framework
-	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.0.2' // 5.0.2, 5.3.2
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.0.2' // 5.0.2, 5.3.2
     testImplementation 'org.junit.platform:junit-platform-runner:1.0.2' // 1.0.2, 1.3.2
     testImplementation 'org.apiguardian:apiguardian-api:1.0.0'    
     
