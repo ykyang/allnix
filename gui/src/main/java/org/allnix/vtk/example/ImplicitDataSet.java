@@ -69,10 +69,9 @@ public class ImplicitDataSet {
         VtkExternalFrame vframe = new VtkExternalFrame();
         VtkRenderWindowPanelRenderer renderer = vframe.getVtkRenderer();
         
-        vtkRenderer ren1 = renderer.getRenderer();
-        ren1.AddActor(actor);
-        ren1.AddActor(actor2);
-        ren1.SetBackground(0.1, 0.2, 0.4);
+        renderer.addActor(actor);
+        renderer.addActor(actor2);
+        renderer.setBackground(0.1, 0.2, 0.4);
 
         vframe.setVisible(true);
         renderer.render();
