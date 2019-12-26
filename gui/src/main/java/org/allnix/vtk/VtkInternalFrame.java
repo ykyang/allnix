@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.allnix.gui.ImageSelection;
+import org.allnix.vtk.prop.SceneProp;
 
 
 import vtk.vtkGenericRenderWindowInteractor;
@@ -40,7 +41,11 @@ public class VtkInternalFrame {
 //    private KeyListener keyListener;
     private vtkLightKit lightKit;
  
+    private SceneProp sceneProp;
     
+    public SceneProp getSceneProp() {
+        return sceneProp;
+    }
     
     public VtkInternalFrame() {
         renPanel = new vtkRenderWindowPanel();
@@ -65,6 +70,11 @@ public class VtkInternalFrame {
         frame.setSize(800, 600);
         frame.add(renPanel);
         //frame.setLocationRelativeTo(null);
+        
+        
+        sceneProp = new SceneProp();
+        sceneProp.setVtkRenderer(renderer);        
+        
         
     }
     
@@ -92,6 +102,8 @@ public class VtkInternalFrame {
         frame.add(renPanel); // bug???
         //frame.setLocationRelativeTo(null);
         
+        sceneProp = new SceneProp();
+        sceneProp.setVtkRenderer(renderer);
     }
     
     

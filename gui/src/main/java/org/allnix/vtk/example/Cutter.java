@@ -1,5 +1,8 @@
 package org.allnix.vtk.example;
 
+import org.allnix.vtk.VtkExternalFrame;
+import org.allnix.vtk.VtkLoader;
+import org.allnix.vtk.VtkRenderWindowPanelRenderer;
 import vtk.vtkActor;
 import vtk.vtkCubeSource;
 import vtk.vtkCutter;
@@ -11,23 +14,19 @@ import vtk.vtkRenderer;
 import vtk.vtkRenderWindow;
 import vtk.vtkRenderWindowInteractor;
 
+/**
+ * https://lorensen.github.io/VTKExamples/site/Java/VisualizationAlgorithms/Cutter/
+ * 
+ * <pre>
+ * ./gradlew -PmainClass=org.allnix.vtk.example.Cutter runApp
+ * </pre> 
+ * @author ykyang
+ */
 public class Cutter {
-  private static final long serialVersionUID = 1L;
-
-  // Loading Native Libraries.
-  // Now it works in eclipse without any issues.
-  static {
-    if (!vtkNativeLibrary.LoadAllNativeLibraries()) {
-      for (vtkNativeLibrary lib : vtkNativeLibrary.values()) {
-        if (!lib.IsLoaded()) {
-          System.out.println(lib.GetLibraryName() + " not loaded");
-        }
-      }
-    }
-    vtkNativeLibrary.DisableOutputWindow(null);
-  }
 
   public static void main(String[] args) {
+      VtkLoader.loadAllNativeLibraries();
+      
     vtkNamedColors color = new vtkNamedColors();
     double planeColor[] = new double[4];
     color.GetColor("Yellow", planeColor);
@@ -52,7 +51,8 @@ public class Cutter {
     //create cutter
     vtkCutter cutter = new vtkCutter();
     cutter.SetCutFunction(plane);
-    cutter.SetInputData(cubeMapper.GetInput());
+//    cutter.SetInputData(cubeMapper.GetInput());
+    cutter.SetInputData(cube.GetOutput());
     cutter.Update();
 
     vtkPolyDataMapper cutterMapper = new vtkPolyDataMapper();
@@ -61,7 +61,7 @@ public class Cutter {
     //create plane actor
     vtkActor planeActor = new vtkActor();
     planeActor.GetProperty().SetColor(planeColor);
-    planeActor.GetProperty().SetLineWidth(2);
+    planeActor.GetProperty().SetLineWidth(10);
     planeActor.SetMapper(cutterMapper);
 
     //create cube actor
@@ -70,21 +70,29 @@ public class Cutter {
     cubeActor.GetProperty().SetOpacity(0.3);
     cubeActor.SetMapper(cubeMapper);
 
+    VtkExternalFrame vframe = new VtkExternalFrame();
+    VtkRenderWindowPanelRenderer renderer = vframe.getVtkRenderer();
+    
     //create renderers and add actors of plane and cube
-    vtkRenderer ren = new vtkRenderer();
+    vtkRenderer ren = renderer.getRenderer();
     ren.AddActor(planeActor);
-    ren.AddActor(cubeActor);
-
+//    ren.AddActor(cubeActor);
+    
     //Add renderer to renderwindow and render
-    vtkRenderWindow renWin = new vtkRenderWindow();
-    renWin.AddRenderer(ren);
-    renWin.SetSize(600, 600);
+//    vtkRenderWindow renWin = new vtkRenderWindow();
+//    renWin.AddRenderer(ren);
+//    renWin.SetSize(600, 600);
+//
+//    vtkRenderWindowInteractor iren = new vtkRenderWindowInteractor();
+//    iren.SetRenderWindow(renWin);
+//    ren.SetBackground(bgColor);
+//    renWin.Render();
+//
+//    iren.Start();
 
-    vtkRenderWindowInteractor iren = new vtkRenderWindowInteractor();
-    iren.SetRenderWindow(renWin);
-    ren.SetBackground(bgColor);
-    renWin.Render();
-
-    iren.Start();
+        vframe.setVisible(true);
+        renderer.resetCamera();
+        renderer.render();
+        
   }
 }

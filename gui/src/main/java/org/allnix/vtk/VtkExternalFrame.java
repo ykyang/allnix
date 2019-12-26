@@ -13,6 +13,7 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
+import org.allnix.gui.ColorList;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -20,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.allnix.gui.ImageSelection;
+import org.allnix.vtk.prop.SceneProp;
 
 import vtk.vtkGenericRenderWindowInteractor;
 import vtk.vtkInteractorStyleTrackballCamera;
@@ -39,6 +41,11 @@ public class VtkExternalFrame {
 //    private KeyListener keyListener;
     private vtkLightKit lightKit;
  
+    private SceneProp sceneProp;
+
+    public SceneProp getSceneProp() {
+        return sceneProp;
+    }
     
     public VtkExternalFrame() {
         renPanel = new vtkRenderWindowPanel();
@@ -63,6 +70,12 @@ public class VtkExternalFrame {
         frame.setSize(800, 600);
         //frame.add(renPanel);
         frame.setLocationRelativeTo(null);
+        
+        renderer.setBackground(ColorList.lightBackground);
+        
+        sceneProp = new SceneProp();
+        sceneProp.setVtkRenderer(renderer);
+      
     }
     
     public VtkExternalFrame(vtkRenderWindowPanel renPanel) {
@@ -88,6 +101,9 @@ public class VtkExternalFrame {
         frame.setSize(800, 600);
         //frame.add(renPanel);
         frame.setLocationRelativeTo(null);
+        
+        sceneProp = new SceneProp();
+        sceneProp.setVtkRenderer(renderer);
     }
     
     

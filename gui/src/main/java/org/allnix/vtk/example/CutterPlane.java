@@ -1,10 +1,12 @@
-package org.allnix.gui.example;
+package org.allnix.vtk.example;
 
 import java.util.concurrent.TimeUnit;
 
 import org.allnix.gui.Builder;
+import org.allnix.vtk.VtkExternalFrame;
 import org.allnix.vtk.VtkFrame;
 import org.allnix.vtk.VtkLoader;
+import org.allnix.vtk.VtkRenderer;
 import org.allnix.vtk.VtkUnstructuredGrid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,14 +21,14 @@ import vtk.vtkPolyData;
 public class CutterPlane {
 	static final private Logger logger = LoggerFactory.getLogger(CutterPlane.class);
 	/**
-	 * ./gradlew -PmainClass=org.allnix.gui.example.CutterPlane runApp
+	 * ./gradlew -PmainClass=org.allnix.vtk.example.CutterPlane runApp
 	 * 
 	 * @param args
 	 * @throws InterruptedException
 	 */
 	static public void main(String[] args) throws InterruptedException {
 		VtkLoader.loadAllNativeLibraries();
-		VtkFrame vframe = new VtkFrame();
+		VtkExternalFrame vframe = new VtkExternalFrame();
 		
 		// > Value to show
 		String name = "Temperature";
@@ -72,25 +74,30 @@ public class CutterPlane {
 		cutter.Update();
 		polyData.GetCellData().SetActiveScalars(name);
 		
+        vframe.getSceneProp().showAxesActor();
+        
+        VtkRenderer renderer = vframe.getVtkRenderer();
 		// > render
-		vframe.pack();
-		vframe.addActor(planeActor);
+//		vframe.pack();
+		renderer.addActor(planeActor);
+        renderer.resetCamera();
 		vframe.setVisible(true);
-		vframe.render();
+		renderer.render();
 		
 		TimeUnit.MILLISECONDS.sleep(500); // it is a windows thing
-		vframe.render();
+		renderer.render();
 		
 		TimeUnit.MILLISECONDS.sleep(1500);
 		// this should not interfere with the display color
 		grid.setActiveScalars("Pressure"); 
-		vframe.render();
+		renderer.render();
 		
 		TimeUnit.MILLISECONDS.sleep(1500);
 		plane.SetNormal(0,1,0);
 		cutter.Update();
 		polyData.GetCellData().SetActiveScalars(name); // STAR
-		vframe.render();
+        
+		renderer.render();
 	}
 	
 }
