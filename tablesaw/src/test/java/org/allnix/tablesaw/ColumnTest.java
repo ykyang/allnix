@@ -18,6 +18,7 @@ import tech.tablesaw.selection.Selection;
  *  
  * https://jtablesaw.github.io/tablesaw/gettingstarted
  * 
+ * ./gradlew test --tests ColumnTest
  * 
  * @author Yi-Kun Yang ykyang@gmail.com
  *
@@ -46,15 +47,15 @@ public class ColumnTest {
 		DoubleColumn nc = DoubleColumn.create("Test", numbers);
 		
 		DoubleColumn nc2 = nc.multiply(2.);
-		logger.info("\n{}", nc2.print());
+		logger.info("multiply(2.):\n{}", nc2.print());
 		assertEquals(6., nc2.getDouble(2));
 		
 		Selection filter = nc.isLessThan(3.);
-		logger.info(Arrays.toString(filter.toArray()));
+		logger.info("Filter: {}", Arrays.toString(filter.toArray()));
 //		assertEquals(1, filter.get(1));
 //		assertEquals(0, filter.get(2));
 		
 		DoubleColumn filtered = nc.where(filter);
-		logger.info("\n{}", filtered.print());
+		logger.info("Filtered Column:\n{}", filtered.print());
 	}
 }
