@@ -13,15 +13,16 @@ buildscript {
         // The following is only necessary if you want to use SNAPSHOT releases.
         // maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
     }
-    dependencies {
-        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.3'
-    }
+    //dependencies {
+    //    classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.3'
+    //}
 }
 
 plugins {
     // Apply the java-library plugin to add support for Java Library
     id 'java-library'
-    id 'application'
+    id 'java-library-distribution'
+    //id 'application'
 //    id 'org.junit.platform.gradle.plugin'
 }
 
@@ -33,23 +34,24 @@ sourceCompatibility = '1.8'
 dependencies {
     // This dependency is exported to consumers, that is to say found on their compile classpath.
     //api 'org.apache.commons:commons-math3:3.6.1'
-	compile 'org.slf4j:slf4j-api:1.7.13'
-    compile 'ch.qos.logback:logback-classic:1.1.2'
+	implementation 'org.slf4j:slf4j-api:1.7.13'
+    implementation 'ch.qos.logback:logback-classic:1.1.2'
     // This dependency is used internally, and not exposed to consumers on their own compile classpath.
     implementation 'com.google.guava:guava:23.0'
+    implementation 'org.apache.commons:commons-lang3:3.8.1'
     // https://mvnrepository.com/artifact/tech.tablesaw/tablesaw-core
     //compile group: 'tech.tablesaw', name: 'tablesaw-core', version: '0.12.0'
-    compile group: 'tech.tablesaw', name: 'tablesaw-core', version: '0.32.7'
+    implementation 'tech.tablesaw:tablesaw-core:0.32.7'
 
 
     // Use JUnit test framework
     //testImplementation 'junit:junit:4.12'
     
     // JUnit 5
-    testCompile("org.junit.jupiter:junit-jupiter-api:5.0.2")
-    testCompile("org.junit.platform:junit-platform-runner:1.0.2")
-    testCompile 'org.apiguardian:apiguardian-api:1.0.0'
-    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.2")
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.0.2'
+    testImplementation 'org.junit.platform:junit-platform-runner:1.0.2'
+    testImplementation 'org.apiguardian:apiguardian-api:1.0.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.0.2'
 }
 
 // In this section you declare where to find the dependencies of your project
@@ -88,6 +90,22 @@ repositories {
 //}
 
 test {
+	useJUnitPlatform {
+    	// see JUnitPlatformOptions
+    	excludeTags 'gui', 'day', 'hour'//, 'minute', 'second'
+   	
+   		//includeTags 'minute', 'second'//, 'manual'
+    	//includeTags 'fast'
+  	}
+  	maxParallelForks = 6
+  //systemProperties 'logback.configurationFile' : new File(projectDir,'src/test/resources/logback-test.xml').absolutePath
+//  include '**/**'
+  //include '**/DisableAllTest*.*'
+
+  // Use "gradlew cleanTest test" to force running test
+  testLogging {
+    events "started", "passed", "skipped", "failed", "standardOut" //, "standardError"
+  }
 }
 
 

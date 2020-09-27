@@ -8,9 +8,13 @@
  */
 
 // Apply the java plugin to add support for Java
-apply plugin: 'java'
-apply plugin: 'java-library'
-apply plugin: "application"
+plugins {
+	id 'java'
+	id 'java-library'
+	id 'java-library-distribution'
+	id 'application'
+}
+
 
 targetCompatibility = '1.8'
 sourceCompatibility = '1.8'
