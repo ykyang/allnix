@@ -1,4 +1,4 @@
-package org.allnix.simple;
+package org.allnix.simple.ch1;
 
 import java.util.BitSet;
 
@@ -10,8 +10,8 @@ import java.util.BitSet;
  */
 public class CompressedGene {
 	/**
-	 * ./gradlew -PmainClass=org.allnix.simple.CompressedGene runApp
-	 * gradlew.bat -PmainClass=org.allnix.simple.CompressedGene runApp
+	 * ./gradlew -PmainClass=org.allnix.simple.ch1.CompressedGene runApp
+	 * gradlew.bat -PmainClass=org.allnix.simple.ch1.CompressedGene runApp
 	 * 
 	 * @param args
 	 */

@@ -1,4 +1,4 @@
-package org.allnix.simple;
+package org.allnix.simple.ch1;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,8 +19,8 @@ import java.util.stream.IntStream;
 public class Fib {
 
 	/**
-	 * ./gradlew -PmainClass=org.allnix.simple.Fib runApp
-	 * gradlew.bat -PmainClass=org.allnix.simple.Fib runApp
+	 * ./gradlew -PmainClass=org.allnix.simple.ch1.Fib runApp
+	 * gradlew.bat -PmainClass=org.allnix.simple.ch1.Fib runApp
 	 * 
 	 * @param args
 	 */
