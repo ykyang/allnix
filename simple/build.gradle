@@ -35,6 +35,14 @@ application {
     // Define the main class for the application.
     mainClassName = 'org.allnix.simple.App'
 }
+//
+// ./gradlew -PmainClass=org.your.main.class runApp
+// 
+task runApp(type:JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+
+    main = project.hasProperty("mainClass") ? project.getProperty("mainClass") : "org.allnix.simple.App"
+}
 
 test {
     // Use junit platform for unit tests
