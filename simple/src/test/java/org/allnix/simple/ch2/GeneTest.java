@@ -27,6 +27,9 @@ public class GeneTest {
 		assertEquals(55, gene.codonCount());
 	}
 	
+	/**
+	 * Search given codon in a gene
+	 */
 	@Test
 	public void linearContain() {
 		Gene gene = new Gene(geneStr);
@@ -37,4 +40,19 @@ public class GeneTest {
         Codon gat = new Codon("GAT");
         assertEquals(false, gene.linearContains(gat));
 	}
+	
+	/**
+	 * Search given codon in a gene
+	 */
+	@Test
+	public void binaryContain() {
+		Gene gene = new Gene(geneStr);
+
+		Codon acg = new Codon("ACG");
+        assertEquals(true, gene.binaryContains(acg));
+        
+        Codon gat = new Codon("GAT");
+        assertEquals(false, gene.binaryContains(gat));
+	}
+	
 }

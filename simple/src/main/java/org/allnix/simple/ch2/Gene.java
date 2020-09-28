@@ -1,6 +1,7 @@
 package org.allnix.simple.ch2;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 
 import org.allnix.simple.ch2.Gene.Nucleotide;
@@ -50,6 +51,33 @@ public class Gene {
 		for (Codon codon : codons) {
 			if (codon.compareTo(key) == 0) {
 				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * 2.1.3
+	 *  
+	 * @param key
+	 * @return
+	 */
+	public boolean binaryContains(Codon key) {
+		//> Create sorted codons
+		ArrayList<Codon> sortedCodons = new ArrayList<>(codons);
+		Collections.sort(sortedCodons);
+		int lowInd = 0;
+		int higInd = sortedCodons.size() - 1;
+		while (lowInd <= higInd) {
+			int midInd = (lowInd+higInd) / 2;
+			int comparison = codons.get(midInd).compareTo(key);
+			if (comparison == 0) {
+				return true;
+			} else if (comparison < 0) {
+				lowInd = midInd + 1;
+			} else { // (comparison > 0)
+				higInd = midInd - 1;
 			}
 		}
 		
