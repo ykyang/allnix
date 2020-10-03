@@ -2,6 +2,7 @@ package org.allnix.simple.ch2;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 public class Maze {
@@ -14,6 +15,18 @@ public class Maze {
 	static public void main(String[] args) {
 		Maze maze = new Maze();
 		System.out.println(maze.toString());
+		
+		Node<MazeLocation> solution_1 
+		= Search.dfs(maze.getStart(), maze::goalTest, maze::successors);
+		if (solution_1 == null) {
+			System.out.println("No solution found using depth-first search!");
+		} else {
+			Collection<MazeLocation> path_1 = Search.nodeToPath(solution_1);
+			maze.mark(path_1);
+			System.out.println(maze);
+			maze.clear(path_1);
+		}
+		
 	}
 	
 	public enum Cell {
@@ -67,42 +80,66 @@ public class Maze {
 		grid[goal.row][goal.column] = Cell.GOAL;
 	}
 	
+	public MazeLocation getStart() {
+		return start;
+	}
+
 	public List<MazeLocation> successors(MazeLocation ml) {
 		List<MazeLocation> locations = new ArrayList<>();
 		
 		int r,c; // row and column to be tested
-		boolean blocked;
 		
 		r = ml.row + 1;
 		c = ml.column;
-		blocked = grid[r][c] == Cell.BLOCKED;
-		if (r < rowCount && !blocked) {
+		if (r < rowCount && grid[r][c] != Cell.BLOCKED) {
 			locations.add(new MazeLocation(r, c));
 		}
 		
 		r = ml.row - 1;
 		c = ml.column;
-		blocked = grid[r][c] == Cell.BLOCKED;
-		if (-1 < r && !blocked) {
+		if (-1 < r && grid[r][c] != Cell.BLOCKED) {
 			locations.add(new MazeLocation(r, c));
 		}
 		
 		r = ml.row;
 		c = ml.column + 1;
-		blocked = grid[r][c] == Cell.BLOCKED;
-		if (c < columnCount && !blocked) {
+		if (c < columnCount && grid[r][c] != Cell.BLOCKED) {
 			locations.add(new MazeLocation(r, c));
 		}
 		
 		r = ml.row;
 		c = ml.column - 1;
-		blocked = grid[r][c] == Cell.BLOCKED;
-		if (-1 < c && !blocked) {
+		if (-1 < c && grid[r][c] != Cell.BLOCKED) {
 			locations.add(new MazeLocation(r, c));
 		}
 		
 		return locations;
 	}
+
+	/**
+	 * Mark the path in the maze 
+	 * 
+	 * @param path
+	 */
+	public void mark(Collection<MazeLocation> path) {
+		for (MazeLocation ml : path) {
+			grid[ml.row][ml.column] = Cell.PATH;
+		}
+		
+		grid[start.row][start.column] = Cell.START;
+		grid[goal.row][goal.column] = Cell.GOAL;
+	}
+	
+	public void clear(Collection<MazeLocation> path) {
+		for (MazeLocation ml : path) {
+			grid[ml.row][ml.column] = Cell.EMPTY;
+		}
+		
+		grid[start.row][start.column] = Cell.START;
+		grid[goal.row][goal.column] = Cell.GOAL;
+	}
+	
+	
 	
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
