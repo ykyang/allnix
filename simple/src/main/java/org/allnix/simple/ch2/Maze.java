@@ -17,7 +17,7 @@ public class Maze {
 		System.out.println(maze.toString());
 		
 		Node<MazeLocation> solution_1 
-		= Search.dfs(maze.getStart(), maze::goalTest, maze::successors);
+			= Search.dfs(maze.getStart(), maze::goalTest, maze::successors);
 		if (solution_1 == null) {
 			System.out.println("No solution found using depth-first search!");
 		} else {
@@ -26,6 +26,18 @@ public class Maze {
 			System.out.println(maze);
 			maze.clear(path_1);
 		}
+		
+		Node<MazeLocation> solution_2 
+			= Search.bfs(maze.getStart(), maze::goalTest, maze::successors);
+		if (solution_2 == null) {
+			System.out.println("No solution found using breadth-first search!");
+		} else {
+			Collection<MazeLocation> path_2 = Search.nodeToPath(solution_2);
+			maze.mark(path_2);
+			System.out.println(maze);
+			maze.clear(path_2);
+		}
+		
 		
 	}
 	
