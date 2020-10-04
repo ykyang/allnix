@@ -3,16 +3,56 @@ package org.allnix.simple.ch2;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
 import java.util.Stack;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.ToDoubleFunction;
 
 public class Search {
+	public static <T> Node<T> astar(T initial, Predicate<T> goalTest,
+			Function<T, List<T>> successors, ToDoubleFunction<T> heuristic) {
+		
+		Node<T> node;
+		PriorityQueue<Node<T>> frontier = new PriorityQueue<>(); // yet to go
+		// state -> cost
+		HashMap<T, Double> explored = new HashMap<>(); // visited
+		
+		node = new Node<T>(initial, null, 0.0, heuristic.applyAsDouble(initial));
+		frontier.offer(node);
+
+		while (!frontier.isEmpty()) {
+			Node<T> currentNode = frontier.poll();
+			T currentState = currentNode.getState();
+			
+			if (goalTest.test(currentState)) {
+				return currentNode;
+			}
+			
+			for (T child : successors.apply(currentState)) {
+				double childCost = currentNode.getCost() + 1;
+				
+				// Not been there 
+				// or
+				// new child cost is less than existing one
+				if (!explored.containsKey(child) || childCost < explored.get(child)) {
+					explored.put(child, childCost);
+					node = new Node<T>(child, currentNode, childCost, 
+							heuristic.applyAsDouble(child));
+					frontier.offer(node);
+				}
+			}
+		}
+		
+		return null; // goal not found
+	}
+	
 	static public <T> Node<T> bfs(T initial, Predicate<T> goalTest,
 			Function<T, List<T>> successors) {
 		// Where we have yet to go
@@ -39,7 +79,7 @@ public class Search {
 			}
 		}
 		
-		return null;
+		return null; // goal not found
 	}
 	
 	/**

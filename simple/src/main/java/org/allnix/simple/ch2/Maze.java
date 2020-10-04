@@ -16,6 +16,9 @@ public class Maze {
 		Maze maze = new Maze();
 		System.out.println(maze.toString());
 		
+		Node<MazeLocation> solution;
+		
+		// Depth-first
 		Node<MazeLocation> solution_1 
 			= Search.dfs(maze.getStart(), maze::goalTest, maze::successors);
 		if (solution_1 == null) {
@@ -27,6 +30,7 @@ public class Maze {
 			maze.clear(path_1);
 		}
 		
+		// Breadth-first
 		Node<MazeLocation> solution_2 
 			= Search.bfs(maze.getStart(), maze::goalTest, maze::successors);
 		if (solution_2 == null) {
@@ -38,6 +42,19 @@ public class Maze {
 			maze.clear(path_2);
 		}
 		
+		// A* (astar)
+		Node<MazeLocation> sol_astar 
+			= solution
+			= Search.astar(maze.getStart(), maze::goalTest, maze::successors, 
+				maze::manhattanDistance);
+		if (solution == null) {
+			System.out.println("No solution found using A* search!");
+		} else {
+			Collection<MazeLocation> path = Search.nodeToPath(solution);
+			maze.mark(path);
+			System.out.println(maze);
+			maze.clear(path);
+		}
 		
 	}
 	
@@ -96,6 +113,33 @@ public class Maze {
 		return start;
 	}
 
+	/**
+	 * Distance from a location to the goal in straight line
+	 * 
+	 * @param ml
+	 * @return
+	 */
+	public double euclideanDistance(MazeLocation ml) {
+		int deltax = ml.column - goal.column;
+		int deltay = ml.row - goal.row;
+		
+		return Math.sqrt(deltax*deltax + deltay*deltay);
+	}
+	
+	/**
+	 * Distance from a location to the goal by the sum
+	 * of delta-x and delta-y.
+	 * 
+	 * @param ml
+	 * @return
+	 */
+	public double manhattanDistance(MazeLocation ml) {
+		int deltax = Math.abs(ml.column - goal.column);
+		int deltay = Math.abs(ml.row - goal.row);
+		
+		return deltax + deltay;
+	}
+	
 	public List<MazeLocation> successors(MazeLocation ml) {
 		List<MazeLocation> locations = new ArrayList<>();
 		
