@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * Constraint-Satisfaction Problem
  * 
  * @author ykyang@gmail.com
  *
@@ -13,30 +14,58 @@ import java.util.Map;
  * @param <D> Domain
  */
 public class CSP<V, D> {
+    /**
+     * List of all variables
+     */
     private List<V> variables;
+    /**
+     * Mapping of variable to its admissible values
+     */
     private Map<V, List<D>> domains;
-    private Map<V, List<Constraint<V, D>>> constraints;
+    /**
+     * Mapping of variable to its constraints
+     */
+    private Map<V, List<Constraint<V, D>>> constraintDb;
 
     public CSP(List<V> variables, Map<V, List<D>> domains) {
         this.variables = variables;
         this.domains = domains;
 
-        // Initialize constraints & check domains
-        constraints = new HashMap<>();
+        //> The following can be done in one-loop but
+        //> it is more clear to be separated.
+        
+        //> Check all variables have domain
         for (V v : variables) {
-            // variable with empty constraints
-            constraints.put(v, new ArrayList<>());
-            // variable must have domsins
-            if (!domains.containsKey(v)) {
-                throw new IllegalArgumentException("Every Variable must have a domain.");
+            if (domains.containsKey(v)) {
+                continue;
             }
+            
+            throw new IllegalArgumentException("Every Variable must have a domain.");
+        }
+
+        //> Initialize constraintDb
+        constraintDb = new HashMap<>();
+        for (V v : variables) {
+            //> Empty list of constraints for each variable
+            constraintDb.put(v, new ArrayList<>());
         }
     }
 
+    /**
+     * Add a new constraint between variables
+     * 
+     * Convert 
+     * constraint -> variable mapping 
+     * to 
+     * variable -> constraint mapping 
+     * as shown below
+     * C1{V1, V2...} => V1{C1}, V2{C1}
+     * @param constraint
+     */
     public void addConstraint(Constraint<V, D> constraint) {
         for (V v : constraint.getVariables()) {
             if (variables.contains(v)) {
-                constraints.get(v).add(constraint);
+                constraintDb.get(v).add(constraint);
             } else {
                 throw new IllegalArgumentException("Variable in constraint not in CSP");
             }
@@ -45,7 +74,7 @@ public class CSP<V, D> {
 
     public boolean consistent(V variable, Map<V, D> assignment) {
         // Check assignment against constraints
-        for (Constraint<V, D> constraint : constraints.get(variable)) {
+        for (Constraint<V, D> constraint : constraintDb.get(variable)) {
             if (!constraint.satisfied(assignment)) {
                 return false;
             }
