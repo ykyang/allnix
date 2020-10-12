@@ -4,6 +4,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * CSP: 3.2
+ * 
+ * @author ykyang@gmail.com
+ *
+ */
 public class MapColoringConstraint extends Constraint<String,String> {
     /**
      * ./gradlew -PmainClass=org.allnix.simple.ch3.MapColoringConstraint runApp
