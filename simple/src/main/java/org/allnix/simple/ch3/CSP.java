@@ -27,16 +27,16 @@ public class CSP<V, D> {
      */
     private Map<V, List<Constraint<V, D>>> constraintDb;
 
-    public CSP(List<V> variables, Map<V, List<D>> domains) {
+    public CSP(List<V> variables, Map<V, List<D>> domainDb) {
         this.variables = variables;
-        this.domains = domains;
+        this.domains = domainDb;
 
         //> The following can be done in one-loop but
         //> it is more clear to be separated.
         
         //> Check all variables have domain
         for (V v : variables) {
-            if (domains.containsKey(v)) {
+            if (domainDb.containsKey(v)) {
                 continue;
             }
             
