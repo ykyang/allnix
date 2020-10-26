@@ -1,8 +1,17 @@
 package org.allnix.simple.ch4;
 
 import java.io.PrintStream;
+import java.util.Collection;
 import java.util.List;
 
+import org.allnix.simple.ch2.Node;
+import org.allnix.simple.ch2.Search;
+/**
+ * 
+ * @author ykyang@gmail.com
+ *
+ * @param <V> Vertex type
+ */
 public class UnweightedGraph<V> extends Graph<V,Edge> {
     /**
      * ./gradlew -PmainClass=org.allnix.simple.ch4.UnweightedGraph runApp
@@ -20,6 +29,7 @@ public class UnweightedGraph<V> extends Graph<V,Edge> {
                 );
         
         UnweightedGraph<String> cityGraph = new UnweightedGraph<>(cities);
+        
         cityGraph.addEdge("Seattle", "Chicago").addEdge("Seattle","San Francisco")
         .addEdge("San Francisco", "Riverside").addEdge("San Francisco", "Los Angeles")
         .addEdge("Los Angeles", "Riverside").addEdge("Los Angeles", "Phoenix")
@@ -35,6 +45,15 @@ public class UnweightedGraph<V> extends Graph<V,Edge> {
         .addEdge("New York", "Philadelphia").addEdge("Philadelphia", "Washington");
         
         out.println(cityGraph.toString());
+        
+        Node<String> bfsAns = Search.bfs("Boston", v -> v.equals("Miami"), cityGraph::neighborOf);
+        if (bfsAns == null) {
+            out.println("No solution found using breadth-first search!");
+        } else {
+            Collection<String> path = Search.nodeToPath(bfsAns);
+            out.println("Path from Boston to Miami:");
+            out.println(path);
+        }
     }
     
     public UnweightedGraph(List<V> vertices) {
@@ -49,8 +68,10 @@ public class UnweightedGraph<V> extends Graph<V,Edge> {
      * @param edge
      */
     public UnweightedGraph<V> addEdge(Edge edge) {
-        edges.get(edge.u).add(edge);
-        edges.get(edge.v).add(edge.reversed());
+        edgeOf(edge.u).add(edge);
+        //edges.get(edge.u).add(edge);
+        edgeOf(edge.v).add(edge.reversed());
+        //edges.get(edge.v).add(edge.reversed());
         
         return this;
     }

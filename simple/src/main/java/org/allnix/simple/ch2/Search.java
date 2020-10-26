@@ -53,6 +53,15 @@ public class Search {
 		return null; // goal not found
 	}
 	
+	/**
+	 * Breadth-first search
+	 * 
+	 * @param <T>
+	 * @param initial Initial state
+	 * @param goalTest Test if the goal has reached
+	 * @param successors Returns list of next state (node)
+	 * @return Destination
+	 */
 	static public <T> Node<T> bfs(T initial, Predicate<T> goalTest,
 			Function<T, List<T>> successors) {
 		// Where we have yet to go

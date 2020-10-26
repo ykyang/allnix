@@ -2,6 +2,7 @@ package org.allnix.simple.ch4;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,18 +19,27 @@ public abstract class Graph<V, E extends Edge> {
      * Edge list for each vertex
      * edges.get(i) -> List of edges for vertex[i]
      */
-    protected ArrayList<ArrayList<E>> edges = new ArrayList<>();
+    private ArrayList<ArrayList<E>> edges = new ArrayList<>();
     
     public Graph() {
         
     }
     
-    public Graph(List<V> vertices) {
+    public Graph(Collection<V> vertices) {
         this.vertices.addAll(vertices);
         for (V vertex : vertices) {
             edges.add(new ArrayList<>());
         }
     }
+    /*
+     * List of edges a vertex is connected to
+     * 
+     * @param ind Vertex index
+     * @return List of edges
+     */
+//    protected List<E> getEdgeOfVertex(int ind) {
+//        return edges.get(ind);
+//    }
     
     public int getVertexCount() {
         return vertices.size();
