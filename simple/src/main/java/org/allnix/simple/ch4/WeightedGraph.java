@@ -3,14 +3,66 @@ package org.allnix.simple.ch4;
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
+import java.util.function.IntConsumer;
 
 public class WeightedGraph<V> extends Graph<V, WeightedEdge> {
+    private static PrintStream out = System.out;
     
     public WeightedGraph(Collection<V> vertices) {
         super(vertices);
     }
 
+    public Collection<WeightedEdge> mst(int start) {
+        LinkedList<WeightedEdge> result = new LinkedList<>();
+        
+        //> bound checking
+        if (start < 0) { 
+            return result;
+        }
+        if (getVertexCount() <= start) {
+            return result;
+        }
+        
+        PriorityQueue<WeightedEdge> pq = new PriorityQueue<>();
+        boolean[] visited = new boolean[getVertexCount()];
+        
+        //> Use this at 2 different places so it is convenient
+        //> to make it a function.
+        IntConsumer visit = index -> {
+            visited[index] = true;
+            //> Add all edges to priority queue
+            for (WeightedEdge edge : edgeOf(index)) {
+                if (!visited[edge.v]) {
+                    pq.offer(edge);
+                }
+            }
+        };
+        
+        //> start with "start"
+        visit.accept(start);
+        while (!pq.isEmpty()) { 
+            WeightedEdge edge = pq.poll();
+            if (visited[edge.v]) {
+                continue;
+            }
+            
+            result.add(edge);
+            visit.accept(edge.v);
+        }
+        
+        return result;
+    }
+    
+    public void printWeightedPath(Collection<WeightedEdge> weightedPath) {
+       for (WeightedEdge edge : weightedPath) {
+           out.println(vertexAt(edge.u) + " "  + edge.weight + "> " + vertexAt(edge.v));
+       }
+       out.println("Total weight: " + totalWeight(weightedPath));
+    }
+    
     /**
      * Add a new edge to the graph.
      * 
@@ -63,8 +115,6 @@ public class WeightedGraph<V> extends Graph<V, WeightedEdge> {
      * @param args
      */
     public static void main(String[] args) {
-        PrintStream out = System.out;
-        
         List<String> cities = List.of("Seattle", "San Francisco",  
                 "Los Angeles", "Riverside", "Phoenix", "Chicago", "Boston",
                 "New York", "Atlanta", "Miami", "Dallas", "Houston", "Detroit",
@@ -81,6 +131,7 @@ public class WeightedGraph<V> extends Graph<V, WeightedEdge> {
         .addEdge("Los Angeles", "Phoenix", 357)
         .addEdge("Riverside", "Phoenix", 307)
         .addEdge("Riverside", "Chicago", 1704)
+        .addEdge("Phoenix", "Dallas", 887)
         .addEdge("Phoenix", "Houston", 1015)
         .addEdge("Dallas", "Chicago", 805)
         .addEdge("Dallas", "Atlanta", 721)
@@ -101,5 +152,8 @@ public class WeightedGraph<V> extends Graph<V, WeightedEdge> {
         .addEdge("Philadelphia", "Washington", 123);
         
         out.println(cityGraph.toString());
+        
+        Collection<WeightedEdge> mst = cityGraph.mst(0);
+        cityGraph.printWeightedPath(mst);
     }
 }

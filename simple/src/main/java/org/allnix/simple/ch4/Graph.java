@@ -3,7 +3,10 @@ package org.allnix.simple.ch4;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
+import java.util.function.IntConsumer;
 import java.util.stream.Collectors;
 
 /**
@@ -14,9 +17,13 @@ import java.util.stream.Collectors;
  * @param <E> Edge
  */
 public abstract class Graph<V, E extends Edge> {
+    /**
+     * List of vertices
+     */
     private ArrayList<V> vertices = new ArrayList<>();
     /**
      * Edge list for each vertex
+     * 
      * edges.get(i) -> List of edges for vertex[i]
      */
     private ArrayList<ArrayList<E>> edges = new ArrayList<>();
@@ -31,15 +38,7 @@ public abstract class Graph<V, E extends Edge> {
             edges.add(new ArrayList<>());
         }
     }
-    /*
-     * List of edges a vertex is connected to
-     * 
-     * @param ind Vertex index
-     * @return List of edges
-     */
-//    protected List<E> getEdgeOfVertex(int ind) {
-//        return edges.get(ind);
-//    }
+       
     
     public int getVertexCount() {
         return vertices.size();
@@ -64,6 +63,12 @@ public abstract class Graph<V, E extends Edge> {
         return getVertexCount() - 1;
     }
     
+    /**
+     * Get vertex[index]
+     * 
+     * @param index
+     * @return V at index
+     */
     public V vertexAt(int index) {
         return vertices.get(index);
     }
@@ -91,10 +96,22 @@ public abstract class Graph<V, E extends Edge> {
         return neighborOf(index);
     }
     
+    /**
+     * Get edges of Vertex[index]
+     * 
+     * @param index Vertex index
+     * @return List of edges
+     */
     public List<E> edgeOf(int index) {
         return edges.get(index);
     }
     
+    /**
+     * Get edges of Vertex
+     * 
+     * @param vertex
+     * @return List of edges
+     */
     public List<E> edgeOf(V vertex) {
         int index = indexOf(vertex);
         return edgeOf(index);
