@@ -3,8 +3,10 @@ package org.allnix.simple.ch4;
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.function.IntConsumer;
 
@@ -15,6 +17,64 @@ public class WeightedGraph<V> extends Graph<V, WeightedEdge> {
         super(vertices);
     }
 
+    /**
+     * 
+     * @param startV Starting vertex
+     * @return
+     */
+    public DijkstraResult dijkstra(V startV) {
+        int startInd = indexOf(startV);
+        
+        //> Distance from "start" to every other vertex
+        double[] distances = new double[getVertexCount()];
+        distances[startInd] = 0.0; // start to start is zero
+        boolean[] visited = new boolean[getVertexCount()];
+        visited[startInd] = true;
+        
+        //> Record how to get to each vertex
+        Map<Integer, WeightedEdge> pathDb = new HashMap<>();
+        //> Shortest distance from "start" to vertices
+        PriorityQueue<DijkstraNode> pq = new PriorityQueue<>();
+        
+        //> initialize
+        pq.offer(new DijkstraNode(startInd, 0));
+        
+        while (!pq.isEmpty()) {
+            //> Work on the node that is closest to the "start"
+            DijkstraNode node = pq.poll();
+            double distance2Node = distances[node.vertexIndex];
+            
+            //> Extend our horizon from "node" and eventually cover
+            //> every node in the graph
+            for (WeightedEdge wedge : edgeOf(node.vertexIndex)) {
+                int nextNodeIndex = wedge.v;
+                double distance2NextNode = distances[nextNodeIndex];
+                double newDistance2NextNode = distance2Node + wedge.weight;
+                if (!visited[nextNodeIndex] || newDistance2NextNode < distance2NextNode) {
+                    visited[nextNodeIndex] = true;
+                    distances[nextNodeIndex] = newDistance2NextNode;
+                    // record the edge that has shortest distance nextNode
+                    pathDb.put(nextNodeIndex, wedge);
+                    // need to come back to nextNode in the future
+                    pq.offer(new DijkstraNode(nextNodeIndex, newDistance2NextNode));
+                }
+            }
+        }
+        
+//        return null;
+        return new DijkstraResult(distances, pathDb); // just a struct
+    }
+    
+    public Map<V, Double> distanceArrayToDistanceMap(double[] distances) {
+        Map<V, Double> distanceMap = new HashMap<>();
+        
+        for (int i = 0; i < distances.length; i++) {
+            distanceMap.put(vertexAt(i), distances[i]);
+        }
+        
+        return distanceMap;
+    }
+    
     public Collection<WeightedEdge> mst(int start) {
         LinkedList<WeightedEdge> result = new LinkedList<>();
         
