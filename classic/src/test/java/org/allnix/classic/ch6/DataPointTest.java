@@ -21,8 +21,8 @@ public class DataPointTest {
     List<Double> list = Arrays.asList(1.0,2.0); 
     DataPoint p1 = new DataPoint(list);
     assertEquals(2, p1.dimensionCount);
-    assertEquals(1.0, p1.dimensions.get(0));
-    assertEquals(2.0, p1.dimensions.get(1));
+    assertEquals(1.0, p1.normValueList.get(0));
+    assertEquals(2.0, p1.normValueList.get(1));
   }
   
   @Test
