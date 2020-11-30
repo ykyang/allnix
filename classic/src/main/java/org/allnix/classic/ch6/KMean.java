@@ -42,7 +42,7 @@ public class KMean<Point extends DataPoint> {
 
     this.points = points; //new ArrayList<>(points);
 
-    normalizeZScore();
+    computeZScore();
 
     // initialize empty clusters with random centroids
     clusters = new ArrayList<>();
@@ -52,29 +52,37 @@ public class KMean<Point extends DataPoint> {
       clusters.add(cluster);
     }
   }
-
+  
+  /**
+   * Use the values from a set of points to compute the corresponding
+   * z-score.
+   * 
+   * Formally normalizeZScore
+   * @param points
+   */
   @VisibleForTesting
-  void normalizeZScore(Collection<Point> points) {
-    // zscoreList[point,dimension] = zscore
-    List<List<Double>> zscoreList = new ArrayList<>();
+  void computeZScore(Collection<Point> points) {
+    // zscore[point,dimension] = zscore
+    List<List<Double>> zscoreMat = new ArrayList<>();
 
     // initialize
     for (Point point : points) {
-      zscoreList.add(new ArrayList<Double>());
+      zscoreMat.add(new ArrayList<Double>());
     }
 
     for (int dimInd = 0; dimInd < dimensionCount; dimInd++) {
-      List<Double> dimensionSlice = normValueSlice(dimInd); // size = points
-      Statistics stat = new Statistics(dimensionSlice);
-      // z-score of a dimension for all points
+      // normValue[:,dimInd]
+      List<Double> normValueCol = zscoreColumn(dimInd); // size = points
+      Statistics stat = new Statistics(normValueCol);
       // z-score[:,dimInd]
-      Collection<Double> zscoresOfDimInd = stat.zscored(); // size = points
+      Collection<Double> zscoreCol = stat.zscored(); // size = points
 //      out.println("zscoresOfDimInd");
 //      out.println(zscoresOfDimInd);
       // Distribute zscores into zscoreList
       // Guava library
-      Streams.forEachPair(zscoreList.stream(), // List<Double>: dimensions of a point
-          zscoresOfDimInd.stream(), // Double: dimension of a point
+      // Append 1 column to the matrix
+      Streams.forEachPair(zscoreMat.stream(), // Row of 
+          zscoreCol.stream(), // Double: dimension of a point
           (list, zscore) -> list.add(zscore));
     }
 
@@ -82,15 +90,20 @@ public class KMean<Point extends DataPoint> {
 //    out.println(zscoreList);
     
     //
-    Streams.forEachPair(points.stream(), zscoreList.stream(),
-        (point, dimlist) -> point.normValueList = dimlist);
-//    out.println("normalizeZScore: normValueList: ");
-//    points.stream().forEach(pt -> out.println(pt.normValueList));
+    Streams.forEachPair(
+        points.stream(), // -> point 
+        zscoreMat.stream(),// -> zscoreRow
+        (point, normValueRow) -> point.zscore = normValueRow);
+    out.println("zscore:");
+    points.stream().forEach(pt -> out.println(pt.zscore));
   }
   
+  /**
+   * normalizeZScore
+   */
   @VisibleForTesting
-  void normalizeZScore() {
-    normalizeZScore(points);
+  void computeZScore() {
+    computeZScore(points);
   }
 
 
@@ -103,13 +116,13 @@ public class KMean<Point extends DataPoint> {
    * @return
    */
   @VisibleForTesting
-  List<Double> normValueSlice(int dimInd) {
-    return normValueSlice(dimInd, points);
+  List<Double> zscoreColumn(int dimInd) {
+    return zscoreColumn(dimInd, points);
   }
 
   @VisibleForTesting
-  List<Double> normValueSlice(int dimInd, Collection<Point> points) {
-    return points.stream().map(pt -> pt.normValueList.get(dimInd))
+  List<Double> zscoreColumn(int dimInd, Collection<Point> points) {
+    return points.stream().map(pt -> pt.zscore.get(dimInd))
         .collect(Collectors.toList());
   }
 
@@ -127,7 +140,7 @@ public class KMean<Point extends DataPoint> {
     // Generate a list of norm value for one DataPoint
     IntStream.range(0, dimensionCount).forEach(dimInd -> {
       // Collection<Double> randNormValueList = new ArrayList<>();
-      List<Double> normValueSliceList = normValueSlice(dimInd);
+      List<Double> normValueSliceList = zscoreColumn(dimInd);
       // Need to limit rand between min/max
       Statistics stat = new Statistics(normValueSliceList);
       Double randNormValue =
@@ -170,7 +183,7 @@ public class KMean<Point extends DataPoint> {
         // norm value of all points at dimInd
         // [:, dimInd]
         Collection<Double> normValueList =
-            normValueSlice(dimInd, cluster.pointList);
+            zscoreColumn(dimInd, cluster.pointList);
         // mean([:,dimInd])
         Double meanNormValue =
             normValueList.stream().mapToDouble(x -> x).average().getAsDouble();
@@ -188,8 +201,8 @@ public class KMean<Point extends DataPoint> {
 
     for (int ptInd = 0; ptInd < lhs.size(); ptInd++) {
       for (int dimInd = 0; dimInd < dimensionCount; dimInd++) {
-        if (lhs.get(ptInd).normValueList
-            .get(dimInd).doubleValue() != rhs.get(ptInd).normValueList.get(dimInd).doubleValue()) {
+        if (lhs.get(ptInd).zscore
+            .get(dimInd).doubleValue() != rhs.get(ptInd).zscore.get(dimInd).doubleValue()) {
           return false;
         }
       }

@@ -6,27 +6,28 @@ import java.util.List;
 
 public class DataPoint {
   public final int dimensionCount;
-  public List<Double> normValueList; // a.k.a. z-score
-  private List<Double> valueList;
+  public List<Double> zscore; // a.k.a. z-score
+  private List<Double> value;
  
   public DataPoint(Collection<Double> initial) {
-    valueList = new ArrayList<>(initial);
-    normValueList = new ArrayList<>(initial);
-    dimensionCount = normValueList.size();
+    value = new ArrayList<>(initial);
+    zscore = new ArrayList<>(initial);
+    dimensionCount = value.size(); zscore.size();
   }
   
   public double distance(DataPoint other) {
     double differences = 0;
     for (int i = 0; i < dimensionCount; i++) {
-      double difference = normValueList.get(i) - other.normValueList.get(i);
+      double difference = zscore.get(i) - other.zscore.get(i);
       differences += difference * difference;
     }
     
     return Math.sqrt(differences);
   }
 
+  
   public String toString() {
-    return valueList.toString();
+    return value.toString();
   }
   
 }
